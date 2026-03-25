@@ -286,6 +286,8 @@ tbody td{padding:10px 11px;font-size:12.5px}
 @media(max-width:580px){.stats-row{grid-template-columns:1fr 1fr}.events-grid{grid-template-columns:1fr}}
 select option{background:var(--surface2);color:var(--text)}
 </style>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 <!-- AUTH -->
@@ -668,7 +670,7 @@ select option{background:var(--surface2);color:var(--text)}
 </div>
 
 <div id="toast"><span id="t-txt"></span></div>
-<script type="module">
+<script>
 // ════════════════════════════════════════════════════════════
 //  CONSTANTS & CONFIG
 // ════════════════════════════════════════════════════════════
@@ -1412,64 +1414,71 @@ function rDocs(){
 }
 
 // ════════════════════════════════════════════════════════════
-//  FIREBASE FIRESTORE — общая база для всех устройств
+//  FIREBASE FIRESTORE
 // ════════════════════════════════════════════════════════════
 
-// Firebase SDK
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyAhqqUSmiTsMOSXM0OlzT31wTMhzQ3t0Q8",
-  authDomain: "volontermdk.firebaseapp.com",
-  projectId: "volontermdk",
-  storageBucket: "volontermdk.firebasestorage.app",
-  messagingSenderId: "719971816104",
-  appId: "1:719971816104:web:bfd408c3efb27b959ee89d"
-};
-
-const _fbApp = initializeApp(firebaseConfig);
-const _db = getFirestore(_fbApp);
-const _docRef = doc(_db, "app", "data");
-
 const LS_SES = 'vmdk_uid';
-
-// Сохранить всю БД в Firestore
+let _db = null;
+let _docRef = null;
 let _syncTimer = null;
+let _unsubscribe = null;
+
+function initFirebase() {
+  const firebaseConfig = {
+    apiKey: "AIzaSyAhqqUSmiTsMOSXM0OlzT31wTMhzQ3t0Q8",
+    authDomain: "volontermdk.firebaseapp.com",
+    projectId: "volontermdk",
+    storageBucket: "volontermdk.firebasestorage.app",
+    messagingSenderId: "719971816104",
+    appId: "1:719971816104:web:bfd408c3efb27b959ee89d"
+  };
+  try {
+    firebase.initializeApp(firebaseConfig);
+    _db = firebase.firestore();
+    _docRef = _db.collection('app').doc('data');
+    console.log('✅ Firebase инициализирован');
+    return true;
+  } catch(e) {
+    console.warn('Firebase init error:', e);
+    return false;
+  }
+}
+
 function syncToServer() {
   clearTimeout(_syncTimer);
   _syncTimer = setTimeout(async () => {
+    if (!_docRef) return;
     try {
-      // Firestore имеет лимит 1МБ на документ — сохраняем по частям
-      const payload = JSON.parse(JSON.stringify(DB));
-      // Убираем avatarData из users при сохранении (они большие)
-      // но сохраняем отдельно в localStorage
-      try { localStorage.setItem('vmdk_avatars', JSON.stringify(
-        DB.users.reduce((acc,u) => { if(u.avatarData) acc[u.id]=u.avatarData; return acc; }, {})
-      )); } catch(e){}
-      const slim = JSON.parse(JSON.stringify(payload));
+      const slim = JSON.parse(JSON.stringify(DB));
+      // Сохраняем аватары отдельно в localStorage (они большие)
+      try {
+        const avatars = {};
+        DB.users.forEach(u => { if(u.avatarData) avatars[u.id] = u.avatarData; });
+        localStorage.setItem('vmdk_avatars', JSON.stringify(avatars));
+      } catch(e){}
       slim.users = slim.users.map(u => ({...u, avatarData: null}));
-      await setDoc(_docRef, slim);
+      await _docRef.set(slim);
     } catch(e) {
       console.warn('Firestore save error:', e);
-      // Fallback to localStorage
-      try { localStorage.setItem('vmdk_db_backup', JSON.stringify(DB)); } catch(ex){}
     }
   }, 500);
 }
 
-// Загрузить БД из Firestore
-async function loadDBFromFirestore() {
+function restoreAvatars() {
   try {
-    const snap = await getDoc(_docRef);
-    if (snap.exists()) {
+    const avatars = JSON.parse(localStorage.getItem('vmdk_avatars') || '{}');
+    DB.users.forEach(u => { if(avatars[u.id]) u.avatarData = avatars[u.id]; });
+  } catch(e){}
+}
+
+async function loadDBFromFirestore() {
+  if (!_docRef) return false;
+  try {
+    const snap = await _docRef.get();
+    if (snap.exists) {
       const data = snap.data();
-      Object.keys(data).forEach(k => { if (DB[k] !== undefined) DB[k] = data[k]; });
-      // Восстанавливаем аватары из localStorage
-      try {
-        const avatars = JSON.parse(localStorage.getItem('vmdk_avatars') || '{}');
-        DB.users.forEach(u => { if (avatars[u.id]) u.avatarData = avatars[u.id]; });
-      } catch(e){}
+      Object.keys(data).forEach(k => { if(DB[k] !== undefined) DB[k] = data[k]; });
+      restoreAvatars();
       return true;
     }
     return false;
@@ -1479,26 +1488,22 @@ async function loadDBFromFirestore() {
   }
 }
 
-// Слушаем изменения в реальном времени
 function subscribeFirestore() {
-  onSnapshot(_docRef, (snap) => {
-    if (!snap.exists()) return;
+  if (!_docRef) return;
+  if (_unsubscribe) _unsubscribe();
+  _unsubscribe = _docRef.onSnapshot(snap => {
+    if (!snap.exists) return;
     const data = snap.data();
-    Object.keys(data).forEach(k => { if (DB[k] !== undefined) DB[k] = data[k]; });
-    // Восстанавливаем аватары
-    try {
-      const avatars = JSON.parse(localStorage.getItem('vmdk_avatars') || '{}');
-      DB.users.forEach(u => { if (avatars[u.id]) u.avatarData = avatars[u.id]; });
-    } catch(e){}
-    // Обновляем текущего пользователя
+    Object.keys(data).forEach(k => { if(DB[k] !== undefined) DB[k] = data[k]; });
+    restoreAvatars();
     if (CU) {
       CU = DB.users.find(u => u.id === CU.id) || CU;
       refreshAllUI();
     }
-  });
+  }, err => console.warn('Snapshot error:', err));
 }
 
-function connectWS() {} // не нужен — используем onSnapshot
+function connectWS() {}
 
 function refreshAllUI() {
   updBadges();
@@ -1531,7 +1536,6 @@ function updAdminMenu(){
   }
 }
 
-// ── Авторизация ──────────────────────────────────────────────
 function doLogin() {
   const id = v('li-id').trim(), pw = v('li-pw').trim();
   const u = DB.users.find(x => (x.email === id || x.phone === id) && x.pw === pw);
@@ -1577,12 +1581,9 @@ function doLogout(){
   toast('👋 До встречи!');
 }
 
-// ── Патчим функции изменяющие данные ────────────────────────
+// Патчим функции изменяющие данные
 const _origAddPoints = addPointsWithLog;
-addPointsWithLog = function(...args) {
-  _origAddPoints.apply(this, args);
-  syncToServer();
-};
+addPointsWithLog = function(...args) { _origAddPoints.apply(this, args); syncToServer(); };
 window.doRegEv = function(id) {
   const e = DB.events.find(x => x.id === id); if(!e) return;
   if(!e.registered.includes(CU.id)){e.registered.push(CU.id);CU.events++;checkAutoPromo();}
@@ -1618,19 +1619,18 @@ window.delEv = function(id){ _origDelEv(id); syncToServer(); };
 const _origDoWarn = doWarn;
 window.doWarn = function(){ _origDoWarn(); syncToServer(); };
 
-// ── Старт ────────────────────────────────────────────────────
+// Старт
 window.addEventListener('load', async () => {
-  // Загружаем БД из Firestore
-  const loaded = await loadDBFromFirestore();
-  if (!loaded) {
-    console.log('Firestore пуст — используем демо-данные и сохраняем');
-    await syncToServer();
+  const ok = initFirebase();
+  if (ok) {
+    const loaded = await loadDBFromFirestore();
+    if (!loaded) {
+      console.log('Firestore пуст — сохраняем демо-данные');
+      syncToServer();
+    }
+    subscribeFirestore();
   }
 
-  // Подписываемся на realtime обновления
-  subscribeFirestore();
-
-  // Восстанавливаем сессию
   const savedUid = localStorage.getItem(LS_SES);
   if (savedUid) {
     const savedUser = DB.users.find(u => String(u.id) === savedUid);
@@ -1643,90 +1643,6 @@ window.addEventListener('load', async () => {
     }
   }
 });
-
-// Экспортируем все функции в window для работы с onclick в HTML
-const _fns = [
-  'doLogin','doRegister','doLogout','authTab','go','toggleSb',
-  'filterEvs','filterEvsSt','doRegEv','unregEv','openEvDetail','postCmt',
-  'rTasks','filterVolRank',
-  'go','handleAvUpload','handleEvCover','handleEvDrop','clearEvCover',
-  'saveBio','saveProfile',
-  'startExam','selectOpt','submitExam',
-  'toggleCond','sendPromoRequest','toggleCondAdmin',
-  'doAddPts','doWarn','removeWarn','showVol','openPosModal','openPermsModal',
-  'savePerms','savePosition','approvePromo','rejectPromo','approveExamRetry',
-  'openConf','confOne','confirmAll','editEvCover',
-  'admDoneTask','addEv','addTask','uploadDoc','delEv','openEvDetail',
-  'addAnn','delAnn','pinAnn','openPromoAdmin','toggleCondAdmin','fireUser',
-  'xrep','rAdmRep','rAdmVol','rAdmEv','rAdmTasks','rAdmPromo',
-  'rKpiAdmin','rTestConstructor','rAdmPerms','filterPermSearch',
-  'addTest','toggleTest','delTest','addQuestion',
-  'saveTgSettings','testTG','toggleNotifs',
-  'openPermsModal','openPosModal',
-];
-_fns.forEach(name => {
-  if (typeof window[name] === 'undefined' && typeof eval(name) === 'function') {
-    try { window[name] = eval(name); } catch(e){}
-  }
-});
-// Явно назначаем самые важные
-window.doLogin = doLogin;
-window.doRegister = doRegister;
-window.doLogout = doLogout;
-window.authTab = authTab;
-window.go = go;
-window.toggleSb = toggleSb;
-window.closeSb = closeSb;
-window.filterEvs = filterEvs;
-window.filterEvsSt = filterEvsSt;
-window.openEvDetail = openEvDetail;
-window.postCmt = postCmt;
-window.handleAvUpload = handleAvUpload;
-window.handleEvCover = handleEvCover;
-window.handleEvDrop = handleEvDrop;
-window.clearEvCover = clearEvCover;
-window.startExam = startExam;
-window.selectOpt = selectOpt;
-window.submitExam = submitExam;
-window.toggleCond = toggleCond;
-window.sendPromoRequest = sendPromoRequest;
-window.doAddPts = doAddPts;
-window.showVol = showVol;
-window.openPosModal = openPosModal;
-window.openPermsModal = openPermsModal;
-window.savePerms = savePerms;
-window.savePosition = savePosition;
-window.approvePromo = approvePromo;
-window.rejectPromo = rejectPromo;
-window.approveExamRetry = approveExamRetry;
-window.openConf = openConf;
-window.confirmAll = confirmAll;
-window.editEvCover = editEvCover;
-window.addEv = addEv;
-window.addTask = addTask;
-window.uploadDoc = uploadDoc;
-window.delEv = delEv;
-window.xrep = xrep;
-window.addAnn = addAnn;
-window.delAnn = delAnn;
-window.pinAnn = pinAnn;
-window.openPromoAdmin = openPromoAdmin;
-window.toggleCondAdmin = toggleCondAdmin;
-window.fireUser = fireUser;
-window.filterVolRank = filterVolRank;
-window.filterPermSearch = filterPermSearch;
-window.addTest = addTest;
-window.toggleTest = toggleTest;
-window.delTest = delTest;
-window.addQuestion = addQuestion;
-window.saveTgSettings = saveTgSettings;
-window.testTG = testTG;
-window.toggleNotifs = toggleNotifs;
-window.opm = opm;
-window.cpm = cpm;
-window.admDoneTask = admDoneTask;
-window.doWarn = doWarn;
-window.removeWarn = removeWarn;
 
 </script>
 </body>
