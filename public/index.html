@@ -668,7 +668,7 @@ select option{background:var(--surface2);color:var(--text)}
 </div>
 
 <div id="toast"><span id="t-txt"></span></div>
-<script>
+<script type="module">
 // ════════════════════════════════════════════════════════════
 //  CONSTANTS & CONFIG
 // ════════════════════════════════════════════════════════════
@@ -1412,40 +1412,94 @@ function rDocs(){
 }
 
 // ════════════════════════════════════════════════════════════
-//  ХРАНИЛИЩЕ (localStorage — работает везде без сервера)
+//  FIREBASE FIRESTORE — общая база для всех устройств
 // ════════════════════════════════════════════════════════════
 
-const LS_DB  = 'vmdk_db';
+// Firebase SDK
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAhqqUSmiTsMOSXM0OlzT31wTMhzQ3t0Q8",
+  authDomain: "volontermdk.firebaseapp.com",
+  projectId: "volontermdk",
+  storageBucket: "volontermdk.firebasestorage.app",
+  messagingSenderId: "719971816104",
+  appId: "1:719971816104:web:bfd408c3efb27b959ee89d"
+};
+
+const _fbApp = initializeApp(firebaseConfig);
+const _db = getFirestore(_fbApp);
+const _docRef = doc(_db, "app", "data");
+
 const LS_SES = 'vmdk_uid';
 
-// Сохранить всю БД в localStorage
-function saveDB() {
-  try {
-    localStorage.setItem(LS_DB, JSON.stringify(DB));
-  } catch(e) { console.warn('localStorage full', e); }
-}
-
-// Загрузить БД из localStorage (возвращает true если нашли)
-function loadDB() {
-  try {
-    const raw = localStorage.getItem(LS_DB);
-    if (!raw) return false;
-    const saved = JSON.parse(raw);
-    // Мержим — сохраняем структуру, подставляем сохранённые данные
-    Object.keys(saved).forEach(k => { if (DB[k] !== undefined) DB[k] = saved[k]; });
-    return true;
-  } catch(e) { return false; }
-}
-
-// syncToServer теперь просто сохраняет в localStorage
+// Сохранить всю БД в Firestore
 let _syncTimer = null;
 function syncToServer() {
   clearTimeout(_syncTimer);
-  _syncTimer = setTimeout(saveDB, 100);
+  _syncTimer = setTimeout(async () => {
+    try {
+      // Firestore имеет лимит 1МБ на документ — сохраняем по частям
+      const payload = JSON.parse(JSON.stringify(DB));
+      // Убираем avatarData из users при сохранении (они большие)
+      // но сохраняем отдельно в localStorage
+      try { localStorage.setItem('vmdk_avatars', JSON.stringify(
+        DB.users.reduce((acc,u) => { if(u.avatarData) acc[u.id]=u.avatarData; return acc; }, {})
+      )); } catch(e){}
+      const slim = JSON.parse(JSON.stringify(payload));
+      slim.users = slim.users.map(u => ({...u, avatarData: null}));
+      await setDoc(_docRef, slim);
+    } catch(e) {
+      console.warn('Firestore save error:', e);
+      // Fallback to localStorage
+      try { localStorage.setItem('vmdk_db_backup', JSON.stringify(DB)); } catch(ex){}
+    }
+  }, 500);
 }
 
-// Заглушка — WS не нужен на Vercel
-function connectWS() {}
+// Загрузить БД из Firestore
+async function loadDBFromFirestore() {
+  try {
+    const snap = await getDoc(_docRef);
+    if (snap.exists()) {
+      const data = snap.data();
+      Object.keys(data).forEach(k => { if (DB[k] !== undefined) DB[k] = data[k]; });
+      // Восстанавливаем аватары из localStorage
+      try {
+        const avatars = JSON.parse(localStorage.getItem('vmdk_avatars') || '{}');
+        DB.users.forEach(u => { if (avatars[u.id]) u.avatarData = avatars[u.id]; });
+      } catch(e){}
+      return true;
+    }
+    return false;
+  } catch(e) {
+    console.warn('Firestore load error:', e);
+    return false;
+  }
+}
+
+// Слушаем изменения в реальном времени
+function subscribeFirestore() {
+  onSnapshot(_docRef, (snap) => {
+    if (!snap.exists()) return;
+    const data = snap.data();
+    Object.keys(data).forEach(k => { if (DB[k] !== undefined) DB[k] = data[k]; });
+    // Восстанавливаем аватары
+    try {
+      const avatars = JSON.parse(localStorage.getItem('vmdk_avatars') || '{}');
+      DB.users.forEach(u => { if (avatars[u.id]) u.avatarData = avatars[u.id]; });
+    } catch(e){}
+    // Обновляем текущего пользователя
+    if (CU) {
+      CU = DB.users.find(u => u.id === CU.id) || CU;
+      refreshAllUI();
+    }
+  });
+}
+
+function connectWS() {} // не нужен — используем onSnapshot
+
 function refreshAllUI() {
   updBadges();
   updNotifBadge();
@@ -1511,7 +1565,7 @@ function doRegister() {
   DB.users.push(nu);
   CU = nu;
   localStorage.setItem(LS_SES, String(CU.id));
-  saveDB();
+  syncToServer();
   launchApp();
 }
 
@@ -1565,9 +1619,16 @@ const _origDoWarn = doWarn;
 window.doWarn = function(){ _origDoWarn(); syncToServer(); };
 
 // ── Старт ────────────────────────────────────────────────────
-window.addEventListener('load', () => {
-  // Загружаем сохранённую БД
-  loadDB();
+window.addEventListener('load', async () => {
+  // Загружаем БД из Firestore
+  const loaded = await loadDBFromFirestore();
+  if (!loaded) {
+    console.log('Firestore пуст — используем демо-данные и сохраняем');
+    await syncToServer();
+  }
+
+  // Подписываемся на realtime обновления
+  subscribeFirestore();
 
   // Восстанавливаем сессию
   const savedUid = localStorage.getItem(LS_SES);
@@ -1581,8 +1642,91 @@ window.addEventListener('load', () => {
       localStorage.removeItem(LS_SES);
     }
   }
-  // Иначе показываем экран входа (он уже виден по умолчанию)
 });
+
+// Экспортируем все функции в window для работы с onclick в HTML
+const _fns = [
+  'doLogin','doRegister','doLogout','authTab','go','toggleSb',
+  'filterEvs','filterEvsSt','doRegEv','unregEv','openEvDetail','postCmt',
+  'rTasks','filterVolRank',
+  'go','handleAvUpload','handleEvCover','handleEvDrop','clearEvCover',
+  'saveBio','saveProfile',
+  'startExam','selectOpt','submitExam',
+  'toggleCond','sendPromoRequest','toggleCondAdmin',
+  'doAddPts','doWarn','removeWarn','showVol','openPosModal','openPermsModal',
+  'savePerms','savePosition','approvePromo','rejectPromo','approveExamRetry',
+  'openConf','confOne','confirmAll','editEvCover',
+  'admDoneTask','addEv','addTask','uploadDoc','delEv','openEvDetail',
+  'addAnn','delAnn','pinAnn','openPromoAdmin','toggleCondAdmin','fireUser',
+  'xrep','rAdmRep','rAdmVol','rAdmEv','rAdmTasks','rAdmPromo',
+  'rKpiAdmin','rTestConstructor','rAdmPerms','filterPermSearch',
+  'addTest','toggleTest','delTest','addQuestion',
+  'saveTgSettings','testTG','toggleNotifs',
+  'openPermsModal','openPosModal',
+];
+_fns.forEach(name => {
+  if (typeof window[name] === 'undefined' && typeof eval(name) === 'function') {
+    try { window[name] = eval(name); } catch(e){}
+  }
+});
+// Явно назначаем самые важные
+window.doLogin = doLogin;
+window.doRegister = doRegister;
+window.doLogout = doLogout;
+window.authTab = authTab;
+window.go = go;
+window.toggleSb = toggleSb;
+window.closeSb = closeSb;
+window.filterEvs = filterEvs;
+window.filterEvsSt = filterEvsSt;
+window.openEvDetail = openEvDetail;
+window.postCmt = postCmt;
+window.handleAvUpload = handleAvUpload;
+window.handleEvCover = handleEvCover;
+window.handleEvDrop = handleEvDrop;
+window.clearEvCover = clearEvCover;
+window.startExam = startExam;
+window.selectOpt = selectOpt;
+window.submitExam = submitExam;
+window.toggleCond = toggleCond;
+window.sendPromoRequest = sendPromoRequest;
+window.doAddPts = doAddPts;
+window.showVol = showVol;
+window.openPosModal = openPosModal;
+window.openPermsModal = openPermsModal;
+window.savePerms = savePerms;
+window.savePosition = savePosition;
+window.approvePromo = approvePromo;
+window.rejectPromo = rejectPromo;
+window.approveExamRetry = approveExamRetry;
+window.openConf = openConf;
+window.confirmAll = confirmAll;
+window.editEvCover = editEvCover;
+window.addEv = addEv;
+window.addTask = addTask;
+window.uploadDoc = uploadDoc;
+window.delEv = delEv;
+window.xrep = xrep;
+window.addAnn = addAnn;
+window.delAnn = delAnn;
+window.pinAnn = pinAnn;
+window.openPromoAdmin = openPromoAdmin;
+window.toggleCondAdmin = toggleCondAdmin;
+window.fireUser = fireUser;
+window.filterVolRank = filterVolRank;
+window.filterPermSearch = filterPermSearch;
+window.addTest = addTest;
+window.toggleTest = toggleTest;
+window.delTest = delTest;
+window.addQuestion = addQuestion;
+window.saveTgSettings = saveTgSettings;
+window.testTG = testTG;
+window.toggleNotifs = toggleNotifs;
+window.opm = opm;
+window.cpm = cpm;
+window.admDoneTask = admDoneTask;
+window.doWarn = doWarn;
+window.removeWarn = removeWarn;
 
 </script>
 </body>
