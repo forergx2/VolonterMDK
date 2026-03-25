@@ -1,0 +1,653 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "email": "admin@demo.kz",
+      "phone": "+77770001100",
+      "name": "Ахметов Даулет Сейткалиевич",
+      "age": 28,
+      "district": "Центральный",
+      "school": "КГУ им. К. Жубанова",
+      "work": "МДК Мугунгхва",
+      "points": 1300,
+      "events": 19,
+      "tasks_done": 18,
+      "joined": "2022-09-01",
+      "avatar": "А",
+      "avatarData": null,
+      "bio": "Председатель",
+      "warnings": [],
+      "rank": "activist",
+      "positionId": "chair",
+      "dept": "management",
+      "perms": null,
+      "kpiMonth": 184,
+      "kpiGoal": 150,
+      "kpiArchive": [
+        {
+          "month": "2026-02",
+          "points": 142,
+          "goal": 150,
+          "pct": 95
+        }
+      ],
+      "pointsLog": [
+        {
+          "date": "26.03.2026",
+          "by": "Цой Даниил",
+          "reason": "Участие в «Тест 1»",
+          "amount": 60,
+          "type": "plus"
+        },
+        {
+          "date": "25.03.2026",
+          "by": "Система",
+          "reason": "Участие в субботнике",
+          "amount": 80,
+          "type": "plus"
+        }
+      ],
+      "notifications": [
+        {
+          "id": 1774478322643,
+          "text": "🎉 KPI выполнен! Отличная работа в этом месяце!",
+          "time": "сейчас",
+          "read": false
+        },
+        {
+          "id": 1774478322643,
+          "text": "Вам начислено 60 баллов: Участие в «Тест 1» ⭐",
+          "time": "сейчас",
+          "read": false
+        },
+        {
+          "id": 1774478305608,
+          "text": "Вы записаны на «Тест 1» — 26 мар 2026",
+          "time": "сейчас",
+          "read": false
+        },
+        {
+          "id": 1,
+          "text": "KPI выполнен на 95%",
+          "time": "4 дня назад",
+          "read": false
+        }
+      ],
+      "tgChatId": "",
+      "tgEnabled": false,
+      "promoConditions": {
+        "toVolunteer": {
+          "onboarding": true,
+          "staffAcademy": true,
+          "events3": true,
+          "active": true,
+          "leaderApproval": true
+        },
+        "toActivist": {
+          "staffAcademyFull": true,
+          "events10": true,
+          "organized3": true,
+          "examPassed": true,
+          "leaderApproval": true
+        }
+      },
+      "organizedEvents": [
+        1,
+        2,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "promoRequest": null,
+      "examResult": {
+        "passed": true,
+        "score": 5,
+        "total": 5,
+        "date": "01.01.2023"
+      },
+      "examRetry": {
+        "canRetry": true,
+        "lastAttempt": null,
+        "adminApproved": false
+      },
+      "pw": "admin123"
+    },
+    {
+      "id": 1774474636082,
+      "email": "Forergx2@gmail.com",
+      "phone": "+77011607389",
+      "name": "Цой Даниил Владимирович",
+      "age": "",
+      "district": "",
+      "school": "",
+      "work": "",
+      "points": 820,
+      "events": 10,
+      "tasks_done": 0,
+      "joined": "2026-03-26",
+      "avatar": "Ц",
+      "avatarData": null,
+      "bio": "",
+      "warnings": [],
+      "rank": "activist",
+      "positionId": "chair",
+      "dept": "management",
+      "perms": null,
+      "kpiMonth": 820,
+      "kpiGoal": 50,
+      "kpiArchive": [],
+      "pointsLog": [
+        {
+          "date": "26.03.2026",
+          "by": "Ахметов Даулет",
+          "reason": "Участие в «Тест 4»",
+          "amount": 60,
+          "type": "plus"
+        },
+        {
+          "date": "26.03.2026",
+          "by": "Ахметов Даулет",
+          "reason": "Участие в «Тест»",
+          "amount": 60,
+          "type": "plus"
+        },
+        {
+          "date": "26.03.2026",
+          "by": "Ахметов Даулет",
+          "reason": "Участие в «Тест 6ж»",
+          "amount": 60,
+          "type": "plus"
+        },
+        {
+          "date": "26.03.2026",
+          "by": "Ахметов Даулет",
+          "reason": "Участие в «Тест 4»",
+          "amount": 60,
+          "type": "plus"
+        },
+        {
+          "date": "26.03.2026",
+          "by": "Ахметов Даулет",
+          "reason": "Участие в «Тест 3»",
+          "amount": 60,
+          "type": "plus"
+        },
+        {
+          "date": "26.03.2026",
+          "by": "Ахметов Даулет",
+          "reason": "Участие в «Тест 2»",
+          "amount": 60,
+          "type": "plus"
+        },
+        {
+          "date": "26.03.2026",
+          "by": "Ахметов Даулет",
+          "reason": "Участие в «Тест 1»",
+          "amount": 60,
+          "type": "plus"
+        },
+        {
+          "date": "26.03.2026",
+          "by": "Ахметов Даулет",
+          "reason": "Участие в «Выездной лагерь»",
+          "amount": 200,
+          "type": "plus"
+        },
+        {
+          "date": "26.03.2026",
+          "by": "Ахметов Даулет",
+          "reason": "Участие в «Форум молодёжи Казахстана»",
+          "amount": 120,
+          "type": "plus"
+        },
+        {
+          "date": "26.03.2026",
+          "by": "Ахметов Даулет",
+          "reason": "Участие в «Городской субботник «Зелёный Актобе»»",
+          "amount": 80,
+          "type": "plus"
+        }
+      ],
+      "notifications": [
+        {
+          "id": 1774476989071,
+          "text": "Вам начислено 60 баллов: Участие в «Тест 4» ⭐",
+          "time": "сейчас",
+          "read": false
+        },
+        {
+          "id": 1774476981577,
+          "text": "Вам начислено 60 баллов: Участие в «Тест» ⭐",
+          "time": "сейчас",
+          "read": false
+        },
+        {
+          "id": 1774476977350,
+          "text": "Вам начислено 60 баллов: Участие в «Тест 6ж» ⭐",
+          "time": "сейчас",
+          "read": false
+        },
+        {
+          "id": 1774476973344,
+          "text": "Вам начислено 60 баллов: Участие в «Тест 4» ⭐",
+          "time": "сейчас",
+          "read": false
+        },
+        {
+          "id": 1774476968849,
+          "text": "Вам начислено 60 баллов: Участие в «Тест 3» ⭐",
+          "time": "сейчас",
+          "read": false
+        },
+        {
+          "id": 1774476964879,
+          "text": "Вам начислено 60 баллов: Участие в «Тест 2» ⭐",
+          "time": "сейчас",
+          "read": false
+        },
+        {
+          "id": 1774476961780,
+          "text": "Вам начислено 60 баллов: Участие в «Тест 1» ⭐",
+          "time": "сейчас",
+          "read": false
+        },
+        {
+          "id": 1774476954212,
+          "text": "Вам начислено 200 баллов: Участие в «Выездной лагерь» ⭐",
+          "time": "сейчас",
+          "read": false
+        },
+        {
+          "id": 1774476946724,
+          "text": "Вам начислено 120 баллов: Участие в «Форум молодёжи Казахстана» ⭐",
+          "time": "сейчас",
+          "read": false
+        },
+        {
+          "id": 1774476940853,
+          "text": "🎉 KPI выполнен! Отличная работа в этом месяце!",
+          "time": "сейчас",
+          "read": false
+        },
+        {
+          "id": 1774476940853,
+          "text": "Вам начислено 80 баллов: Участие в «Городской субботник «Зелёный Актобе»» ⭐",
+          "time": "сейчас",
+          "read": false
+        },
+        {
+          "id": 1774476179815,
+          "text": "🎉 Поздравляем! Вы повышены до ранга «Активист»!",
+          "time": "сейчас",
+          "read": false
+        },
+        {
+          "id": 1774476162113,
+          "text": "Вы записаны на «Тест» — 26 мар 2026",
+          "time": "сейчас",
+          "read": false
+        },
+        {
+          "id": 1774476116552,
+          "text": "Вы записаны на «Тест 1» — 26 мар 2026",
+          "time": "сейчас",
+          "read": false
+        },
+        {
+          "id": 1774476115162,
+          "text": "Вы записаны на «Тест 3» — 26 мар 2026",
+          "time": "сейчас",
+          "read": false
+        },
+        {
+          "id": 1774476113781,
+          "text": "Вы записаны на «Тест 2» — 26 мар 2026",
+          "time": "сейчас",
+          "read": false
+        },
+        {
+          "id": 1774476110772,
+          "text": "Вы записаны на «Тест 4» — 26 мар 2026",
+          "time": "сейчас",
+          "read": false
+        },
+        {
+          "id": 1774476109481,
+          "text": "Вы записаны на «Тест 4» — 26 мар 2026",
+          "time": "сейчас",
+          "read": false
+        },
+        {
+          "id": 1774476105704,
+          "text": "Вы записаны на «Тест 6ж» — 26 мар 2026",
+          "time": "сейчас",
+          "read": false
+        },
+        {
+          "id": 1774475937908,
+          "text": "🎉 Экзамен сдан! 5/5",
+          "time": "сейчас",
+          "read": false
+        },
+        {
+          "id": 1774474973157,
+          "text": "🎉 Поздравляем! Вы повышены до ранга «Волонтёр»!",
+          "time": "сейчас",
+          "read": false
+        },
+        {
+          "id": 1774474659494,
+          "text": "Вы записаны на «Выездной лагерь» — 20 апр 2026",
+          "time": "сейчас",
+          "read": false
+        },
+        {
+          "id": 1774474657405,
+          "text": "Вы записаны на «Форум молодёжи Казахстана» — 12 апр 2026",
+          "time": "сейчас",
+          "read": false
+        },
+        {
+          "id": 1774474651108,
+          "text": "Вы записаны на «Городской субботник «Зелёный Актобе»» — 5 апр 2026",
+          "time": "сейчас",
+          "read": false
+        }
+      ],
+      "tgChatId": "",
+      "tgEnabled": false,
+      "promoConditions": {
+        "toVolunteer": {
+          "onboarding": true,
+          "staffAcademy": true,
+          "events3": true,
+          "active": true,
+          "leaderApproval": true
+        },
+        "toActivist": {
+          "staffAcademyFull": true,
+          "events10": true,
+          "organized3": true,
+          "examPassed": true,
+          "leaderApproval": true
+        }
+      },
+      "organizedEvents": [],
+      "promoRequest": null,
+      "examResult": {
+        "passed": true,
+        "score": 5,
+        "total": 5,
+        "date": "26.03.2026"
+      },
+      "examRetry": {
+        "canRetry": false,
+        "lastAttempt": "Thu Mar 26 2026",
+        "adminApproved": false
+      },
+      "pw": "0717071947"
+    }
+  ],
+  "events": [
+    {
+      "id": 6,
+      "title": "Тест 1",
+      "date": "2026-03-26",
+      "location": "Актобе",
+      "points": 60,
+      "max": 30,
+      "registered": [
+        1774474636082,
+        1
+      ],
+      "confirmed": [
+        1774474636082,
+        1
+      ],
+      "emoji": "🎯",
+      "coverData": null,
+      "organizerId": 1,
+      "desc": "авоамгыпвмт",
+      "status": "open",
+      "comments": []
+    },
+    {
+      "id": 7,
+      "title": "Тест 2",
+      "date": "2026-03-26",
+      "location": "Актобе",
+      "points": 60,
+      "max": 30,
+      "registered": [
+        1774474636082
+      ],
+      "confirmed": [
+        1774474636082
+      ],
+      "emoji": "🎯",
+      "coverData": null,
+      "organizerId": 1,
+      "desc": "амвмгвамвшам",
+      "status": "open",
+      "comments": []
+    },
+    {
+      "id": 8,
+      "title": "Тест 3",
+      "date": "2026-03-26",
+      "location": "Актобе",
+      "points": 60,
+      "max": 30,
+      "registered": [
+        1774474636082
+      ],
+      "confirmed": [
+        1774474636082
+      ],
+      "emoji": "🎯",
+      "coverData": null,
+      "organizerId": 1,
+      "desc": "аормшыташмгмгшаур",
+      "status": "open",
+      "comments": []
+    },
+    {
+      "id": 9,
+      "title": "Тест 4",
+      "date": "2026-03-26",
+      "location": "Актобе",
+      "points": 60,
+      "max": 30,
+      "registered": [
+        1774474636082
+      ],
+      "confirmed": [
+        1774474636082
+      ],
+      "emoji": "🎯",
+      "coverData": null,
+      "organizerId": 1,
+      "desc": "оашвгшармгршаои",
+      "status": "open",
+      "comments": []
+    },
+    {
+      "id": 10,
+      "title": "Тест 4",
+      "date": "2026-03-26",
+      "location": "Актобе",
+      "points": 60,
+      "max": 30,
+      "registered": [
+        1774474636082
+      ],
+      "confirmed": [
+        1774474636082
+      ],
+      "emoji": "🎯",
+      "coverData": null,
+      "organizerId": 1,
+      "desc": "лооаштаошрапшшаргапм",
+      "status": "open",
+      "comments": []
+    },
+    {
+      "id": 11,
+      "title": "Тест 6ж",
+      "date": "2026-03-26",
+      "location": "Актобе",
+      "points": 60,
+      "max": 30,
+      "registered": [
+        1774474636082
+      ],
+      "confirmed": [
+        1774474636082
+      ],
+      "emoji": "🎯",
+      "coverData": null,
+      "organizerId": 1,
+      "desc": "яваошщвощашо",
+      "status": "open",
+      "comments": []
+    },
+    {
+      "id": 12,
+      "title": "Тест",
+      "date": "2026-03-26",
+      "location": "Актобе",
+      "points": 60,
+      "max": 30,
+      "registered": [
+        1774474636082
+      ],
+      "confirmed": [
+        1774474636082
+      ],
+      "emoji": "🎯",
+      "coverData": null,
+      "organizerId": 1,
+      "desc": "Актобе",
+      "status": "open",
+      "comments": []
+    }
+  ],
+  "tasks": [],
+  "announcements": [
+    {
+      "id": 1,
+      "title": "📌 Регистрация на Форум открыта",
+      "text": "Зарегистрируйтесь до 1 апреля. Участникам +120 баллов.",
+      "date": "25 марта 2026",
+      "pinned": true
+    },
+    {
+      "id": 2,
+      "title": "Изменение системы баллов",
+      "text": "С 1 апреля коэффициент ×1.2 за городские мероприятия.",
+      "date": "20 марта 2026",
+      "pinned": false
+    },
+    {
+      "id": 3,
+      "title": "Топ-волонтёры марта",
+      "text": "1 место — Нурланова Асель, 2 место — Жаксыбеков Берик.",
+      "date": "18 марта 2026",
+      "pinned": false
+    }
+  ],
+  "documents": [
+    {
+      "id": 1,
+      "name": "Устав МДК Мугунгхва",
+      "icon": "📄",
+      "size": "1.2 МБ",
+      "date": "01.01.2026"
+    },
+    {
+      "id": 2,
+      "name": "Инструкция волонтёра",
+      "icon": "📝",
+      "size": "845 КБ",
+      "date": "15.01.2026"
+    },
+    {
+      "id": 3,
+      "name": "Положение Staff Academy",
+      "icon": "📄",
+      "size": "620 КБ",
+      "date": "10.01.2026"
+    },
+    {
+      "id": 4,
+      "name": "Планы на 2026 год",
+      "icon": "📊",
+      "size": "2.1 МБ",
+      "date": "05.01.2026"
+    }
+  ],
+  "tests": [
+    {
+      "id": 1,
+      "title": "Экзамен на Активиста",
+      "passScore": 4,
+      "active": true,
+      "questions": [
+        {
+          "q": "Что является главной ценностью волонтёра МДК?",
+          "opts": [
+            "Личная выгода",
+            "Служение обществу",
+            "Карьера",
+            "Баллы"
+          ],
+          "correct": 1
+        },
+        {
+          "q": "Сколько мероприятий нужно посетить кандидату?",
+          "opts": [
+            "1",
+            "2",
+            "3",
+            "5"
+          ],
+          "correct": 2
+        },
+        {
+          "q": "Что такое Staff Academy?",
+          "opts": [
+            "Внешний курс",
+            "Внутренняя программа МДК",
+            "Экзамен",
+            "Рейтинг"
+          ],
+          "correct": 1
+        },
+        {
+          "q": "Сколько мероприятий нужно ОРГАНИЗОВАТЬ для Активиста?",
+          "opts": [
+            "1",
+            "2",
+            "3",
+            "5"
+          ],
+          "correct": 2
+        },
+        {
+          "q": "Чем отличается Активист от Волонтёра?",
+          "opts": [
+            "Только баллами",
+            "Высший ранг, прошёл все этапы",
+            "Зарплатой",
+            "Ничем"
+          ],
+          "correct": 1
+        }
+      ]
+    }
+  ]
+}
