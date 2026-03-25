@@ -1412,52 +1412,40 @@ function rDocs(){
 }
 
 // ════════════════════════════════════════════════════════════
-//  SERVER SYNC LAYER
+//  ХРАНИЛИЩЕ (localStorage — работает везде без сервера)
 // ════════════════════════════════════════════════════════════
-const API = 'http://localhost:3000/api';
-let _ws = null, _wsReady = false;
 
-function connectWS() {
+const LS_DB  = 'vmdk_db';
+const LS_SES = 'vmdk_uid';
+
+// Сохранить всю БД в localStorage
+function saveDB() {
   try {
-    _ws = new WebSocket('ws://localhost:3000');
-    _ws.onopen = () => {
-      _wsReady = true;
-      console.log('🟢 WebSocket подключён — реалтайм активен');
-    };
-    _ws.onmessage = (e) => {
-      const msg = JSON.parse(e.data);
-      if (msg.type === 'db_update') {
-        // Merge incoming DB, preserve current user session
-        const prev = CU ? DB.users.find(u => u.id === CU.id) : null;
-        Object.assign(DB, msg.db);
-        // Restore current user reference
-        if (CU) {
-          CU = DB.users.find(u => u.id === CU.id) || CU;
-        }
-        // Re-render current page
-        refreshAllUI();
-        console.log('🔄 Данные обновлены с сервера');
-      }
-    };
-    _ws.onclose = () => {
-      _wsReady = false;
-      console.log('🔴 WebSocket отключён, переподключение через 3с...');
-      setTimeout(connectWS, 3000);
-    };
-    _ws.onerror = () => { _wsReady = false; };
-  } catch(e) { console.log('WS недоступен, работаем офлайн'); }
+    localStorage.setItem(LS_DB, JSON.stringify(DB));
+  } catch(e) { console.warn('localStorage full', e); }
 }
 
-function updAdminMenu(){
-  if(!CU)return;
-  if(canAdmin(CU)){
-    document.querySelectorAll('.adm-only').forEach(el=>el.style.display='');
-    const db=document.getElementById('doc-btn');if(db)db.style.display='inline-flex';
-  } else {
-    document.querySelectorAll('.adm-only').forEach(el=>el.style.display='none');
-    const db=document.getElementById('doc-btn');if(db)db.style.display='none';
-  }
+// Загрузить БД из localStorage (возвращает true если нашли)
+function loadDB() {
+  try {
+    const raw = localStorage.getItem(LS_DB);
+    if (!raw) return false;
+    const saved = JSON.parse(raw);
+    // Мержим — сохраняем структуру, подставляем сохранённые данные
+    Object.keys(saved).forEach(k => { if (DB[k] !== undefined) DB[k] = saved[k]; });
+    return true;
+  } catch(e) { return false; }
 }
+
+// syncToServer теперь просто сохраняет в localStorage
+let _syncTimer = null;
+function syncToServer() {
+  clearTimeout(_syncTimer);
+  _syncTimer = setTimeout(saveDB, 100);
+}
+
+// Заглушка — WS не нужен на Vercel
+function connectWS() {}
 function refreshAllUI() {
   updBadges();
   updNotifBadge();
@@ -1478,93 +1466,69 @@ function refreshAllUI() {
   renders[pageId]?.();
 }
 
-// Sync entire DB to server after any change
-let _syncTimer = null;
-function syncToServer() {
-  clearTimeout(_syncTimer);
-  _syncTimer = setTimeout(() => {
-    const payload = JSON.parse(JSON.stringify(DB));
-    fetch(API + '/sync-all', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify(payload)
-    }).catch(() => {});
-  }, 300);
-}
-
-// ── Override auth functions to use API ──────────────────────────────────────
-async function doLogin() {
-  const id = v('li-id').trim(), pw = v('li-pw').trim();
-  
-  // Try server first
-  try {
-    const res = await fetch(API + '/login', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({id, pw})
-    });
-    if (res.ok) {
-      const data = await res.json();
-      // Load full DB
-      const dbRes = await fetch(API + '/db');
-      const serverDB = await dbRes.json();
-      Object.assign(DB, serverDB);
-      CU = DB.users.find(u => u.id === data.user.id);
-      localStorage.setItem('session_uid', CU.id);
-      connectWS();
-      launchApp();
-      return;
-    } else {
-      const err = await res.json();
-      toast('❌ ' + (err.error || 'Ошибка входа'));
-      return;
-    }
-  } catch(e) {
-    // Server unavailable — fallback to local
-    console.log('Сервер недоступен, вход локально');
-    const u = DB.users.find(x => (x.email === id || x.phone === id) && x.pw === pw);
-    if (!u) { toast('❌ Неверный логин или пароль'); return; }
-    CU = u; localStorage.setItem('session_uid', CU.id); launchApp(); return;
+function updAdminMenu(){
+  if(!CU)return;
+  if(canAdmin(CU)){
+    document.querySelectorAll('.adm-only').forEach(el=>el.style.display='');
+    const db=document.getElementById('doc-btn');if(db)db.style.display='inline-flex';
+  } else {
+    document.querySelectorAll('.adm-only').forEach(el=>el.style.display='none');
+    const db=document.getElementById('doc-btn');if(db)db.style.display='none';
   }
 }
 
-async function doRegister() {
+// ── Авторизация ──────────────────────────────────────────────
+function doLogin() {
+  const id = v('li-id').trim(), pw = v('li-pw').trim();
+  const u = DB.users.find(x => (x.email === id || x.phone === id) && x.pw === pw);
+  if (!u) { toast('❌ Неверный логин или пароль'); return; }
+  CU = u;
+  localStorage.setItem(LS_SES, String(CU.id));
+  launchApp();
+}
+
+function doRegister() {
   const name = v('rg-name').trim(), email = v('rg-email').trim();
   const phone = v('rg-phone').trim(), pw = v('rg-pw').trim();
   if (!name||!email||!phone||!pw) { toast('⚠️ Заполните все поля'); return; }
-  
-  try {
-    const res = await fetch(API + '/register', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({name, email, phone, pw})
-    });
-    const data = await res.json();
-    if (!res.ok) { toast('❌ ' + data.error); return; }
-    // Load fresh DB
-    const dbRes = await fetch(API + '/db');
-    const serverDB = await dbRes.json();
-    Object.assign(DB, serverDB);
-    CU = DB.users.find(u => u.id === data.user.id);
-    localStorage.setItem('session_uid', CU.id);
-    connectWS();
-    launchApp();
-  } catch(e) {
-    // Fallback local
-    if (DB.users.find(x => x.email === email)) { toast('❌ Email уже используется'); return; }
-    const nu = {id:DB.users.length+1,email,phone,pw,name,age:'',district:'',school:'',work:'',points:0,events:0,tasks_done:0,joined:new Date().toISOString().split('T')[0],avatar:name[0].toUpperCase(),avatarData:null,bio:'',warnings:[],rank:'candidate',positionId:'cand_pos',dept:'volunteers',perms:null,kpiMonth:0,kpiGoal:50,kpiArchive:[],pointsLog:[],notifications:[],tgChatId:'',tgEnabled:false,promoConditions:{toVolunteer:{onboarding:false,staffAcademy:false,events3:false,active:false,leaderApproval:false},toActivist:{staffAcademyFull:false,events10:false,organized3:false,examPassed:false,leaderApproval:false}},organizedEvents:[],promoRequest:null,examResult:null,examRetry:{canRetry:true,lastAttempt:null,adminApproved:false}};
-    DB.users.push(nu); CU = nu; localStorage.setItem('session_uid', CU.id); launchApp();
-  }
+  if (DB.users.find(x => x.email === email)) { toast('❌ Email уже используется'); return; }
+  const nu = {
+    id: Date.now(), email, phone, pw, name,
+    age:'', district:'', school:'', work:'',
+    points:0, events:0, tasks_done:0,
+    joined: new Date().toISOString().split('T')[0],
+    avatar: name[0].toUpperCase(), avatarData:null, bio:'', warnings:[],
+    rank:'candidate', positionId:'cand_pos', dept:'volunteers', perms:null,
+    kpiMonth:0, kpiGoal:50, kpiArchive:[], pointsLog:[], notifications:[],
+    tgChatId:'', tgEnabled:false,
+    promoConditions:{
+      toVolunteer:{onboarding:false,staffAcademy:false,events3:false,active:false,leaderApproval:false},
+      toActivist:{staffAcademyFull:false,events10:false,organized3:false,examPassed:false,leaderApproval:false}
+    },
+    organizedEvents:[], promoRequest:null, examResult:null,
+    examRetry:{canRetry:true,lastAttempt:null,adminApproved:false}
+  };
+  DB.users.push(nu);
+  CU = nu;
+  localStorage.setItem(LS_SES, String(CU.id));
+  saveDB();
+  launchApp();
 }
 
-// ── Patch all data-mutating functions to auto-sync ──────────────────────────
+function doLogout(){
+  CU = null;
+  localStorage.removeItem(LS_SES);
+  document.getElementById('app').style.display='none';
+  document.getElementById('auth-screen').style.display='flex';
+  toast('👋 До встречи!');
+}
+
+// ── Патчим функции изменяющие данные ────────────────────────
 const _origAddPoints = addPointsWithLog;
 addPointsWithLog = function(...args) {
   _origAddPoints.apply(this, args);
   syncToServer();
 };
-
-const _origDoRegEv = doRegEv;
 window.doRegEv = function(id) {
   const e = DB.events.find(x => x.id === id); if(!e) return;
   if(!e.registered.includes(CU.id)){e.registered.push(CU.id);CU.events++;checkAutoPromo();}
@@ -1572,135 +1536,52 @@ window.doRegEv = function(id) {
   toast(`✅ Записались на «${e.title}»`);
   syncToServer(); updBadges(); rEvents();
 };
-
-const _origUnregEv = unregEv;
 window.unregEv = function(id) {
   const e = DB.events.find(x => x.id === id); if(!e) return;
   e.registered = e.registered.filter(x => x !== CU.id);
-  e.confirmed = e.confirmed.filter(x => x !== CU.id);
+  e.confirmed  = e.confirmed.filter(x => x !== CU.id);
   CU.events = Math.max(0, CU.events - 1);
   toast('↩️ Запись отменена'); syncToServer(); updBadges(); rEvents();
 };
-
-// Patch comment posting
 const _origPostCmt = postCmt;
-window.postCmt = function(evId) {
-  _origPostCmt(evId);
-  syncToServer();
-};
-
-// Patch admin actions
+window.postCmt = function(evId){ _origPostCmt(evId); syncToServer(); };
 const _origConfOne = confOne;
-window.confOne = function(evId, uid) {
-  _origConfOne(evId, uid);
-  syncToServer();
-};
-
+window.confOne = function(evId,uid){ _origConfOne(evId,uid); syncToServer(); };
 const _origConfirmAll = confirmAll;
-window.confirmAll = function() {
-  _origConfirmAll();
-  syncToServer();
-};
-
+window.confirmAll = function(){ _origConfirmAll(); syncToServer(); };
 const _origAdmDoneTask = admDoneTask;
-window.admDoneTask = function(id) {
-  _origAdmDoneTask(id);
-  syncToServer();
-};
-
+window.admDoneTask = function(id){ _origAdmDoneTask(id); syncToServer(); };
 const _origAddEv = addEv;
-window.addEv = function() {
-  _origAddEv();
-  syncToServer();
-};
-
+window.addEv = function(){ _origAddEv(); syncToServer(); };
 const _origAddTask = addTask;
-window.addTask = function() {
-  _origAddTask();
-  syncToServer();
-};
-
+window.addTask = function(){ _origAddTask(); syncToServer(); };
 const _origSavePerms = savePerms;
-window.savePerms = function() {
-  _origSavePerms();
-  syncToServer();
-};
-
+window.savePerms = function(){ _origSavePerms(); syncToServer(); };
 const _origSavePosition = savePosition;
-window.savePosition = function() {
-  _origSavePosition();
-  syncToServer();
-};
-
+window.savePosition = function(){ _origSavePosition(); syncToServer(); };
 const _origDelEv = delEv;
-window.delEv = function(id) {
-  _origDelEv(id);
-  syncToServer();
-};
-
+window.delEv = function(id){ _origDelEv(id); syncToServer(); };
 const _origDoWarn = doWarn;
-window.doWarn = function() {
-  _origDoWarn();
-  syncToServer();
-};
+window.doWarn = function(){ _origDoWarn(); syncToServer(); };
 
-// Connection status indicator
-function showConnectionStatus(online) {
-  let el = document.getElementById('conn-status');
-  if (!el) {
-    el = document.createElement('div');
-    el.id = 'conn-status';
-    el.style.cssText = 'position:fixed;bottom:16px;left:50%;transform:translateX(-50%);padding:5px 14px;border-radius:20px;font-size:11px;font-weight:600;z-index:9999;transition:all .3s;pointer-events:none';
-    document.body.appendChild(el);
-  }
-  if (online) {
-    el.textContent = '🟢 Подключено к серверу — реалтайм активен';
-    el.style.background = 'rgba(0,212,170,0.15)';
-    el.style.color = '#00d4aa';
-    el.style.border = '1px solid rgba(0,212,170,0.3)';
-    setTimeout(() => el.style.opacity = '0', 3000);
-  } else {
-    el.textContent = '🔴 Офлайн режим';
-    el.style.background = 'rgba(239,68,68,0.15)';
-    el.style.color = '#ef4444';
-    el.style.border = '1px solid rgba(239,68,68,0.3)';
-    el.style.opacity = '1';
-  }
-}
-
-// Auto-connect on page load
+// ── Старт ────────────────────────────────────────────────────
 window.addEventListener('load', () => {
-  fetch(API + '/db').then(r => {
-    if (r.ok) return r.json();
-    throw new Error();
-  }).then(serverDB => {
-    Object.assign(DB, serverDB);
-    connectWS();
-    setTimeout(() => showConnectionStatus(true), 500);
-    console.log('✅ Данные загружены с сервера');
-    // Восстанавливаем сессию после обновления страницы
-    const savedUid = localStorage.getItem('session_uid');
-    if (savedUid) {
-      const savedUser = DB.users.find(u => String(u.id) === String(savedUid));
-      if (savedUser) {
-        CU = savedUser;
-        launchApp();
-        console.log('✅ Сессия восстановлена:', CU.name);
-      } else {
-        // Юзер удалён — чистим сессию
-        localStorage.removeItem('session_uid');
-      }
+  // Загружаем сохранённую БД
+  loadDB();
+
+  // Восстанавливаем сессию
+  const savedUid = localStorage.getItem(LS_SES);
+  if (savedUid) {
+    const savedUser = DB.users.find(u => String(u.id) === savedUid);
+    if (savedUser) {
+      CU = savedUser;
+      launchApp();
+      return;
+    } else {
+      localStorage.removeItem(LS_SES);
     }
-  }).catch(() => {
-    console.log('ℹ️ Сервер недоступен, работаем с локальными данными');
-    showConnectionStatus(false);
-    // Восстанавливаем сессию из локальных данных
-    const savedUid = localStorage.getItem('session_uid');
-    if (savedUid) {
-      const savedUser = DB.users.find(u => String(u.id) === String(savedUid));
-      if (savedUser) { CU = savedUser; launchApp(); }
-    }
-  });
+  }
+  // Иначе показываем экран входа (он уже виден по умолчанию)
 });
 
 </script>
