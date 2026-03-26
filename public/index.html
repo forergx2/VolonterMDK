@@ -326,6 +326,22 @@ select option{background:var(--surface2);color:var(--text)}
 .mb-done{background:rgba(148,163,184,.1);color:var(--text2)}
 .mb-cat{background:var(--blue-dim);color:#60a5fa}
 </style>
+<script>
+function showLoginScreen(){
+  var l=document.getElementById('landing-screen');
+  var a=document.getElementById('auth-screen');
+  if(l)l.style.display='none';
+  if(a)a.style.display='flex';
+  if(typeof authTab==='function')authTab('login');
+}
+function showRegScreen(){
+  var l=document.getElementById('landing-screen');
+  var a=document.getElementById('auth-screen');
+  if(l)l.style.display='none';
+  if(a)a.style.display='flex';
+  if(typeof authTab==='function')authTab('reg');
+}
+</script>
 </head>
 <body>
 <!-- LANDING -->
