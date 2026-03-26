@@ -432,6 +432,21 @@ select option{background:var(--surface2);color:var(--text)}
 .ach-nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
 .ach-nav button{font-size:11px;padding:5px 12px}
 </style>
+<script>
+function showAuth(tab) {
+  var ls = document.getElementById('landing-screen');
+  var as = document.getElementById('auth-screen');
+  if (ls) ls.style.display = 'none';
+  if (as) as.style.display = 'flex';
+  // authTab будет доступна после загрузки основного скрипта
+  if (typeof authTab === 'function') {
+    authTab(tab || 'login');
+  } else {
+    // Ждём загрузки скрипта
+    window._pendingTab = tab || 'login';
+  }
+}
+</script>
 </head>
 <body>
 <!-- AUTH -->
@@ -441,26 +456,26 @@ select option{background:var(--surface2);color:var(--text)}
     <div style="font-size:11px;color:var(--text3);margin-bottom:6px;font-family:'Golos Text'">МДК «Мугунгхва» · Актобе</div>
     <div class="landing-sub">Платформа для волонтёров — мероприятия, баллы, повышения и многое другое</div>
     <div class="landing-btns">
-      <button class="btn btn-a" style="padding:12px 28px;font-size:13px" data-action="showAuth-login">🚀 Войти</button>
-      <button class="btn btn-o" style="padding:12px 28px;font-size:13px" data-action="showAuth-reg">✨ Регистрация</button>
+      <button class="btn btn-a" style="padding:12px 28px;font-size:13px" onclick="showAuth('login')">🚀 Войти</button>
+      <button class="btn btn-o" style="padding:12px 28px;font-size:13px" onclick="showAuth('reg')">✨ Регистрация</button>
     </div>
     <div class="landing-cards">
-      <div class="landing-card" data-action="showAuth-login">
+      <div class="landing-card" onclick="showAuth('login')">
         <div class="landing-card-ico">📅</div>
         <div class="landing-card-title">Мероприятия</div>
         <div class="landing-card-sub">Записывайся и получай баллы</div>
       </div>
-      <div class="landing-card" data-action="showAuth-login">
+      <div class="landing-card" onclick="showAuth('login')">
         <div class="landing-card-ico">⭐</div>
         <div class="landing-card-title">Система баллов</div>
         <div class="landing-card-sub">Отслеживай прогресс и KPI</div>
       </div>
-      <div class="landing-card" data-action="showAuth-login">
+      <div class="landing-card" onclick="showAuth('login')">
         <div class="landing-card-ico">⬆️</div>
         <div class="landing-card-title">Повышение</div>
         <div class="landing-card-sub">Кандидат → Волонтёр → Активист</div>
       </div>
-      <div class="landing-card" data-action="showAuth-login">
+      <div class="landing-card" onclick="showAuth('login')">
         <div class="landing-card-ico">👥</div>
         <div class="landing-card-title">Команда</div>
         <div class="landing-card-sub">Единая платформа МДК</div>
@@ -1320,7 +1335,7 @@ function rLandingAnns() {
   const anns = [...DB.announcements].sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)).slice(0,3);
   if (!anns.length) { el.innerHTML = '<div style="font-size:12px;color:var(--text3);text-align:center;padding:16px">Объявлений пока нет</div>'; return; }
   el.innerHTML = anns.map(a => `
-    <div class="landing-ann-item" data-action="showAuth-login">
+    <div class="landing-ann-item" onclick="showAuth('login')">
       ${a.imageData ? `<img src="${a.imageData}" class="landing-ann-img" alt="">` : ''}
       <div class="landing-ann-body">
         ${a.pinned ? '<div class="landing-ann-pin">📌 Закреплено</div>' : ''}
@@ -1332,6 +1347,8 @@ function rLandingAnns() {
 }
 
 function doLogout(){CU=null;localStorage.removeItem('session_uid');document.getElementById('app').style.display='none';document.getElementById('auth-screen').style.display='flex';toast('👋 До встречи!')}
+// Применяем отложенный таб если был
+if (window._pendingTab) { authTab(window._pendingTab); window._pendingTab = null; }
 function launchApp(){
   document.getElementById('auth-screen').style.display='none';
   document.getElementById('app').style.display='flex';
@@ -2257,7 +2274,7 @@ function rLandingAnns() {
   const anns = [...DB.announcements].sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)).slice(0,3);
   if (!anns.length) { el.innerHTML = '<div style="font-size:12px;color:var(--text3);text-align:center;padding:16px">Объявлений пока нет</div>'; return; }
   el.innerHTML = anns.map(a => `
-    <div class="landing-ann-item" data-action="showAuth-login">
+    <div class="landing-ann-item" onclick="showAuth('login')">
       ${a.imageData ? `<img src="${a.imageData}" class="landing-ann-img" alt="">` : ''}
       <div class="landing-ann-body">
         ${a.pinned ? '<div class="landing-ann-pin">📌 Закреплено</div>' : ''}
@@ -2383,17 +2400,7 @@ window.rKpiAdmin = rKpiAdmin;
 window.uploadDoc = uploadDoc;
 
 
-// ── Обработчик для landing кнопок (data-action) ──
-document.addEventListener('click', function(e) {
-  var el = e.target.closest('[data-action]');
-  if (!el) return;
-  var action = el.getAttribute('data-action');
-  if (action === 'showAuth-login') showAuth('login');
-  else if (action === 'showAuth-reg') showAuth('reg');
-  else if (action === 'authTab-login') authTab('login');
-  else if (action === 'authTab-reg') authTab('reg');
-  else if (action === 'data-achf') filterAch(el.getAttribute('data-achf'), el);
-});
+// ── Обработчик для ачивок ──
 document.addEventListener('click', function(e) {
   var achf = e.target.getAttribute('data-achf');
   if (achf !== null) filterAch(achf, e.target);
