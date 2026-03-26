@@ -302,6 +302,29 @@ select option{background:var(--surface2);color:var(--text)}
 .ach-filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
 .ach-filters button{font-size:11px;padding:5px 12px}
 .ach-summary{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 18px;display:flex;gap:24px;flex-wrap:wrap;margin-bottom:16px}
+
+/* ── Биржа задач ── */
+.market-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.market-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:all .2s;display:flex;flex-direction:column}
+.market-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,212,170,.08)}
+.market-card.taken{border-color:rgba(245,158,11,.3);opacity:.8}
+.market-card.done{border-color:rgba(148,163,184,.2);opacity:.6}
+.market-header{padding:14px 16px 0}
+.market-cat{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.market-title{font-weight:700;font-size:14px;line-height:1.3;margin-bottom:6px}
+.market-desc{font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:10px}
+.market-body{padding:0 16px 14px;flex:1;display:flex;flex-direction:column;justify-content:flex-end}
+.market-meta{display:flex;gap:10px;flex-wrap:wrap;font-size:11px;color:var(--text2);margin-bottom:10px}
+.market-reward{display:flex;align-items:center;gap:6px;padding:8px 12px;background:var(--amber-dim);border:1px solid rgba(245,158,11,.25);border-radius:9px;margin-bottom:10px}
+.market-reward-pts{font-family:'Unbounded',sans-serif;font-size:18px;font-weight:700;color:var(--amber)}
+.market-filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+.market-filters button{font-size:11px;padding:5px 12px}
+.market-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700}
+.mb-open{background:var(--accent-dim);color:var(--accent)}
+.mb-taken{background:var(--amber-dim);color:var(--amber)}
+.mb-review{background:var(--purple-dim);color:#a78bfa}
+.mb-done{background:rgba(148,163,184,.1);color:var(--text2)}
+.mb-cat{background:var(--blue-dim);color:#60a5fa}
 </style>
 </head>
 <body>
@@ -371,6 +394,7 @@ select option{background:var(--surface2);color:var(--text)}
         <div class="sb-gl">Главное</div>
         <div class="nav-item active" onclick="go('dashboard')"><span class="ico">📊</span>Дашборд</div>
         <div class="nav-item" onclick="go('events')"><span class="ico">📅</span>Мероприятия<span class="nb" id="nb-ev">0</span></div>
+        <div class="nav-item" onclick="go('market')"><span class="ico">💼</span>Биржа задач<span class="nb" id="nb-market" style="display:none">0</span></div>
         <div class="nav-item" onclick="go('tasks')"><span class="ico">✅</span>Мои задачи<span class="nb am" id="nb-tk" style="display:none">0</span></div>
         <div class="nav-item" onclick="go('announcements')"><span class="ico">📢</span>Объявления</div>
         <div class="sb-gl" style="margin-top:4px">Личное</div>
@@ -444,6 +468,30 @@ select option{background:var(--surface2);color:var(--text)}
           </div>
         </div>
 
+
+
+        <!-- MARKET -->
+        <div class="page" id="page-market">
+          <div class="market-filters">
+            <button class="btn btn-a" id="mf-all"    onclick="setMarketFilter('all')">Все</button>
+            <button class="btn btn-o" id="mf-open"   onclick="setMarketFilter('open')">🟢 Открытые</button>
+            <button class="btn btn-o" id="mf-my"     onclick="setMarketFilter('my')">📋 Мои задачи</button>
+            <button class="btn btn-o" id="mf-review" onclick="setMarketFilter('review')">⏳ На проверке</button>
+            <button class="btn btn-o" id="mf-done"   onclick="setMarketFilter('done')">✅ Завершённые</button>
+            <div style="margin-left:auto;display:flex;gap:6px">
+              <select id="mf-cat" onchange="rMarket()" class="fsel" style="font-size:11px;padding:5px 10px">
+                <option value="">Все категории</option>
+                <option value="org">🗂️ Организация</option>
+                <option value="media">📱 Медиа</option>
+                <option value="edu">📚 Обучение</option>
+                <option value="tech">💻 Техническое</option>
+                <option value="other">🔧 Другое</option>
+              </select>
+              <span id="market-adm-btn"></span>
+            </div>
+          </div>
+          <div class="market-grid" id="market-grid"></div>
+        </div>
 
         <!-- ACHIEVEMENTS -->
         <div class="page" id="page-achievements">
@@ -722,6 +770,43 @@ select option{background:var(--surface2);color:var(--text)}
   </div>
 </div>
 
+
+<div class="modal-overlay" id="m-add-market">
+  <div class="modal" style="max-width:520px">
+    <button class="modal-close" onclick="cpm('m-add-market')">✕</button>
+    <div class="modal-title">💼 Новая задача на бирже</div>
+    <div class="fg"><label>Название</label><input id="mk-title" placeholder="Подготовить баннер для субботника"></div>
+    <div class="fg"><label>Описание</label><textarea id="mk-desc" rows="3" placeholder="Подробно опишите что нужно сделать..."></textarea></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px">
+      <div class="fg"><label>Категория</label>
+        <select id="mk-cat">
+          <option value="org">🗂️ Организация</option>
+          <option value="media">📱 Медиа</option>
+          <option value="edu">📚 Обучение</option>
+          <option value="tech">💻 Техническое</option>
+          <option value="other">🔧 Другое</option>
+        </select>
+      </div>
+      <div class="fg"><label>Баллы за выполнение</label><input id="mk-pts" type="number" value="50" min="10"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px">
+      <div class="fg"><label>Дедлайн</label><input id="mk-due" type="date"></div>
+      <div class="fg"><label>Макс. исполнителей</label><input id="mk-slots" type="number" value="1" min="1" max="20"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-g" onclick="cpm('m-add-market')">Отмена</button>
+      <button class="btn btn-a" onclick="addMarketTask()">Опубликовать</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="m-market-detail">
+  <div class="modal" style="max-width:520px">
+    <button class="modal-close" onclick="cpm('m-market-detail')">✕</button>
+    <div id="m-market-detail-body"></div>
+  </div>
+</div>
+
 <div id="toast"><span id="t-txt"></span></div>
 <script>
 // ════════════════════════════════════════════════════════════
@@ -817,6 +902,12 @@ const DB={
     {id:4,name:'Планы на 2026 год',icon:'📊',size:'2.1 МБ',date:'05.01.2026'},
     {id:5,name:'Форма заявки на событие',icon:'📄',size:'320 КБ',date:'10.02.2026'},
   ],
+  marketTasks:[
+    {id:1,title:'Сделать анонс субботника в Instagram',desc:'Создать пост с фото и текстом для анонса субботника «Зелёный Актобе». Размер 1080x1080, яркий дизайн.',cat:'media',pts:80,due:'2026-04-03',slots:1,status:'open',createdBy:1,takers:[],done:[],createdAt:'24.03.2026'},
+    {id:2,title:'Составить список волонтёров для лагеря',desc:'Обзвонить записавшихся на выездной лагерь, уточнить подтверждение участия и составить итоговый список.',cat:'org',pts:40,due:'2026-04-15',slots:1,status:'open',createdBy:1,takers:[],done:[],createdAt:'24.03.2026'},
+    {id:3,title:'Подготовить презентацию для форума',desc:'PowerPoint 10-15 слайдов о деятельности МДК Мугунгхва за 2025-2026 год. Корпоративный стиль.',cat:'edu',pts:120,due:'2026-04-10',slots:1,status:'open',createdBy:1,takers:[],done:[],createdAt:'23.03.2026'},
+    {id:4,title:'Записать видео-отчёт с субботника',desc:'Смонтировать короткое видео 1-2 минуты из материалов субботника. Добавить субтитры и музыку.',cat:'media',pts:150,due:'2026-04-08',slots:1,status:'open',createdBy:1,takers:[],done:[],createdAt:'22.03.2026'},
+  ],
   tests:[{
     id:1,title:'Экзамен на Активиста',passScore:4,active:true,
     questions:[
@@ -831,7 +922,7 @@ const DB={
 
 let CU=null,_confEvId=null,_detVolId=null,_pendingCoverData=null,_examAnswers={},_editPermsId=null,_editPosId=null,_notifOpen=false;
 
-const PT={achievements:'Мои ачивки','adm-promo':'Повышения',dashboard:'Дашборд',events:'Мероприятия',tasks:'Мои задачи',announcements:'Объявления',profile:'Профиль',progress:'Мой прогресс',promotion:'Повышение','pts-log':'История баллов',leaderboard:'Рейтинг',documents:'Документы','tg-settings':'Telegram','adm-vol':'Сотрудники','adm-ev':'Мероприятия','adm-tasks':'Задачи','adm-promo':'Повышения','adm-kpi':'KPI','adm-tests':'Конструктор тестов','adm-perms':'Права доступа','adm-rep':'Отчёты'};
+const PT={market:'Биржа задач',achievements:'Мои ачивки','adm-promo':'Повышения',dashboard:'Дашборд',events:'Мероприятия',tasks:'Мои задачи',announcements:'Объявления',profile:'Профиль',progress:'Мой прогресс',promotion:'Повышение','pts-log':'История баллов',leaderboard:'Рейтинг',documents:'Документы','tg-settings':'Telegram','adm-vol':'Сотрудники','adm-ev':'Мероприятия','adm-tasks':'Задачи','adm-promo':'Повышения','adm-kpi':'KPI','adm-tests':'Конструктор тестов','adm-perms':'Права доступа','adm-rep':'Отчёты'};
 
 // ════════════════════════════════════════════════════════════
 //  UTILS
@@ -958,7 +1049,7 @@ function go(id){
   const nav=document.querySelector(`.nav-item[onclick="go('${id}')"]`);if(nav)nav.classList.add('active');
   document.getElementById('pg-title').textContent=PT[id]||id;
   closeSb();
-  const renders={achievements:rAchievements,dashboard:renderDashboard,events:rEvents,tasks:rTasks,announcements:rAnn,profile:rProfile,progress:rProg,promotion:rPromotion,'pts-log':rPointsLog,leaderboard:rLb,documents:rDocs,'tg-settings':rTelegramSettings,'adm-vol':rAdmVol,'adm-ev':rAdmEv,'adm-tasks':rAdmTasks,'adm-promo':rAdmPromo,'adm-kpi':rKpiAdmin,'adm-tests':rTestConstructor,'adm-perms':rAdmPerms,'adm-rep':rAdmRep};
+  const renders={market:rMarket,achievements:rAchievements,dashboard:renderDashboard,events:rEvents,tasks:rTasks,announcements:rAnn,profile:rProfile,progress:rProg,promotion:rPromotion,'pts-log':rPointsLog,leaderboard:rLb,documents:rDocs,'tg-settings':rTelegramSettings,'adm-vol':rAdmVol,'adm-ev':rAdmEv,'adm-tasks':rAdmTasks,'adm-promo':rAdmPromo,'adm-kpi':rKpiAdmin,'adm-tests':rTestConstructor,'adm-perms':rAdmPerms,'adm-rep':rAdmRep};
   renders[id]?.();
 }
 function toggleSb(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('ovr').classList.toggle('show')}
@@ -1399,6 +1490,176 @@ function renderLandingAnns(){
     +anns.map(function(a){return'<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:8px;text-align:left;cursor:pointer" onclick="showLoginScreen()">'+(a.pinned?'<div style="font-size:10px;color:var(--amber);font-weight:700;margin-bottom:4px">📌 Закреплено</div>':'')+'<div style="font-weight:700;font-size:13px;margin-bottom:4px">'+a.title+'</div><div style="font-size:12px;color:var(--text2)">'+a.text.slice(0,100)+(a.text.length>100?'...':'')+'</div><div style="font-size:10px;color:var(--text3);margin-top:5px">'+a.date+'</div></div>';}).join('');
 }
 
+
+
+// ════════════════════════════════════════════════════════════
+//  БИРЖА ЗАДАЧ
+// ════════════════════════════════════════════════════════════
+var _marketFilter='all';
+var _catLabels={org:'🗂️ Организация',media:'📱 Медиа',edu:'📚 Обучение',tech:'💻 Техническое',other:'🔧 Другое'};
+
+function setMarketFilter(f){
+  _marketFilter=f;
+  ['all','open','my','review','done'].forEach(function(k){
+    var b=document.getElementById('mf-'+k);
+    if(b){b.className=k===f?'btn btn-a':'btn btn-o';}
+  });
+  rMarket();
+}
+
+function rMarket(){
+  if(!DB.marketTasks)DB.marketTasks=[];
+  var cat=document.getElementById('mf-cat')?document.getElementById('mf-cat').value:'';
+  var isAdm=hasPerm(CU,'assignTasks')||hasPerm(CU,'fullAdmin');
+
+  // Кнопка создания для админа
+  var admBtn=document.getElementById('market-adm-btn');
+  if(admBtn)admBtn.innerHTML=isAdm?'<button class="btn btn-a" style="font-size:11px;padding:5px 12px" onclick="opm('m-add-market')">+ Добавить задачу</button>':'';
+
+  var tasks=DB.marketTasks.filter(function(t){
+    if(cat&&t.cat!==cat)return false;
+    if(_marketFilter==='open')return t.status==='open'&&t.takers.length<t.slots;
+    if(_marketFilter==='my')return t.takers.includes(CU.id)||t.done.includes(CU.id);
+    if(_marketFilter==='review')return t.takers.includes(CU.id)&&t.status==='review';
+    if(_marketFilter==='done')return t.status==='done';
+    return true;
+  });
+
+  // Счётчик открытых задач
+  var openCnt=DB.marketTasks.filter(function(t){return t.status==='open'&&t.takers.length<t.slots;}).length;
+  var nb=document.getElementById('nb-market');
+  if(nb){nb.textContent=openCnt;nb.style.display=openCnt?'':'none';}
+
+  var grid=document.getElementById('market-grid');if(!grid)return;
+  if(!tasks.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="ei">💼</div><p>Задач нет</p></div>';return;}
+
+  grid.innerHTML=tasks.map(function(t){
+    var isTaker=t.takers.includes(CU.id);
+    var isDone=t.done.includes(CU.id);
+    var isFull=t.takers.length>=t.slots;
+    var creator=DB.users.find(function(u){return u.id===t.createdBy;})||{name:'—'};
+    var statusLabel=t.status==='done'?'<span class="market-badge mb-done">✅ Завершено</span>':
+      (t.status==='review'?'<span class="market-badge mb-review">⏳ На проверке</span>':
+      (isFull?'<span class="market-badge mb-taken">👤 Занято</span>':
+      '<span class="market-badge mb-open">🟢 Открыто</span>'));
+    var takerNames=t.takers.map(function(id){var u=DB.users.find(function(x){return x.id===id;});return u?u.name.split(' ')[0]:'?';}).join(', ');
+
+    return '<div class="market-card'+(t.status==='done'?' done':(isFull&&!isTaker?' taken':''))+'" onclick="openMarketTask('+t.id+')">'
+      +'<div class="market-header">'
+      +'<div class="market-cat" style="color:#60a5fa">'+(_catLabels[t.cat]||t.cat)+'</div>'
+      +'<div class="market-title">'+t.title+'</div>'
+      +'<div class="market-desc">'+t.desc.slice(0,90)+(t.desc.length>90?'...':'')+'</div>'
+      +'</div>'
+      +'<div class="market-body">'
+      +'<div class="market-reward"><div class="market-reward-pts">+'+t.pts+'</div><div style="font-size:12px;color:var(--amber)">баллов за выполнение</div></div>'
+      +'<div class="market-meta">'
+      +'<span>📅 до '+fdate(t.due)+'</span>'
+      +'<span>👤 '+t.takers.length+'/'+t.slots+' исп.</span>'
+      +'<span>от '+creator.name.split(' ')[0]+'</span>'
+      +'</div>'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px">'
+      +statusLabel
+      +(isDone?'<span style="font-size:11px;color:var(--accent)">✅ Вы выполнили</span>':
+        isTaker?'<span style="font-size:11px;color:var(--amber)">📋 Вы взяли</span>':
+        (!isFull&&t.status==='open'?'<button class="btn btn-a" style="font-size:11px;padding:5px 12px" onclick="takeMarketTask(event,'+t.id+')">Взять задачу</button>':''))
+      +'</div>'
+      +'</div>'
+      +'</div>';
+  }).join('');
+}
+
+function openMarketTask(id){
+  var t=DB.marketTasks.find(function(x){return x.id===id;});if(!t)return;
+  var isTaker=t.takers.includes(CU.id);
+  var isDone=t.done.includes(CU.id);
+  var isFull=t.takers.length>=t.slots;
+  var isAdm=hasPerm(CU,'assignTasks')||hasPerm(CU,'fullAdmin');
+  var creator=DB.users.find(function(u){return u.id===t.createdBy;})||{name:'—'};
+  var takerUsers=t.takers.map(function(id){return DB.users.find(function(u){return u.id===id;})||{name:'?',id:id};});
+
+  h('m-market-detail-body',
+    '<div style="margin-bottom:14px">'
+    +'<div style="font-size:10px;color:#60a5fa;font-weight:700;margin-bottom:5px">'+(_catLabels[t.cat]||t.cat)+'</div>'
+    +'<div style="font-family:'Unbounded',sans-serif;font-size:15px;font-weight:700;margin-bottom:8px;line-height:1.3">'+t.title+'</div>'
+    +'<div style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:12px">'+t.desc+'</div>'
+    +'<div class="market-reward" style="margin-bottom:12px"><div class="market-reward-pts">+'+t.pts+'</div><div style="font-size:12px;color:var(--amber)">баллов</div></div>'
+    +'<div style="display:flex;gap:12px;font-size:12px;color:var(--text2);flex-wrap:wrap;margin-bottom:12px">'
+    +'<span>📅 Дедлайн: '+fdate(t.due)+'</span>'
+    +'<span>👤 Мест: '+t.takers.length+'/'+t.slots+'</span>'
+    +'<span>📋 Создал: '+creator.name.split(' ').slice(0,2).join(' ')+'</span>'
+    +'<span>🗓️ '+t.createdAt+'</span>'
+    +'</div>'
+    +(takerUsers.length?'<div style="font-size:11px;color:var(--text2);margin-bottom:10px">Исполнители: '+takerUsers.map(function(u){
+      return '<span style="background:var(--surface2);border-radius:6px;padding:2px 7px;font-size:11px;margin:0 2px">'+u.name.split(' ')[0]
+        +(isAdm&&t.status!=='done'?'<button onclick="confirmMarketTask('+t.id+','+u.id+')" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:11px;margin-left:3px">✓</button>':'')
+        +'</span>';
+    }).join('')+'</div>':'')
+    +'</div>'
+    +'<div class="modal-actions">'
+    +'<button class="btn btn-g" onclick="cpm('m-market-detail')">Закрыть</button>'
+    +(!isDone&&!isTaker&&!isFull&&t.status==='open'?'<button class="btn btn-a" onclick="takeMarketTask(null,'+t.id+');cpm('m-market-detail')">📋 Взять задачу</button>':'')
+    +(isTaker&&!isDone&&t.status!=='done'?'<button class="btn btn-am" onclick="submitMarketTask('+t.id+')">⬆️ Сдать на проверку</button>':'')
+    +(isAdm&&t.status!=='done'?'<button class="btn btn-d" style="margin-left:auto" onclick="deleteMarketTask('+t.id+')">🗑 Удалить</button>':'')
+    +'</div>'
+  );
+  opm('m-market-detail');
+}
+
+function takeMarketTask(e,id){
+  if(e)e.stopPropagation();
+  var t=DB.marketTasks.find(function(x){return x.id===id;});if(!t)return;
+  if(t.takers.includes(CU.id)){toast('⚠️ Вы уже взяли эту задачу');return;}
+  if(t.takers.length>=t.slots){toast('❌ Все места заняты');return;}
+  t.takers.push(CU.id);
+  addNotif(CU.id,'📋 Вы взяли задачу: «'+t.title+'» (+'+t.pts+'б за выполнение)');
+  syncToServer();toast('✅ Задача взята! Выполните и сдайте на проверку');rMarket();
+}
+
+function submitMarketTask(id){
+  var t=DB.marketTasks.find(function(x){return x.id===id;});if(!t)return;
+  if(!t.takers.includes(CU.id)){toast('❌ Вы не брали эту задачу');return;}
+  t.status='review';
+  addNotif(t.createdBy,'⬆️ '+CU.name.split(' ')[0]+' сдал задачу «'+t.title+'» на проверку');
+  syncToServer();toast('✅ Отправлено на проверку');cpm('m-market-detail');rMarket();
+}
+
+function confirmMarketTask(taskId,uid){
+  var t=DB.marketTasks.find(function(x){return x.id===taskId;});if(!t)return;
+  if(!t.done)t.done=[];
+  if(t.done.includes(uid))return;
+  t.done.push(uid);
+  var u=DB.users.find(function(x){return x.id===uid;});
+  if(u){addPointsWithLog(uid,t.pts,'Биржа задач: «'+t.title+'»',CU.name.split(' ')[0]);checkAutoAchs(u);}
+  // Если все исполнители подтверждены — закрываем задачу
+  if(t.done.length>=t.takers.length)t.status='done';
+  syncToServer();toast('✅ '+t.pts+' баллов начислено');cpm('m-market-detail');rMarket();rAdmTasks();
+}
+
+function deleteMarketTask(id){
+  if(!confirm('Удалить задачу?'))return;
+  DB.marketTasks=DB.marketTasks.filter(function(x){return x.id!==id;});
+  syncToServer();toast('🗑️ Удалено');cpm('m-market-detail');rMarket();
+}
+
+function addMarketTask(){
+  var title=v('mk-title').trim(),desc=v('mk-desc').trim(),pts=parseInt(v('mk-pts'))||50;
+  var due=document.getElementById('mk-due').value;
+  var cat=document.getElementById('mk-cat').value;
+  var slots=parseInt(document.getElementById('mk-slots').value)||1;
+  if(!title||!desc||!due){toast('⚠️ Заполните название, описание и дедлайн');return;}
+  if(!DB.marketTasks)DB.marketTasks=[];
+  var now=new Date();
+  DB.marketTasks.unshift({
+    id:Date.now(),title:title,desc:desc,cat:cat,pts:pts,due:due,slots:slots,
+    status:'open',createdBy:CU.id,takers:[],done:[],
+    createdAt:now.getDate()+'.'+String(now.getMonth()+1).padStart(2,'0')+'.'+now.getFullYear()
+  });
+  // Уведомляем всех
+  DB.users.forEach(function(u){addNotif(u.id,'💼 Новая задача на бирже: «'+title+'» (+'+pts+'б)');});
+  syncToServer();cpm('m-add-market');
+  document.getElementById('mk-title').value='';document.getElementById('mk-desc').value='';
+  toast('✅ Задача опубликована!');rMarket();
+}
 
 // ════════════════════════════════════════════════════════════
 //  АЧИВКИ
