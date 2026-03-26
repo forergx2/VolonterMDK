@@ -433,18 +433,42 @@ select option{background:var(--surface2);color:var(--text)}
 .ach-nav button{font-size:11px;padding:5px 12px}
 </style>
 <script>
+// Все функции вызываемые из onclick в HTML — определяем ДО загрузки страницы
+// showAuth defined in head
+function doLogin() {
+  // Ждём пока основной скрипт загрузится
+  if (typeof _doLogin === 'function') { _doLogin(); return; }
+  var id = (document.getElementById('li-id')||{}).value||'';
+  var pw = (document.getElementById('li-pw')||{}).value||'';
+  window._pendingLogin = {id: id.trim(), pw: pw.trim()};
+}
+function doRegister() {
+  if (typeof _doRegister === 'function') { _doRegister(); return; }
+  window._pendingRegister = true;
+}
 function showAuth(tab) {
   var ls = document.getElementById('landing-screen');
   var as = document.getElementById('auth-screen');
   if (ls) ls.style.display = 'none';
   if (as) as.style.display = 'flex';
-  // authTab будет доступна после загрузки основного скрипта
-  if (typeof authTab === 'function') {
-    authTab(tab || 'login');
-  } else {
-    // Ждём загрузки скрипта
-    window._pendingTab = tab || 'login';
-  }
+  window._pendingAuthTab = tab || 'login';
+  if (typeof authTab === 'function') authTab(tab || 'login');
+}
+function authTab(t) {
+  var lf = document.getElementById('login-form');
+  var rf = document.getElementById('reg-form');
+  var tabs = document.querySelectorAll('.auth-tab');
+  if (lf) lf.style.display = t === 'login' ? 'block' : 'none';
+  if (rf) rf.style.display = t === 'reg' ? 'block' : 'none';
+  tabs.forEach(function(el, i) {
+    el.classList.toggle('active', (t==='login'&&i===0)||(t==='reg'&&i===1));
+  });
+}
+function closeSb() {
+  var sb = document.getElementById('sidebar');
+  var ov = document.getElementById('ovr');
+  if (sb) sb.classList.remove('open');
+  if (ov) ov.classList.remove('show');
 }
 </script>
 </head>
@@ -1304,18 +1328,15 @@ function checkAutoPromo(u){
 // ════════════════════════════════════════════════════════════
 //  AUTH & INIT
 // ════════════════════════════════════════════════════════════
-function authTab(t){
-  document.querySelectorAll('.auth-tab').forEach((el,i)=>el.classList.toggle('active',(t==='login'&&i===0)||(t==='reg'&&i===1)));
-  document.getElementById('login-form').style.display=t==='login'?'block':'none';
-  document.getElementById('reg-form').style.display=t==='reg'?'block':'none';
-}
-function doLogin(){
+// authTab defined in head
+
+function _doLoginLocal(){
   const id=v('li-id').trim(),pw=v('li-pw').trim();
   const u=DB.users.find(x=>(x.email===id||x.phone===id)&&x.pw===pw);
   if(!u){toast('❌ Неверный логин или пароль');return;}
   CU=u;launchApp();
 }
-function doRegister(){
+function _doRegisterLocal(){
   const name=v('rg-name').trim(),email=v('rg-email').trim(),phone=v('rg-phone').trim(),pw=v('rg-pw').trim();
   if(!name||!email||!phone||!pw){toast('⚠️ Заполните все поля');return;}
   if(DB.users.find(x=>x.email===email)){toast('❌ Email уже используется');return;}
@@ -1323,11 +1344,7 @@ function doRegister(){
   DB.users.push(nu);CU=nu;launchApp();
 }
 
-function showAuth(tab) {
-  document.getElementById('landing-screen').style.display = 'none';
-  document.getElementById('auth-screen').style.display = 'flex';
-  authTab(tab || 'login');
-}
+// showAuth defined in head
 
 function rLandingAnns() {
   const el = document.getElementById('landing-ann-list');
@@ -1385,7 +1402,6 @@ function go(id){
   renders[id]?.();
 }
 function toggleSb(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('ovr').classList.toggle('show')}
-function closeSb(){document.getElementById('sidebar').classList.remove('open');document.getElementById('ovr').classList.remove('show')}
 function fillSelects(){
   const tv=document.getElementById('task-vol'),eo=document.getElementById('ev-org');
   if(tv)DB.users.forEach(u=>{const o=document.createElement('option');o.value=u.id;o.textContent=u.name.split(' ').slice(0,2).join(' ');tv.appendChild(o)});
@@ -2224,7 +2240,7 @@ function updAdminMenu(){
   }
 }
 
-function doLogin() {
+function _doLogin() {
   const id = v('li-id').trim(), pw = v('li-pw').trim();
   const u = DB.users.find(x => (x.email === id || x.phone === id) && x.pw === pw);
   if (!u) { toast('❌ Неверный логин или пароль'); return; }
@@ -2233,7 +2249,7 @@ function doLogin() {
   launchApp();
 }
 
-function doRegister() {
+function _doRegister() {
   const name = v('rg-name').trim(), email = v('rg-email').trim();
   const phone = v('rg-phone').trim(), pw = v('rg-pw').trim();
   if (!name||!email||!phone||!pw) { toast('⚠️ Заполните все поля'); return; }
@@ -2262,11 +2278,8 @@ function doRegister() {
 }
 
 
-function showAuth(tab) {
-  document.getElementById('landing-screen').style.display = 'none';
-  document.getElementById('auth-screen').style.display = 'flex';
-  authTab(tab || 'login');
-}
+// showAuth defined in head
+
 
 function rLandingAnns() {
   const el = document.getElementById('landing-ann-list');
@@ -2285,13 +2298,7 @@ function rLandingAnns() {
     </div>`).join('');
 }
 
-function doLogout(){
-  CU = null;
-  localStorage.removeItem(LS_SES);
-  document.getElementById('app').style.display='none';
-  document.getElementById('auth-screen').style.display='flex';
-  toast('👋 До встречи!');
-}
+
 
 // Патчим функции изменяющие данные
 const _origAddPoints = addPointsWithLog;
@@ -2346,8 +2353,10 @@ window.pinAnn = pinAnn;
 window.delAnn = delAnn;
 window.addAnn = addAnn;
 window.saveProfile = saveProfile;
-window.doLogin = doLogin;
-window.doRegister = doRegister;
+window._doLogin = _doLogin;
+window._doRegister = _doRegister;
+window.doLogin = _doLogin || doLogin;
+window.doRegister = _doRegister || doRegister;
 window.doLogout = doLogout;
 window.authTab = authTab;
 window.go = go;
