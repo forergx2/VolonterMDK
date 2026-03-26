@@ -1519,10 +1519,10 @@ window.showVol=function(id){
   var rb=document.getElementById('rank-block');
   if(rb&&hasPerm(CU,'approvePromo')&&u.id!==CU.id){
     rb.style.display='';
-    rb.innerHTML='<div style="padding:11px;background:var(--purple-dim);border:1px solid rgba(124,58,237,.25);border-radius:10px;margin-bottom:10px"><div style="font-size:11px;font-weight:700;color:#a78bfa;margin-bottom:8px">🎖️ Изменить ранг</div><div style="display:flex;gap:7px">'
-      +'<button class="btn '+(u.rank==='candidate'?'btn-a':'btn-o')+'" style="font-size:11px;padding:5px 10px" onclick="setRankDirect('+id+','candidate')">🌱 Кандидат</button>'
-      +'<button class="btn '+(u.rank==='volunteer'?'btn-a':'btn-o')+'" style="font-size:11px;padding:5px 10px" onclick="setRankDirect('+id+','volunteer')">⚡ Волонтёр</button>'
-      +'<button class="btn '+(u.rank==='activist'?'btn-a':'btn-o')+'" style="font-size:11px;padding:5px 10px" onclick="setRankDirect('+id+','activist')">🌟 Активист</button>'
+    rb.innerHTML='<div style="padding:11px;background:var(--purple-dim);border:1px solid rgba(124,58,237,.25);border-radius:10px;margin-bottom:10px"><div style="font-size:11px;font-weight:700;color:#a78bfa;margin-bottom:8px">&#127894;&#65039; Изменить ранг</div><div style="display:flex;gap:7px">'
+      +'<button class="btn '+(u.rank==='candidate'?'btn-a':'btn-o')+'" style="font-size:11px;padding:5px 10px" onclick="setRankDirect('+id+',\'candidate\')">&#127803; Кандидат</button>'
+      +'<button class="btn '+(u.rank==='volunteer'?'btn-a':'btn-o')+'" style="font-size:11px;padding:5px 10px" onclick="setRankDirect('+id+',\'volunteer\')">&#9889; Волонтёр</button>'
+      +'<button class="btn '+(u.rank==='activist'?'btn-a':'btn-o')+'" style="font-size:11px;padding:5px 10px" onclick="setRankDirect('+id+',\'activist\')">&#127775; Активист</button>'
       +'</div></div>';
   }else if(rb){rb.style.display='none';}
 };
@@ -1534,7 +1534,7 @@ function openPromoAdmin(uid){
   var p=isV?promoToVol(u):promoToAct(u),c=p.conds;
   var rows=isV?[{key:'onboarding',t:'Онбординг'},{key:'staffAcademy',t:'Staff Academy'},{key:'events3',t:'3+ мероп.',auto:true},{key:'active',t:'Активность'},{key:'leaderApproval',t:'Допуск'}]:[{key:'staffAcademyFull',t:'Staff Academy полностью'},{key:'events10',t:'10+ мероп.',auto:true},{key:'organized3',t:'3+ организовано'},{key:'examPassed',t:'Экзамен',auto:true},{key:'leaderApproval',t:'Одобрение'}];
   document.getElementById('m-promo-admin-title').textContent='Условия: '+u.name.split(' ').slice(0,2).join(' ');
-  h('m-promo-admin-body','<div style="font-size:11px;color:var(--text2);margin-bottom:10px">'+p.pct+'% · '+(isV?'→ Волонтёр':'→ Активист')+'</div>'+rows.map(function(r){var done=c[r.key];return'<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--surface2);border-radius:8px;margin-bottom:5px;border:1px solid '+(done?'rgba(0,212,170,.3)':'var(--border)')+'"><span style="font-size:12px">'+(done?'✅':'⭕')+' '+r.t+(r.auto?' <small style="color:var(--accent)">авто</small>':'')+'</span>'+(!done&&!r.auto?'<button class="btn btn-a" style="font-size:11px;padding:3px 9px" onclick="toggleCondAdmin('+uid+',''+stage+'',''+r.key+'')">✓</button>':(done&&!r.auto?'<button class="btn btn-o" style="font-size:11px;padding:3px 9px" onclick="toggleCondAdmin('+uid+',''+stage+'',''+r.key+'')">↩</button>':''))+'</div>';}).join(''));
+  h('m-promo-admin-body','<div style="font-size:11px;color:var(--text2);margin-bottom:10px">'+p.pct+'% · '+(isV?'→ Волонтёр':'→ Активист')+'</div>'+rows.map(function(r){var done=c[r.key];return'<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--surface2);border-radius:8px;margin-bottom:5px;border:1px solid '+(done?'rgba(0,212,170,.3)':'var(--border)')+'"><span style="font-size:12px">'+(done?'✅':'⭕')+' '+r.t+(r.auto?' <small style="color:var(--accent)">авто</small>':'')+'</span>'+(!done&&!r.auto?'<button class="btn btn-a" style="font-size:11px;padding:3px 9px" onclick="toggleCondAdmin('+uid+',\''+stage+'\',\''+r.key+'\')">✓</button>':(done&&!r.auto?'<button class="btn btn-o" style="font-size:11px;padding:3px 9px" onclick="toggleCondAdmin('+uid+',\''+stage+'\',\''+r.key+'\')">↩</button>':''))+'</div>';}).join(''));
   opm('m-promo-admin');
 }
 function toggleCondAdmin(uid,stage,key){var u=DB.users.find(function(x){return x.id===uid;});if(!u)return;u.promoConditions[stage][key]=!u.promoConditions[stage][key];syncToServer();toast('✅ Обновлено');openPromoAdmin(uid);rAdmPromo();updBadges();}
