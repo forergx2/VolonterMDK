@@ -58,9 +58,9 @@ body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--text);
 }
 
 /* ── РАВНОМЕРНЫЙ LAYOUT ── */
-.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.dash-grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:16px;width:100%}
 .dash-col-main,.dash-col-side{display:flex;flex-direction:column;gap:16px}
-.content{max-width:1400px;margin:0 auto;padding:22px;width:100%}
+.content{padding:22px 28px;width:100%;box-sizing:border-box}
 
 /* ── ГЛАВНАЯ СТРАНИЦА ── */
 #home-hero{background:linear-gradient(135deg,var(--surface2),var(--surface3));border:1px solid var(--border);border-radius:20px;padding:40px 36px 32px;margin-bottom:22px;position:relative;overflow:hidden;text-align:center}
@@ -135,7 +135,7 @@ body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--text);
 .card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px}
 .card-title{font-family:'Unbounded',sans-serif;font-size:13px;font-weight:700}
 /* STATS */
-.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stats-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:20px}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;transition:all .2s;position:relative;overflow:hidden}
 .stat-card:hover{transform:translateY(-2px);border-color:var(--accent)}
 .stat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent);opacity:0;transition:opacity .2s}
@@ -160,7 +160,7 @@ body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--text);
 .pos-badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:600;background:var(--purple-dim);color:#a78bfa;border:1px solid rgba(124,58,237,.25)}
 .warn-badge{display:inline-flex;align-items:center;gap:3px;background:var(--amber-dim);color:var(--amber);font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:5px;border:1px solid rgba(245,158,11,.25)}
 /* EVENTS */
-.events-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.events-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;width:100%}
 .ev-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:all .2s;display:flex;flex-direction:column}
 .ev-card:hover{transform:translateY(-2px);border-color:var(--accent);box-shadow:0 6px 24px rgba(0,212,170,.08)}
 .ev-banner{height:90px;display:flex;align-items:center;justify-content:center;position:relative;background:linear-gradient(135deg,var(--purple),var(--accent));overflow:hidden;cursor:pointer;flex-shrink:0}
@@ -577,7 +577,7 @@ select option{background:var(--surface2);color:var(--text)}
         <!-- DASHBOARD -->
         <div class="page" id="page-dashboard">
           <!-- Приветствие -->
-          <div id="dash-welcome" style="margin-bottom:20px;padding:22px 24px;background:linear-gradient(135deg,var(--surface2),var(--surface3));border:1px solid var(--border);border-radius:16px;position:relative;overflow:hidden">
+          <div id="dash-welcome" style="margin-bottom:20px;padding:26px 30px;background:linear-gradient(135deg,var(--surface2),var(--surface3));border:1px solid var(--border);border-radius:16px;position:relative;overflow:hidden;width:100%">
             <div style="position:absolute;top:-20px;right:-20px;font-size:100px;opacity:0.06;pointer-events:none">🌟</div>
             <div id="dash-greeting" style="font-family:'Unbounded',sans-serif;font-size:18px;font-weight:700;margin-bottom:4px"></div>
             <div id="dash-subgreeting" style="font-size:13px;color:var(--text2);margin-bottom:14px"></div>
@@ -621,7 +621,7 @@ select option{background:var(--surface2);color:var(--text)}
 
         <!-- ANNOUNCEMENTS -->
         <div class="page" id="page-announcements">
-          <div id="ann-list"></div>
+          <div id="ann-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:16px;align-items:start"></div>
         </div>
 
         <!-- PROFILE -->
