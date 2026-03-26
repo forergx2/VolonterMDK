@@ -56,7 +56,7 @@ body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--text);
 .btn-logout{width:100%;padding:8px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text2);cursor:pointer;font-size:12px;font-family:'Golos Text',sans-serif;transition:all .2s}
 .btn-logout:hover{border-color:var(--danger);color:var(--danger)}
 /* MAIN */
-.main{margin-left:256px;flex:1;min-height:100vh;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+
 .topbar{padding:14px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--surface);position:sticky;top:0;z-index:50;flex-shrink:0}
 .topbar-title{font-family:'Unbounded',sans-serif;font-size:15px;font-weight:700}
 .hamburger{display:none;padding:6px;background:transparent;border:none;color:var(--text);cursor:pointer;font-size:20px}
@@ -289,7 +289,7 @@ select option{background:var(--surface2);color:var(--text)}
 /* ── Новый layout ── */
 .sb-user{display:none!important}
 .content{padding:20px 24px;width:100%;box-sizing:border-box}
-.main{overflow-x:hidden}
+.main{margin-left:256px;flex:1;min-height:100vh;display:flex;flex-direction:column;min-width:0;overflow-x:hidden}
 
 /* Topbar user */
 .topbar-user{display:flex;align-items:center;gap:8px;cursor:pointer;padding:5px 10px;border-radius:10px;transition:background .2s}
@@ -318,7 +318,7 @@ select option{background:var(--surface2);color:var(--text)}
 
 /* ══ РЕДИЗАЙН: новый layout ══ */
 .sb-user{display:none!important}
-.content{padding:22px 28px;flex:1;box-sizing:border-box;min-width:0}
+.content{padding:20px 24px;flex:1;box-sizing:border-box;width:100%;min-width:0}
 .topbar-user{display:flex;align-items:center;gap:8px;cursor:pointer;padding:5px 10px;border-radius:10px;transition:background .2s}
 .topbar-user:hover{background:var(--surface2)}
 .topbar-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--purple));display:flex;align-items:center;justify-content:center;font-family:Unbounded,sans-serif;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;position:relative;overflow:hidden}
@@ -1978,9 +1978,17 @@ function rLb2() {
 // PT и renders для новых страниц
 var _extraPT = {work:'Задачи', myspace:'Мой кабинет', admin:'Администрирование'};
 var _extraRenders = {
-  work: function(){ if(_workTab==='market') rMarket(); else rTasks(); },
-  myspace: function(){ switchMyspace(_myspaceTab); },
-  admin: function(){ switchAdmin(_adminTab); }
+  work: function(){
+    // Инициализируем вкладки если нужно
+    switchWork(_workTab||'market');
+  },
+  myspace: function(){
+    switchMyspace(_myspaceTab||'profile');
+  },
+  admin: function(){
+    if(!canAdmin(CU)){return;}
+    switchAdmin(_adminTab||'vol');
+  }
 };
 
 // Обновляем topbar аватар
