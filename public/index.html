@@ -1165,12 +1165,19 @@ function updSidebar(){updTopbar();
   document.getElementById('sb-rank-lbl').textContent=`${rank.emoji} ${rank.name}`;
 }
 function updBadges(){
-  document.getElementById('nb-ev').textContent=DB.events.filter(e=>e.status==='open').length;
-  const tk=DB.tasks.filter(t=>t.assignee===CU?.id&&!t.done).length;
-  const nb=document.getElementById('nb-tk');nb.textContent=tk;nb.style.display=tk?'':'none';
-  const pc=pendingPromos(),nbap=document.getElementById('nb-adm-promo');if(nbap){nbap.textContent=pc;nbap.style.display=pc?'':'none';}
-  // show ! on promotion if conditions met
-  if(CU){const p=CU.rank==='candidate'?promoToVol(CU):(CU.rank==='volunteer'?promoToAct(CU):{pct:100});const nbp=document.getElementById('nb-promo');if(nbp)nbp.style.display=(p.pct>=80&&!CU.promoRequest)?'':'none';}
+  function sb(id,val,show){var e=document.getElementById(id);if(e){e.textContent=val;if(show!==undefined)e.style.display=show?'':'none';}}
+  var evCnt=DB.events.filter(function(e){return e.status==='open';}).length;
+  sb('nb-ev',evCnt);
+  var tk=(DB.tasks||[]).filter(function(t){return t.assignee===CU?.id&&!t.done;}).length;
+  sb('nb-tk',tk,tk>0);
+  var pc=pendingPromos();
+  sb('nb-adm-promo',pc,pc>0);
+  sb('nb-adm-promo2',pc,pc>0);
+  var mkCnt=(DB.marketTasks||[]).filter(function(t){return t.status==='open'&&t.takers.length<t.slots;}).length;
+  sb('nb-work',mkCnt,mkCnt>0);
+  sb('nb-market',mkCnt,mkCnt>0);
+  var pr=CU&&(CU.promoRequest||pc>0);
+  sb('nb-promo','!',!!pr);
 }
 function go(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -1619,6 +1626,238 @@ function renderLandingAnns(){
       +'<div style="font-size:10px;color:var(--text3);margin-top:5px">'+a.date+'</div>'
       +'</div>';
   }).join('');
+}
+
+
+// ════════════════════════════════════════════════════════════
+//  АЧИВКИ
+// ════════════════════════════════════════════════════════════
+var ACHIEVEMENTS=[
+  {id:'ACT-01',name:'Новичок',ico:'🐣',xp:100,type:'auto',cond:'1 мероприятие',check:function(u){return u.events>=1}},
+  {id:'ACT-02',name:'Постоянный гость',ico:'🏃',xp:500,type:'auto',cond:'10 мероприятий',check:function(u){return u.events>=10}},
+  {id:'ACT-03',name:'Профи-волонтёр',ico:'🏅',xp:1500,type:'auto',cond:'25 мероприятий',check:function(u){return u.events>=25}},
+  {id:'ACT-04',name:'Легенда движения',ico:'💎',xp:5000,type:'auto',cond:'50 мероприятий',check:function(u){return u.events>=50}},
+  {id:'TIME-01',name:'Испытательный срок',ico:'🗓️',xp:200,type:'auto',cond:'1 месяц в организации',check:function(u){return u.joined&&(Date.now()-new Date(u.joined))>=30*24*3600*1000}},
+  {id:'TIME-02',name:'Старожил',ico:'⏳',xp:1000,type:'auto',cond:'1 год в организации',check:function(u){return u.joined&&(Date.now()-new Date(u.joined))>=365*24*3600*1000}},
+  {id:'LDR-01',name:'Лидер группы',ico:'📢',xp:500,type:'manual',cond:'Ответственный за сектор',check:null},
+  {id:'LDR-02',name:'Организатор',ico:'🛠️',xp:700,type:'manual',cond:'Самостоятельная подготовка',check:null},
+  {id:'SPEC-01',name:'Герой дня',ico:'🦸',xp:1000,type:'manual',cond:'Особый вклад',check:null},
+  {id:'SPEC-02',name:'Креативщик',ico:'💡',xp:400,type:'manual',cond:'Предложенная идея',check:null},
+  {id:'SOC-01',name:'Медиа-лицо',ico:'📱',xp:300,type:'manual',cond:'10 упоминаний в соцсетях',check:null},
+  {id:'NIGHT-01',name:'Ночная смена',ico:'🌙',xp:450,type:'manual',cond:'Ночные дежурства',check:null},
+  {id:'TEAM-01',name:'Душа компании',ico:'✨',xp:300,type:'manual',cond:'Сплочение команды',check:null},
+  {id:'EDU-01',name:'Студент',ico:'📚',xp:300,type:'manual',cond:'5 образовательных событий',check:null},
+  {id:'IT-01',name:'Хакер-помощник',ico:'💻',xp:600,type:'manual',cond:'5 IT-проектов',check:null},
+];
+var _achFilter='all';
+function getAllAchs(){
+  var all=ACHIEVEMENTS.slice();
+  (DB.events||[]).forEach(function(e){if(e.achievement)all.push({id:'EVT-'+e.id,name:e.achievement.name,ico:e.achievement.ico,xp:e.achievement.xp,type:'auto',cond:'За «'+e.title+'»',check:null});});
+  return all;
+}
+function getUserAchs(u){return u.achievements||[];}
+function hasAch(u,id){return getUserAchs(u).some(function(a){return a.id===id;});}
+function checkAutoAchs(u){
+  if(!u)return;
+  var changed=false;
+  ACHIEVEMENTS.filter(function(a){return a.type==='auto'&&a.check;}).forEach(function(a){
+    if(!hasAch(u,a.id)&&a.check(u)){
+      if(!u.achievements)u.achievements=[];
+      u.achievements.push({id:a.id,earnedAt:new Date().toLocaleDateString('ru')});
+      u.points=(u.points||0)+a.xp;
+      addNotif(u.id,'🏆 Новая ачивка: '+a.ico+' '+a.name+' (+'+a.xp+' XP)!');
+      changed=true;
+    }
+  });
+  if(changed)syncToServer();
+}
+function giveAch(uid,achId){
+  var u=DB.users.find(function(x){return x.id===uid;});
+  var a=ACHIEVEMENTS.find(function(x){return x.id===achId;});
+  if(!u||!a){return;}if(hasAch(u,achId)){toast('⚠️ Уже выдана');return;}
+  if(!u.achievements)u.achievements=[];
+  u.achievements.push({id:achId,earnedAt:new Date().toLocaleDateString('ru'),by:CU&&CU.name.split(' ')[0]});
+  u.points=(u.points||0)+a.xp;
+  addNotif(u.id,'🏆 Ачивка: '+a.ico+' '+a.name+' (+'+a.xp+' XP)!');
+  syncToServer();toast('✅ '+a.ico+' '+a.name+' → '+u.name.split(' ')[0]);showVol(uid);
+}
+function revokeAch(uid,achId){
+  var u=DB.users.find(function(x){return x.id===uid;});
+  var a=ACHIEVEMENTS.find(function(x){return x.id===achId;});
+  if(!u||!a)return;
+  u.achievements=(u.achievements||[]).filter(function(x){return x.id!==achId;});
+  u.points=Math.max(0,(u.points||0)-a.xp);
+  syncToServer();toast('↩️ '+a.name+' отозвана');showVol(uid);
+}
+function setAchFilter(f){
+  _achFilter=f;
+  ['all','earned','locked','auto','manual'].forEach(function(k){
+    var b=document.getElementById('achf-'+k);
+    if(b){b.className=k===f?'btn btn-a':'btn btn-o';}
+  });
+  rAchievements();
+}
+function rAchievements(){
+  var u=CU;if(!u)return;
+  var earned=getUserAchs(u),all=getAllAchs();
+  var filtered=all;
+  if(_achFilter==='earned')filtered=all.filter(function(a){return earned.some(function(e){return e.id===a.id;});});
+  else if(_achFilter==='locked')filtered=all.filter(function(a){return!earned.some(function(e){return e.id===a.id;});});
+  else if(_achFilter==='auto')filtered=all.filter(function(a){return a.type==='auto';});
+  else if(_achFilter==='manual')filtered=all.filter(function(a){return a.type==='manual';});
+  var totalXP=earned.reduce(function(s,e){var a=all.find(function(x){return x.id===e.id;});return s+(a?a.xp:0);},0);
+  var cnt=document.getElementById('ach-count');if(cnt)cnt.textContent=earned.length+'/'+all.length;
+  var xpEl=document.getElementById('ach-xp-total');if(xpEl)xpEl.textContent=totalXP.toLocaleString();
+  var grid=document.getElementById('ach-grid');if(!grid)return;
+  grid.innerHTML=filtered.map(function(a){
+    var e=earned.find(function(x){return x.id===a.id;});
+    return '<div class="ach-card '+(e?'earned':'locked')+'">'
+      +'<span class="ach-badge '+(a.type==='auto'?'ach-auto':'ach-manual')+'">'+(a.type==='auto'?'авто':'ручн.')+'</span>'
+      +'<span class="ach-ico">'+a.ico+'</span><div class="ach-name">'+a.name+'</div>'
+      +'<div class="ach-cond">'+a.cond+'</div><div class="ach-xp">+'+a.xp+' XP</div>'
+      +(e?'<div class="ach-stamp">✅ '+e.earnedAt+'</div>':'')+'</div>';
+  }).join('');
+}
+function renderVolAchs(uid){
+  var u=DB.users.find(function(x){return x.id===uid;});if(!u)return'';
+  var earned=getUserAchs(u),all=getAllAchs();
+  var canGive=hasPerm(CU,'approvePromo')||hasPerm(CU,'fullAdmin');
+  var manual=all.filter(function(a){return a.type==='manual';});
+  return '<div style="margin-bottom:10px">'
+    +'<div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">🏆 Ачивки ('+earned.length+')</div>'
+    +(earned.length?'<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px">'+earned.map(function(e){
+      var a=all.find(function(x){return x.id===e.id;});if(!a)return'';
+      return '<span style="background:var(--surface2);border:1px solid rgba(0,212,170,.2);border-radius:7px;padding:3px 8px;font-size:12px;display:inline-flex;align-items:center;gap:3px">'+a.ico+' <span style="font-size:11px;color:var(--accent)">'+a.name+'</span>'
+        +(canGive?'<button onclick="revokeAch('+uid+','+JSON.stringify(a.id)+')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:10px;padding:0 1px;margin-left:2px">✕</button>':'')+'</span>';
+    }).join('')+'</div>':'<div style="font-size:11px;color:var(--text3);margin-bottom:8px">Нет ачивок</div>')
+    +(canGive?'<div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:5px">Выдать:</div>'
+      +'<div style="display:flex;flex-wrap:wrap;gap:4px">'+manual.map(function(a){
+        var has=earned.some(function(e){return e.id===a.id;});
+        return '<button class="btn '+(has?'btn-g':'btn-o')+'" style="font-size:10px;padding:3px 7px;'+(has?'opacity:.4':'')+';" '+(has?'disabled':'')+' onclick="giveAch('+uid+','+JSON.stringify(a.id)+')" title="'+a.cond+'">'+a.ico+' '+a.name+'</button>';
+      }).join('')+'</div>':'')
+    +'</div>';
+}
+
+// ════════════════════════════════════════════════════════════
+//  БИРЖА ЗАДАЧ
+// ════════════════════════════════════════════════════════════
+var _marketFilter='all';
+var _catLabels={org:'🗂️ Организация',media:'📱 Медиа',edu:'📚 Обучение',tech:'💻 Техническое',other:'🔧 Другое'};
+function setMarketFilter(f){
+  _marketFilter=f;
+  ['all','open','my','review','done'].forEach(function(k){
+    var b=document.getElementById('mf-'+k);if(b)b.className=k===f?'btn btn-a':'btn btn-o';
+  });
+  rMarket();
+}
+function rMarket(){
+  if(!DB.marketTasks)DB.marketTasks=[];
+  var cat=document.getElementById('mf-cat')?document.getElementById('mf-cat').value:'';
+  var isAdm=hasPerm(CU,'assignTasks')||hasPerm(CU,'fullAdmin');
+  var admBtn=document.getElementById('market-adm-btn');
+  if(admBtn)admBtn.innerHTML=isAdm?'<button class="btn btn-a" style="font-size:11px;padding:5px 12px" onclick="opm('+String.fromCharCode(39)+'m-add-market'+String.fromCharCode(39)+')">+ Добавить</button>':'';
+  var tasks=DB.marketTasks.filter(function(t){
+    if(cat&&t.cat!==cat)return false;
+    if(_marketFilter==='open')return t.status==='open'&&t.takers.length<t.slots;
+    if(_marketFilter==='my')return t.takers.includes(CU.id)||t.done.includes(CU.id);
+    if(_marketFilter==='review')return t.takers.includes(CU.id)&&t.status==='review';
+    if(_marketFilter==='done')return t.status==='done';
+    return true;
+  });
+  var openCnt=DB.marketTasks.filter(function(t){return t.status==='open'&&t.takers.length<t.slots;}).length;
+  ['nb-market','nb-work'].forEach(function(id){var e=document.getElementById(id);if(e){e.textContent=openCnt;e.style.display=openCnt?'':'none';}});
+  var grid=document.getElementById('market-grid');if(!grid)return;
+  if(!tasks.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="ei">💼</div><p>Задач нет</p></div>';return;}
+  grid.innerHTML=tasks.map(function(t){
+    var isTaker=t.takers.includes(CU.id),isDone=t.done.includes(CU.id),isFull=t.takers.length>=t.slots;
+    var creator=DB.users.find(function(u){return u.id===t.createdBy;})||{name:'—'};
+    var statusBadge=t.status==='done'?'<span class="market-badge mb-done">✅ Завершено</span>'
+      :(t.status==='review'?'<span class="market-badge mb-review">⏳ Проверка</span>'
+      :(isFull?'<span class="market-badge mb-taken">👤 Занято</span>'
+      :'<span class="market-badge mb-open">🟢 Открыто</span>'));
+    return '<div class="market-card'+(t.status==='done'?' done':'')+'" onclick="openMarketTask('+t.id+')">'
+      +'<div class="market-header"><div style="font-size:9px;color:#60a5fa;font-weight:700;margin-bottom:5px">'+(_catLabels[t.cat]||t.cat)+'</div>'
+      +'<div style="font-weight:700;font-size:14px;margin-bottom:5px;line-height:1.3">'+t.title+'</div>'
+      +'<div style="font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:10px">'+t.desc.slice(0,90)+(t.desc.length>90?'...':'')+'</div></div>'
+      +'<div class="market-body"><div class="market-reward"><div class="market-reward-pts">+'+t.pts+'</div><div style="font-size:12px;color:var(--amber)">баллов</div></div>'
+      +'<div style="font-size:11px;color:var(--text2);display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px"><span>📅 до '+fdate(t.due)+'</span><span>👤 '+t.takers.length+'/'+t.slots+'</span><span>от '+creator.name.split(' ')[0]+'</span></div>'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px">'+statusBadge
+      +(isDone?'<span style="font-size:11px;color:var(--accent)">✅ Выполнено</span>'
+        :isTaker?'<span style="font-size:11px;color:var(--amber)">📋 Взято</span>'
+        :(!isFull&&t.status==='open'?'<button class="btn btn-a" style="font-size:11px;padding:5px 12px" onclick="takeMarketTask(event,'+t.id+')">Взять</button>':''))
+      +'</div></div></div>';
+  }).join('');
+}
+function openMarketTask(id){
+  var t=DB.marketTasks.find(function(x){return x.id===id;});if(!t)return;
+  var isTaker=t.takers.includes(CU.id),isDone=t.done.includes(CU.id),isFull=t.takers.length>=t.slots;
+  var isAdm=hasPerm(CU,'assignTasks')||hasPerm(CU,'fullAdmin');
+  var creator=DB.users.find(function(u){return u.id===t.createdBy;})||{name:'—'};
+  var takerUsers=t.takers.map(function(uid){return DB.users.find(function(u){return u.id===uid;})||{name:'?',id:uid};});
+  h('m-market-detail-body',
+    '<div style="margin-bottom:14px">'
+    +'<div style="font-size:10px;color:#60a5fa;font-weight:700;margin-bottom:5px">'+(_catLabels[t.cat]||t.cat)+'</div>'
+    +'<div style="font-family:Unbounded,sans-serif;font-size:15px;font-weight:700;margin-bottom:8px;line-height:1.3">'+t.title+'</div>'
+    +'<div style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:12px">'+t.desc+'</div>'
+    +'<div class="market-reward" style="margin-bottom:12px"><div class="market-reward-pts">+'+t.pts+'</div><div style="font-size:12px;color:var(--amber)">баллов за выполнение</div></div>'
+    +'<div style="display:flex;gap:12px;font-size:12px;color:var(--text2);flex-wrap:wrap;margin-bottom:12px">'
+    +'<span>📅 До: '+fdate(t.due)+'</span><span>👤 Мест: '+t.takers.length+'/'+t.slots+'</span><span>от: '+creator.name.split(' ').slice(0,2).join(' ')+'</span></div>'
+    +(takerUsers.length?'<div style="font-size:11px;color:var(--text2);margin-bottom:10px">Исполнители: '+takerUsers.map(function(u){
+      return '<span style="background:var(--surface2);border-radius:6px;padding:2px 7px;margin:0 2px">'+u.name.split(' ')[0]+(isAdm&&t.status!=='done'?'<button onclick="confirmMarketTask('+t.id+','+u.id+')" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:11px;margin-left:3px">✓</button>':'')+'</span>';
+    }).join('')+'</div>':'')
+    +'</div>'
+    +'<div class="modal-actions">'
+    +'<button class="btn btn-g" onclick="cpm('+String.fromCharCode(39)+'m-market-detail'+String.fromCharCode(39)+')">Закрыть</button>'
+    +(!isDone&&!isTaker&&!isFull&&t.status==='open'?'<button class="btn btn-a" onclick="takeMarketTask(null,'+t.id+');cpm('+String.fromCharCode(39)+'m-market-detail'+String.fromCharCode(39)+')">📋 Взять задачу</button>':'')
+    +(isTaker&&!isDone&&t.status!=='done'?'<button class="btn btn-am" onclick="submitMarketTask('+t.id+')">⬆️ Сдать на проверку</button>':'')
+    +(isAdm&&t.status!=='done'?'<button class="btn btn-d" style="margin-left:auto" onclick="deleteMarketTask('+t.id+')">🗑 Удалить</button>':'')
+    +'</div>'
+  );
+  opm('m-market-detail');
+}
+function takeMarketTask(e,id){
+  if(e)e.stopPropagation();
+  var t=DB.marketTasks.find(function(x){return x.id===id;});if(!t)return;
+  if(t.takers.includes(CU.id)){toast('⚠️ Вы уже взяли эту задачу');return;}
+  if(t.takers.length>=t.slots){toast('❌ Все места заняты');return;}
+  t.takers.push(CU.id);
+  addNotif(CU.id,'📋 Вы взяли задачу: «'+t.title+'» (+'+t.pts+'б)');
+  syncToServer();toast('✅ Задача взята!');rMarket();
+}
+function submitMarketTask(id){
+  var t=DB.marketTasks.find(function(x){return x.id===id;});if(!t)return;
+  t.status='review';
+  addNotif(t.createdBy,'⬆️ '+CU.name.split(' ')[0]+' сдал «'+t.title+'» на проверку');
+  syncToServer();toast('✅ Отправлено на проверку');cpm('m-market-detail');rMarket();
+}
+function confirmMarketTask(taskId,uid){
+  var t=DB.marketTasks.find(function(x){return x.id===taskId;});if(!t)return;
+  if(!t.done)t.done=[];if(t.done.includes(uid))return;
+  t.done.push(uid);
+  var u=DB.users.find(function(x){return x.id===uid;});
+  if(u){addPointsWithLog(uid,t.pts,'Биржа: «'+t.title+'»',CU.name.split(' ')[0]);checkAutoAchs(u);}
+  if(t.done.length>=t.takers.length)t.status='done';
+  syncToServer();toast('✅ '+t.pts+' б начислено');cpm('m-market-detail');rMarket();
+}
+function deleteMarketTask(id){
+  if(!confirm('Удалить задачу?'))return;
+  DB.marketTasks=(DB.marketTasks||[]).filter(function(x){return x.id!==id;});
+  syncToServer();toast('🗑️ Удалено');cpm('m-market-detail');rMarket();
+}
+function addMarketTask(){
+  var title=v('mk-title').trim(),desc=v('mk-desc').trim(),pts=parseInt(v('mk-pts'))||50;
+  var due=document.getElementById('mk-due').value;
+  var cat=document.getElementById('mk-cat')?document.getElementById('mk-cat').value:'other';
+  var slots=parseInt(document.getElementById('mk-slots').value)||1;
+  if(!title||!desc||!due){toast('⚠️ Заполните поля');return;}
+  if(!DB.marketTasks)DB.marketTasks=[];
+  var now=new Date();
+  DB.marketTasks.unshift({id:Date.now(),title:title,desc:desc,cat:cat,pts:pts,due:due,slots:slots,status:'open',createdBy:CU.id,takers:[],done:[],createdAt:now.getDate()+'.'+String(now.getMonth()+1).padStart(2,'0')+'.'+now.getFullYear()});
+  DB.users.forEach(function(u){addNotif(u.id,'💼 Новая задача: «'+title+'» (+'+pts+'б)');});
+  syncToServer();cpm('m-add-market');
+  var t=document.getElementById('mk-title');if(t)t.value='';
+  var d=document.getElementById('mk-desc');if(d)d.value='';
+  toast('✅ Задача опубликована!');rMarket();
 }
 
 // ════════════════════════════════════════════════════════════
