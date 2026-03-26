@@ -341,6 +341,26 @@ function showRegScreen(){
   if(a)a.style.display='flex';
   if(typeof authTab==='function')authTab('reg');
 }
+function doLogin(){
+  if(typeof _realDoLogin==='function'){_realDoLogin();return;}
+  window._pendingLogin=true;
+}
+function doRegister(){
+  if(typeof _realDoRegister==='function'){_realDoRegister();return;}
+  window._pendingRegister=true;
+}
+function authTab(t){
+  var lf=document.getElementById('login-form');
+  var rf=document.getElementById('reg-form');
+  var tabs=document.querySelectorAll('.auth-tab');
+  if(lf)lf.style.display=t==='login'?'block':'none';
+  if(rf)rf.style.display=t==='reg'?'block':'none';
+  tabs.forEach(function(el,i){el.classList.toggle('active',(t==='login'&&i===0)||(t==='reg'&&i===1));});
+}
+function closeSb(){
+  var s=document.getElementById('sidebar');var o=document.getElementById('ovr');
+  if(s)s.classList.remove('open');if(o)o.classList.remove('show');
+}
 </script>
 </head>
 <body>
@@ -1025,11 +1045,7 @@ function checkAutoPromo(u){
 // ════════════════════════════════════════════════════════════
 //  AUTH & INIT
 // ════════════════════════════════════════════════════════════
-function authTab(t){
-  document.querySelectorAll('.auth-tab').forEach((el,i)=>el.classList.toggle('active',(t==='login'&&i===0)||(t==='reg'&&i===1)));
-  document.getElementById('login-form').style.display=t==='login'?'block':'none';
-  document.getElementById('reg-form').style.display=t==='reg'?'block':'none';
-}
+
 // doLogin defined in firebase layer
 // doRegister defined in firebase layer
 
@@ -1069,7 +1085,7 @@ function go(id){
   renders[id]?.();
 }
 function toggleSb(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('ovr').classList.toggle('show')}
-function closeSb(){document.getElementById('sidebar').classList.remove('open');document.getElementById('ovr').classList.remove('show')}
+
 function fillSelects(){
   const tv=document.getElementById('task-vol'),eo=document.getElementById('ev-org');
   if(tv)DB.users.forEach(u=>{const o=document.createElement('option');o.value=u.id;o.textContent=u.name.split(' ').slice(0,2).join(' ');tv.appendChild(o)});
@@ -1488,11 +1504,7 @@ function rDocs(){
   list.innerHTML=DB.documents.map(function(d){return '<div class="task-item"><div style="font-size:20px">'+d.icon+'</div><div class="task-main"><div class="task-ttl">'+d.name+'</div><div class="task-sub">'+d.size+' · '+d.date+'</div></div></div>';}).join('');
 }
 
-function showLoginScreen(){
-  document.getElementById('landing-screen').style.display='none';
-  document.getElementById('auth-screen').style.display='flex';
-  authTab('login');
-}
+
 function showRegScreen(){
   document.getElementById('landing-screen').style.display='none';
   document.getElementById('auth-screen').style.display='flex';
@@ -1507,6 +1519,12 @@ function renderLandingAnns(){
 }
 
 
+
+// Назначаем реальные функции после загрузки
+window._realDoLogin = _realDoLogin;
+window._realDoRegister = _realDoRegister;
+if(window._pendingLogin){_realDoLogin();window._pendingLogin=false;}
+if(window._pendingRegister){_realDoRegister();window._pendingRegister=false;}
 
 // ════════════════════════════════════════════════════════════
 //  БИРЖА ЗАДАЧ
@@ -1884,7 +1902,7 @@ function updAdminMenu(){
 }
 
 // ── Auth ──────────────────────────────────────────────────────
-function doLogin(){
+function _realDoLogin(){
   var id=v('li-id').trim(),pw=v('li-pw').trim();
   var u=DB.users.find(function(x){return(x.email===id||x.phone===id)&&x.pw===pw;});
   if(!u){toast('❌ Неверный логин или пароль');return;}
@@ -1892,7 +1910,7 @@ function doLogin(){
   document.getElementById('landing-screen').style.display='none';
   launchApp();
 }
-function doRegister(){
+function _realDoRegister(){
   var name=v('rg-name').trim(),email=v('rg-email').trim(),phone=v('rg-phone').trim(),pw=v('rg-pw').trim();
   if(!name||!email||!phone||!pw){toast('⚠️ Заполните все поля');return;}
   if(DB.users.find(function(x){return x.email===email;})){toast('❌ Email уже используется');return;}
