@@ -285,6 +285,23 @@ tbody td{padding:10px 11px;font-size:12.5px}
 @media(max-width:900px){.stats-row{grid-template-columns:repeat(2,1fr)}.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.content{padding:14px}.pf-form{grid-template-columns:1fr}.hamburger{display:flex}}
 @media(max-width:580px){.stats-row{grid-template-columns:1fr 1fr}.events-grid{grid-template-columns:1fr}}
 select option{background:var(--surface2);color:var(--text)}
+
+.ach-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px}
+.ach-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 12px;text-align:center;transition:all .2s;position:relative;overflow:hidden}
+.ach-card.earned{border-color:rgba(0,212,170,.4);background:linear-gradient(135deg,rgba(0,212,170,.05),var(--surface))}
+.ach-card.locked{opacity:.45}
+.ach-card:hover{transform:translateY(-2px)}
+.ach-ico{font-size:34px;margin-bottom:8px;display:block}
+.ach-name{font-weight:700;font-size:12px;margin-bottom:4px;line-height:1.3}
+.ach-cond{font-size:10px;color:var(--text2);line-height:1.4;margin-bottom:6px}
+.ach-xp{font-size:11px;color:var(--amber);font-weight:700}
+.ach-badge{position:absolute;top:7px;right:7px;font-size:8px;font-weight:700;padding:2px 5px;border-radius:6px}
+.ach-auto{background:var(--accent-dim);color:var(--accent)}
+.ach-manual{background:var(--purple-dim);color:#a78bfa}
+.ach-stamp{position:absolute;bottom:7px;right:7px;font-size:9px;color:var(--accent);font-weight:700}
+.ach-filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.ach-filters button{font-size:11px;padding:5px 12px}
+.ach-summary{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 18px;display:flex;gap:24px;flex-wrap:wrap;margin-bottom:16px}
 </style>
 </head>
 <body>
@@ -360,6 +377,7 @@ select option{background:var(--surface2);color:var(--text)}
         <div class="nav-item" onclick="go('profile')"><span class="ico">👤</span>Профиль</div>
         <div class="nav-item" onclick="go('progress')"><span class="ico">🚀</span>Мой прогресс</div>
         <div class="nav-item" onclick="go('promotion')"><span class="ico">⬆️</span>Повышение<span class="nb rd" id="nb-promo" style="display:none">!</span></div>
+        <div class="nav-item" onclick="go('achievements')"><span class="ico">🏆</span>Ачивки</div>
         <div class="nav-item" onclick="go('pts-log')"><span class="ico">📋</span>История баллов</div>
         <div class="nav-item" onclick="go('leaderboard')"><span class="ico">🏆</span>Рейтинг</div>
         <div class="nav-item" onclick="go('documents')"><span class="ico">📁</span>Документы</div>
@@ -424,6 +442,23 @@ select option{background:var(--surface2);color:var(--text)}
             <div><div class="card"><div class="card-hdr"><div class="card-title">Активные задачи</div><span id="tcnt" style="font-size:12px;color:var(--text2)"></span></div><div class="task-list" id="tasks-act"></div></div></div>
             <div><div class="card"><div class="card-hdr"><div class="card-title">Выполненные</div></div><div class="task-list" id="tasks-done"></div></div></div>
           </div>
+        </div>
+
+
+        <!-- ACHIEVEMENTS -->
+        <div class="page" id="page-achievements">
+          <div class="ach-summary">
+            <div><div style="font-size:9px;color:var(--text3);margin-bottom:2px">ПОЛУЧЕНО</div><div id="ach-count" style="font-family:'Unbounded',sans-serif;font-size:20px;font-weight:700;color:var(--accent)">0</div></div>
+            <div><div style="font-size:9px;color:var(--text3);margin-bottom:2px">TOTAL XP</div><div id="ach-xp-total" style="font-family:'Unbounded',sans-serif;font-size:20px;font-weight:700;color:var(--amber)">0</div></div>
+          </div>
+          <div class="ach-filters">
+            <button class="btn btn-a" id="achf-all" onclick="setAchFilter('all')">Все</button>
+            <button class="btn btn-o" id="achf-earned" onclick="setAchFilter('earned')">✅ Получены</button>
+            <button class="btn btn-o" id="achf-locked" onclick="setAchFilter('locked')">🔒 Не получены</button>
+            <button class="btn btn-o" id="achf-auto" onclick="setAchFilter('auto')">⚡ Авто</button>
+            <button class="btn btn-o" id="achf-manual" onclick="setAchFilter('manual')">🎖️ Вручную</button>
+          </div>
+          <div class="ach-grid" id="ach-grid"></div>
         </div>
 
         <!-- ANNOUNCEMENTS -->
@@ -610,6 +645,7 @@ select option{background:var(--surface2);color:var(--text)}
     <div class="modal-title" id="m-vol-nm">Профиль</div>
     <div id="rank-block" style="display:none"></div>
     <div id="m-vol-body"></div>
+    <div id="m-vol-achs"></div>
     <div class="pts-box">
       <div class="pts-box-title">⭐ Управление баллами</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px">
@@ -795,7 +831,7 @@ const DB={
 
 let CU=null,_confEvId=null,_detVolId=null,_pendingCoverData=null,_examAnswers={},_editPermsId=null,_editPosId=null,_notifOpen=false;
 
-const PT={'adm-promo':'Повышения',dashboard:'Дашборд',events:'Мероприятия',tasks:'Мои задачи',announcements:'Объявления',profile:'Профиль',progress:'Мой прогресс',promotion:'Повышение','pts-log':'История баллов',leaderboard:'Рейтинг',documents:'Документы','tg-settings':'Telegram','adm-vol':'Сотрудники','adm-ev':'Мероприятия','adm-tasks':'Задачи','adm-promo':'Повышения','adm-kpi':'KPI','adm-tests':'Конструктор тестов','adm-perms':'Права доступа','adm-rep':'Отчёты'};
+const PT={achievements:'Мои ачивки','adm-promo':'Повышения',dashboard:'Дашборд',events:'Мероприятия',tasks:'Мои задачи',announcements:'Объявления',profile:'Профиль',progress:'Мой прогресс',promotion:'Повышение','pts-log':'История баллов',leaderboard:'Рейтинг',documents:'Документы','tg-settings':'Telegram','adm-vol':'Сотрудники','adm-ev':'Мероприятия','adm-tasks':'Задачи','adm-promo':'Повышения','adm-kpi':'KPI','adm-tests':'Конструктор тестов','adm-perms':'Права доступа','adm-rep':'Отчёты'};
 
 // ════════════════════════════════════════════════════════════
 //  UTILS
@@ -873,6 +909,7 @@ function promoToVol(u){const c=u.promoConditions.toVolunteer,e3=u.events>=3;retu
 function promoToAct(u){const c=u.promoConditions.toActivist,e10=u.events>=10,org3=(u.organizedEvents||[]).length>=3||c.organized3,exam=!!(u.examResult?.passed);return{complete:c.staffAcademyFull&&e10&&org3&&exam&&c.leaderApproval,pct:Math.round([c.staffAcademyFull,e10,org3,exam,c.leaderApproval].filter(Boolean).length/5*100),conds:{...c,events10:e10,organized3:org3,examPassed:exam}}}
 function pendingPromos(){return DB.users.filter(u=>u.promoRequest?.status==='pending').length}
 function checkAutoPromo(u){
+  if(typeof checkAutoAchs==='function')checkAutoAchs(u||CU);
   const usr=u||CU;if(!usr)return;
   if(usr.rank==='candidate')usr.promoConditions.toVolunteer.events3=usr.events>=3;
   if(usr.rank==='volunteer'){usr.promoConditions.toActivist.events10=usr.events>=10;const org=DB.events.filter(e=>e.organizerId===usr.id&&e.status==='completed').length+(usr.organizedEvents||[]).length;usr.promoConditions.toActivist.organized3=org>=3;}
@@ -921,7 +958,7 @@ function go(id){
   const nav=document.querySelector(`.nav-item[onclick="go('${id}')"]`);if(nav)nav.classList.add('active');
   document.getElementById('pg-title').textContent=PT[id]||id;
   closeSb();
-  const renders={dashboard:renderDashboard,events:rEvents,tasks:rTasks,announcements:rAnn,profile:rProfile,progress:rProg,promotion:rPromotion,'pts-log':rPointsLog,leaderboard:rLb,documents:rDocs,'tg-settings':rTelegramSettings,'adm-vol':rAdmVol,'adm-ev':rAdmEv,'adm-tasks':rAdmTasks,'adm-promo':rAdmPromo,'adm-kpi':rKpiAdmin,'adm-tests':rTestConstructor,'adm-perms':rAdmPerms,'adm-rep':rAdmRep};
+  const renders={achievements:rAchievements,dashboard:renderDashboard,events:rEvents,tasks:rTasks,announcements:rAnn,profile:rProfile,progress:rProg,promotion:rPromotion,'pts-log':rPointsLog,leaderboard:rLb,documents:rDocs,'tg-settings':rTelegramSettings,'adm-vol':rAdmVol,'adm-ev':rAdmEv,'adm-tasks':rAdmTasks,'adm-promo':rAdmPromo,'adm-kpi':rKpiAdmin,'adm-tests':rTestConstructor,'adm-perms':rAdmPerms,'adm-rep':rAdmRep};
   renders[id]?.();
 }
 function toggleSb(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('ovr').classList.toggle('show')}
@@ -1196,6 +1233,9 @@ function showVol(id){
   if(pi)pi.value='';if(pr)pr.value='';if(wr)wr.value='';
   const wl=document.getElementById('warn-list-modal');
   if(wl){const warns=u.warnings||[];wl.innerHTML=warns.length?warns.map(w=>`<div class="warn-row"><span style="font-size:13px">⚠️</span><div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--amber)">${w.reason}</div><div style="font-size:10px;color:var(--text3)">${w.date}</div></div><button onclick="removeWarn(${u.id},${w.id})" style="background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:0 3px">✕</button></div>`).join(''):'<div style="font-size:11.5px;color:var(--text3)">Предупреждений нет</div>';}
+  // Ачивки в профиле
+  var achBlock=document.getElementById('m-vol-achs');
+  if(achBlock)achBlock.innerHTML=typeof renderVolAchs==='function'?renderVolAchs(id):'';
   opm('m-vol');
 }
 function doAddPts(dir){
@@ -1357,6 +1397,144 @@ function renderLandingAnns(){
   if(!anns.length){el.innerHTML='';return;}
   el.innerHTML='<div style="font-size:11px;font-weight:700;color:var(--text2);text-align:left;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">📢 Объявления</div>'
     +anns.map(function(a){return'<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:8px;text-align:left;cursor:pointer" onclick="showLoginScreen()">'+(a.pinned?'<div style="font-size:10px;color:var(--amber);font-weight:700;margin-bottom:4px">📌 Закреплено</div>':'')+'<div style="font-weight:700;font-size:13px;margin-bottom:4px">'+a.title+'</div><div style="font-size:12px;color:var(--text2)">'+a.text.slice(0,100)+(a.text.length>100?'...':'')+'</div><div style="font-size:10px;color:var(--text3);margin-top:5px">'+a.date+'</div></div>';}).join('');
+}
+
+
+// ════════════════════════════════════════════════════════════
+//  АЧИВКИ
+// ════════════════════════════════════════════════════════════
+var ACHIEVEMENTS=[
+  {id:'ACT-01',name:'Новичок',          ico:'🐣',xp:100, type:'auto',  cond:'1 мероприятие',         check:function(u){return u.events>=1}},
+  {id:'ACT-02',name:'Постоянный гость', ico:'🏃',xp:500, type:'auto',  cond:'10 мероприятий',         check:function(u){return u.events>=10}},
+  {id:'ACT-03',name:'Профи-волонтёр',   ico:'🏅',xp:1500,type:'auto',  cond:'25 мероприятий',         check:function(u){return u.events>=25}},
+  {id:'ACT-04',name:'Легенда движения', ico:'💎',xp:5000,type:'auto',  cond:'50 мероприятий',         check:function(u){return u.events>=50}},
+  {id:'TIME-01',name:'Испытательный срок',ico:'🗓️',xp:200,type:'auto', cond:'1 месяц в организации',  check:function(u){return u.joined&&(Date.now()-new Date(u.joined))>=30*24*3600*1000}},
+  {id:'TIME-02',name:'Старожил',        ico:'⏳',xp:1000,type:'auto',  cond:'1 год в организации',    check:function(u){return u.joined&&(Date.now()-new Date(u.joined))>=365*24*3600*1000}},
+  {id:'LDR-01', name:'Лидер группы',    ico:'📢',xp:500, type:'manual',cond:'Ответственный за сектор', check:null},
+  {id:'LDR-02', name:'Организатор',     ico:'🛠️',xp:700, type:'manual',cond:'Самостоятельная подготовка',check:null},
+  {id:'SPEC-01',name:'Герой дня',       ico:'🦸',xp:1000,type:'manual',cond:'Особый вклад в ситуации', check:null},
+  {id:'SPEC-02',name:'Креативщик',      ico:'💡',xp:400, type:'manual',cond:'Предложенная идея',        check:null},
+  {id:'SOC-01', name:'Медиа-лицо',      ico:'📱',xp:300, type:'manual',cond:'10 упоминаний в соцсетях', check:null},
+  {id:'NIGHT-01',name:'Ночная смена',   ico:'🌙',xp:450, type:'manual',cond:'Ночные дежурства',         check:null},
+  {id:'TEAM-01',name:'Душа компании',   ico:'✨',xp:300, type:'manual',cond:'Сплочение команды',        check:null},
+  {id:'EDU-01', name:'Студент',         ico:'📚',xp:300, type:'manual',cond:'5 образовательных событий', check:null},
+  {id:'IT-01',  name:'Хакер-помощник',  ico:'💻',xp:600, type:'manual',cond:'5 IT-проектов',             check:null},
+];
+
+var _achFilter='all';
+
+function getAllAchs(){
+  var all=ACHIEVEMENTS.slice();
+  (DB.events||[]).forEach(function(e){
+    if(e.achievement)all.push({id:'EVT-'+e.id,name:e.achievement.name,ico:e.achievement.ico,xp:e.achievement.xp,type:'auto',cond:'За «'+e.title+'»',check:null});
+  });
+  return all;
+}
+function getUserAchs(u){return u.achievements||[];}
+function hasAch(u,id){return getUserAchs(u).some(function(a){return a.id===id;});}
+
+function checkAutoAchs(u){
+  if(!u)return;
+  var changed=false;
+  ACHIEVEMENTS.filter(function(a){return a.type==='auto'&&a.check;}).forEach(function(a){
+    if(!hasAch(u,a.id)&&a.check(u)){
+      if(!u.achievements)u.achievements=[];
+      u.achievements.push({id:a.id,earnedAt:new Date().toLocaleDateString('ru')});
+      u.points=(u.points||0)+a.xp;
+      addNotif(u.id,'🏆 Новая ачивка: '+a.ico+' '+a.name+' (+'+a.xp+' XP)!');
+      changed=true;
+    }
+  });
+  if(changed)syncToServer();
+}
+
+function giveAch(uid,achId){
+  var u=DB.users.find(function(x){return x.id===uid;});
+  var a=ACHIEVEMENTS.find(function(x){return x.id===achId;});
+  if(!u||!a){return;}
+  if(hasAch(u,achId)){toast('⚠️ Уже выдана');return;}
+  if(!u.achievements)u.achievements=[];
+  u.achievements.push({id:achId,earnedAt:new Date().toLocaleDateString('ru'),by:CU&&CU.name.split(' ')[0]});
+  u.points=(u.points||0)+a.xp;
+  addNotif(u.id,'🏆 Ачивка: '+a.ico+' '+a.name+' (+'+a.xp+' XP)!');
+  syncToServer();
+  toast('✅ '+a.ico+' '+a.name+' → '+u.name.split(' ')[0]);
+  showVol(uid);
+}
+
+function revokeAch(uid,achId){
+  var u=DB.users.find(function(x){return x.id===uid;});
+  var a=ACHIEVEMENTS.find(function(x){return x.id===achId;});
+  if(!u||!a)return;
+  u.achievements=(u.achievements||[]).filter(function(x){return x.id!==achId;});
+  u.points=Math.max(0,(u.points||0)-a.xp);
+  syncToServer();toast('↩️ '+a.name+' отозвана');showVol(uid);
+}
+
+function setAchFilter(f){
+  _achFilter=f;
+  ['all','earned','locked','auto','manual'].forEach(function(k){
+    var b=document.getElementById('achf-'+k);
+    if(b){b.className=k===f?'btn btn-a':'btn btn-o';}
+  });
+  rAchievements();
+}
+
+function rAchievements(){
+  var u=CU;if(!u)return;
+  var earned=getUserAchs(u);
+  var all=getAllAchs();
+  var filtered=all;
+  if(_achFilter==='earned')filtered=all.filter(function(a){return earned.some(function(e){return e.id===a.id;});});
+  else if(_achFilter==='locked')filtered=all.filter(function(a){return!earned.some(function(e){return e.id===a.id;});});
+  else if(_achFilter==='auto')filtered=all.filter(function(a){return a.type==='auto';});
+  else if(_achFilter==='manual')filtered=all.filter(function(a){return a.type==='manual';});
+
+  var totalXP=earned.reduce(function(s,e){var a=all.find(function(x){return x.id===e.id;});return s+(a?a.xp:0);},0);
+  var cnt=document.getElementById('ach-count');if(cnt)cnt.textContent=earned.length+'/'+all.length;
+  var xpEl=document.getElementById('ach-xp-total');if(xpEl)xpEl.textContent=totalXP.toLocaleString();
+
+  var grid=document.getElementById('ach-grid');if(!grid)return;
+  grid.innerHTML=filtered.map(function(a){
+    var e=earned.find(function(x){return x.id===a.id;});
+    return '<div class="ach-card '+(e?'earned':'locked')+'">'
+      +'<span class="ach-badge '+(a.type==='auto'?'ach-auto':'ach-manual')+'">'+(a.type==='auto'?'авто':'ручн.')+'</span>'
+      +'<span class="ach-ico">'+a.ico+'</span>'
+      +'<div class="ach-name">'+a.name+'</div>'
+      +'<div class="ach-cond">'+a.cond+'</div>'
+      +'<div class="ach-xp">+'+a.xp+' XP</div>'
+      +(e?'<div class="ach-stamp">✅ '+e.earnedAt+'</div>':'')
+      +'</div>';
+  }).join('');
+}
+
+function renderVolAchs(uid){
+  var u=DB.users.find(function(x){return x.id===uid;});if(!u)return'';
+  var earned=getUserAchs(u);
+  var all=getAllAchs();
+  var canGive=hasPerm(CU,'approvePromo')||hasPerm(CU,'fullAdmin');
+  var manual=all.filter(function(a){return a.type==='manual';});
+  return '<div style="margin-bottom:10px">'
+    +'<div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">🏆 Ачивки ('+earned.length+')</div>'
+    +(earned.length
+      ? '<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px">'+earned.map(function(e){
+          var a=all.find(function(x){return x.id===e.id;});if(!a)return'';
+          return '<span title="'+a.name+'" style="background:var(--surface2);border:1px solid rgba(0,212,170,.2);border-radius:7px;padding:3px 8px;font-size:12px;display:inline-flex;align-items:center;gap:3px">'
+            +a.ico+' <span style="font-size:11px;color:var(--accent)">'+a.name+'</span>'
+            +(canGive?'<button onclick="revokeAch('+uid+',\''+a.id+'\')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:10px;padding:0 1px;margin-left:2px">✕</button>':'')
+            +'</span>';
+        }).join('')+'</div>'
+      : '<div style="font-size:11px;color:var(--text3);margin-bottom:8px">Нет ачивок</div>'
+    )
+    +(canGive
+      ? '<div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:5px">Выдать:</div>'
+        +'<div style="display:flex;flex-wrap:wrap;gap:4px">'+manual.map(function(a){
+          var has=earned.some(function(e){return e.id===a.id;});
+          return '<button class="btn '+(has?'btn-g':'btn-o')+'" style="font-size:10px;padding:3px 7px;'+(has?'opacity:.4':'')+';" '+(has?'disabled':'')+' onclick="giveAch('+uid+',\''+a.id+'\')" title="'+a.cond+'">'+a.ico+' '+a.name+'</button>';
+        }).join('')+'</div>'
+      : ''
+    )
+    +'</div>';
 }
 
 // ════════════════════════════════════════════════════════════
