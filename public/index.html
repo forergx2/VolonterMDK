@@ -31,7 +31,7 @@ body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--text);
 #reg-form{display:none}
 /* APP LAYOUT */
 #app{display:none}
-.layout{display:flex;min-height:100vh}
+.layout{display:flex;min-height:100vh;width:100%}
 .sidebar{width:256px;min-width:256px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;transition:transform .3s;overflow:hidden}
 .sb-logo{padding:20px 18px 14px;border-bottom:1px solid var(--border);flex-shrink:0}
 .sb-logo-main{font-family:'Unbounded',sans-serif;font-size:14px;font-weight:900;line-height:1.2}
@@ -56,14 +56,14 @@ body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--text);
 .btn-logout{width:100%;padding:8px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text2);cursor:pointer;font-size:12px;font-family:'Golos Text',sans-serif;transition:all .2s}
 .btn-logout:hover{border-color:var(--danger);color:var(--danger)}
 /* MAIN */
-.main{margin-left:256px;flex:1;min-height:100vh;display:flex;flex-direction:column}
+.main{margin-left:256px;flex:1;min-height:100vh;display:flex;flex-direction:column;min-width:0;overflow:hidden}
 .topbar{padding:14px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--surface);position:sticky;top:0;z-index:50;flex-shrink:0}
 .topbar-title{font-family:'Unbounded',sans-serif;font-size:15px;font-weight:700}
 .hamburger{display:none;padding:6px;background:transparent;border:none;color:var(--text);cursor:pointer;font-size:20px}
 .ovr-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99}
 .ovr-bg.show{display:block}
 .content{padding:22px;flex:1}
-.page{display:none}
+.page{width:100%;display:none}
 .page.active{display:block;animation:fadeIn .2s ease}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 /* BUTTONS */
@@ -308,9 +308,9 @@ select option{background:var(--surface2);color:var(--text)}
 .inner-page.active{display:block;animation:fadeIn .15s ease}
 
 /* Dash grid полный экран */
-.dash-grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:16px;width:100%}
+.dash-grid{display:grid;grid-template-columns:minmax(0,2.2fr) minmax(0,1fr);gap:16px;width:100%}
 .dash-col{display:flex;flex-direction:column;gap:16px}
-.stats-row{grid-template-columns:repeat(4,minmax(0,1fr))}
+.stats-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}
 
 @media(max-width:1100px){.dash-grid{grid-template-columns:1fr}}
 @media(max-width:900px){.inner-tabs{overflow-x:auto;flex-wrap:nowrap}.stats-row{grid-template-columns:1fr 1fr}}
@@ -318,7 +318,7 @@ select option{background:var(--surface2);color:var(--text)}
 
 /* ══ РЕДИЗАЙН: новый layout ══ */
 .sb-user{display:none!important}
-.content{padding:20px 26px;width:100%;box-sizing:border-box}
+.content{padding:22px 28px;flex:1;box-sizing:border-box;min-width:0}
 .topbar-user{display:flex;align-items:center;gap:8px;cursor:pointer;padding:5px 10px;border-radius:10px;transition:background .2s}
 .topbar-user:hover{background:var(--surface2)}
 .topbar-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--purple));display:flex;align-items:center;justify-content:center;font-family:Unbounded,sans-serif;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;position:relative;overflow:hidden}
@@ -331,7 +331,7 @@ select option{background:var(--surface2);color:var(--text)}
 .inner-tab.active{background:var(--accent);color:#000;font-weight:700}
 .inner-page{display:none}
 .inner-page.active{display:block}
-.dash-grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:16px;width:100%}
+.dash-grid{display:grid;grid-template-columns:minmax(0,2.2fr) minmax(0,1fr);gap:16px;width:100%}
 .dash-col{display:flex;flex-direction:column;gap:16px}
 @media(max-width:1100px){.dash-grid{grid-template-columns:1fr}}
 @media(max-width:900px){.inner-tabs{overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none}}
@@ -768,8 +768,8 @@ function closeSb(){var s=document.getElementById('sidebar');var o=document.getEl
             <div class="inner-tab"        id="atab-tests" onclick="switchAdmin('tests')">📝 Тесты</div>
             <div class="inner-tab"        id="atab-rep"   onclick="switchAdmin('rep')">📈 Отчёты</div>
           </div>
-          <div class="inner-page active" id="admin-vol">
-            <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap">
+          <div class="inner-page active" id="admin-vol"><span id="vol-cnt" style="font-size:12px;color:var(--text2)"></span>
+            <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
               <button class="btn btn-o" onclick="filterVolRank('all')">Все</button>
               <button class="btn btn-o" onclick="filterVolRank('candidate')">🌱 Кандидаты</button>
               <button class="btn btn-o" onclick="filterVolRank('volunteer')">⚡ Волонтёры</button>
@@ -1234,6 +1234,10 @@ function renderDashboard(){
   h('act-feed',log.length?log.map(l=>`<div class="feed-item"><div class="fd" style="color:${l.type==='plus'?'var(--accent)':l.type==='minus'?'var(--danger)':'var(--text3)'}">${l.type==='plus'?'⭐':l.type==='minus'?'⬇':'🔄'}</div><div><div class="ft"><b>${l.type==='plus'?'+':l.type==='minus'?'-':''}${l.amount}б</b> — ${l.reason}</div><div class="ftime">${l.date} · ${l.by}</div></div></div>`).join(''):'<div style="font-size:12px;color:var(--text3);padding:8px 0">История пуста</div>');
   const vs=[22,38,55,42,72,91,65],mx=Math.max(...vs);
   h('mini-ch',vs.map(val=>`<div class="mini-bar" style="height:${Math.round(val/mx*100)}%"></div>`).join(''));
+
+  // Объявления на дашборде
+  var dAnn=document.getElementById('dash-ann');
+  if(dAnn){var anns=DB.announcements.slice(0,3);dAnn.innerHTML=anns.length?anns.map(function(a){return'<div style="padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer" data-goto="announcements">'+(a.pinned?'<span style="font-size:9px;color:var(--amber)">📌 </span>':'')+'<div style="font-weight:600;font-size:12.5px;margin-bottom:3px">'+a.title+'</div><div style="font-size:11.5px;color:var(--text2)">'+a.text.slice(0,70)+'...</div><div style="font-size:10px;color:var(--text3);margin-top:2px">'+a.date+'</div></div>';}).join(''):'<div style="font-size:12px;color:var(--text3);padding:8px 0">Объявлений нет</div>';}
 }
 
 // Events
@@ -1391,10 +1395,10 @@ function rLb(){
   const rc=['gold','silver','bronze'];
   h('lb-list',[...DB.users].sort((a,b)=>b.points-a.points).map((u,i)=>{const rank=getRank(u),pos=getPos(u);return`<div class="lb-item${u.id===CU.id?' me':''}"><div class="lb-rank ${rc[i]||''}">${i+1}</div><div class="mini-av">${avImg(u)}${u.avatarData?'':u.avatar}</div><div class="lb-info"><div class="lb-name">${u.name.split(' ').slice(0,2).join(' ')} ${u.id===CU.id?'<span style="font-size:10px;color:var(--accent)">(вы)</span>':''}</div><div class="lb-sub">${rank.emoji} ${rank.name} · ${pos.name}</div></div><div class="lb-pts">${u.points}</div></div>`;}).join(''));
 }
-function rDocs(){h('docs-grid',DB.documents.map(d=>`<div class="doc-card" onclick="toast('📥 Скачивание: ${d.name}')"><div style="font-size:30px">${d.icon}</div><div style="font-size:11.5px;font-weight:600">${d.name}</div><div style="font-size:10px;color:var(--text3)">${d.size} · ${d.date}</div></div>`).join(''))}
+
 function rTelegramSettings(){
   const u=CU;
-  h('tg-settings-body',`<div style="padding:15px;background:var(--surface2);border-radius:12px;border:1px solid var(--border);margin-bottom:13px"><div style="display:flex;align-items:center;gap:11px;margin-bottom:13px"><div style="font-size:28px">📱</div><div><div style="font-weight:700;font-size:14px">Telegram-уведомления</div><div style="font-size:12px;color:var(--text2)">Получайте уведомления о баллах, KPI и повышениях</div></div></div><div class="fg"><label>Ваш Telegram Chat ID</label><input id="tg-chat-id" value="${u.tgChatId||''}" placeholder="123456789 (найдите через @userinfobot)"></div><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><div class="toggle${u.tgEnabled?' on':''}" id="tg-toggle" onclick="this.classList.toggle('on')"></div><span style="font-size:13px">Включить уведомления</span></div><div style="display:flex;gap:8px"><button class="btn btn-a" onclick="saveTgSettings()">Сохранить</button><button class="btn btn-o" onclick="testTG()">📤 Тест</button></div></div><div style="padding:12px;background:var(--blue-dim);border-radius:11px;border:1px solid rgba(59,130,246,.2);font-size:12px;color:var(--text2)"><b style="color:#60a5fa">🧩 Как подключиться:</b><br>1. Напишите боту <b>@userinfobot</b> любое сообщение<br>2. Скопируйте ваш Chat ID (цифры)<br>3. Вставьте Chat ID выше и включите уведомления</div>`);
+  h(document.getElementById('tg-body')?'tg-body':'tg-settings-body',`<div style="padding:15px;background:var(--surface2);border-radius:12px;border:1px solid var(--border);margin-bottom:13px"><div style="display:flex;align-items:center;gap:11px;margin-bottom:13px"><div style="font-size:28px">📱</div><div><div style="font-weight:700;font-size:14px">Telegram-уведомления</div><div style="font-size:12px;color:var(--text2)">Получайте уведомления о баллах, KPI и повышениях</div></div></div><div class="fg"><label>Ваш Telegram Chat ID</label><input id="tg-chat-id" value="${u.tgChatId||''}" placeholder="123456789 (найдите через @userinfobot)"></div><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><div class="toggle${u.tgEnabled?' on':''}" id="tg-toggle" onclick="this.classList.toggle('on')"></div><span style="font-size:13px">Включить уведомления</span></div><div style="display:flex;gap:8px"><button class="btn btn-a" onclick="saveTgSettings()">Сохранить</button><button class="btn btn-o" onclick="testTG()">📤 Тест</button></div></div><div style="padding:12px;background:var(--blue-dim);border-radius:11px;border:1px solid rgba(59,130,246,.2);font-size:12px;color:var(--text2)"><b style="color:#60a5fa">🧩 Как подключиться:</b><br>1. Напишите боту <b>@userinfobot</b> любое сообщение<br>2. Скопируйте ваш Chat ID (цифры)<br>3. Вставьте Chat ID выше и включите уведомления</div>`);
 }
 function saveTgSettings(){CU.tgChatId=v('tg-chat-id').trim();CU.tgEnabled=document.getElementById('tg-toggle')?.classList.contains('on')||false;toast(CU.tgEnabled?'✅ Telegram включён':'Telegram отключён')}
 function testTG(){const id=v('tg-chat-id').trim()||CU.tgChatId;if(!id){toast('⚠️ Введите Chat ID');return;}toast(`📤 Тест отправлен на ${id}`);console.log(`[TG TEST] Chat: ${id} | Привет от ВолонтёрМДК! 🎉`);}
@@ -1888,14 +1892,16 @@ function switchMyspace(tab) {
     if(btn) btn.className = 'inner-tab' + (t===tab?' active':'');
     if(page) page.className = 'inner-page' + (t===tab?' active':'');
   });
-  if(tab==='profile') renderMyspaceProfile();
-  if(tab==='promo') rPromotion();
-  if(tab==='progress') rProg();
-  if(tab==='achs') rAchievements();
-  if(tab==='ptslog') rPointsLog2();
-  if(tab==='lb') rLb2();
-  if(tab==='docs') rDocs();
-  if(tab==='tg') rTelegramSettings();
+  try {
+    if(tab==='profile') renderMyspaceProfile();
+    else if(tab==='promo') rPromotion();
+    else if(tab==='progress') rProg();
+    else if(tab==='achs') rAchievements();
+    else if(tab==='ptslog') rPointsLog();
+    else if(tab==='lb') rLb();
+    else if(tab==='docs') rDocs();
+    else if(tab==='tg') rTelegramSettings();
+  } catch(e) { console.warn('switchMyspace error:', e); }
 }
 
 // Переключение вкладок внутри "Администрирование"
@@ -1908,14 +1914,16 @@ function switchAdmin(tab) {
     if(btn) btn.className = 'inner-tab' + (t===tab?' active':'');
     if(page) page.className = 'inner-page' + (t===tab?' active':'');
   });
-  if(tab==='vol') rAdmVol();
-  if(tab==='ev') rAdmEv();
-  if(tab==='tasks') rAdmTasks();
-  if(tab==='promo') rAdmPromo();
-  if(tab==='kpi') rKpiAdmin();
-  if(tab==='perms') rAdmPerms();
-  if(tab==='tests') rTestConstructor();
-  if(tab==='rep') rAdmRep();
+  try {
+    if(tab==='vol') rAdmVol();
+    else if(tab==='ev') rAdmEv();
+    else if(tab==='tasks') rAdmTasks();
+    else if(tab==='promo') rAdmPromo();
+    else if(tab==='kpi') rKpiAdmin();
+    else if(tab==='perms') rAdmPerms();
+    else if(tab==='tests') rTestConstructor();
+    else if(tab==='rep') rAdmRep();
+  } catch(e) { console.warn('switchAdmin error:', e); }
 }
 
 // Профиль в myspace
