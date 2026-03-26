@@ -2,24 +2,30 @@
 <html lang="ru">
 <head>
 <script>
-// Заглушки для onclick на landing — перезапишутся после загрузки основного скрипта
+// ── Заглушки — работают сразу, перезапишутся после загрузки основного скрипта ──
+function _callWhenReady(fn, args) {
+  if (typeof window[fn] === 'function' && window[fn]._isStub !== true) {
+    window[fn].apply(null, args);
+  } else {
+    document.addEventListener('scriptsReady', function() {
+      if (typeof window[fn] === 'function') window[fn].apply(null, args);
+    }, {once: true});
+  }
+}
 function showAuth(tab) {
   document.getElementById('landing-screen').style.display = 'none';
   document.getElementById('auth-screen').style.display = 'flex';
-  // authTab вызовем когда основной скрипт загрузится
-  document.addEventListener('DOMContentLoaded', function() {
-    if (typeof authTab === 'function') authTab(tab || 'login');
-  });
-  if (typeof authTab === 'function') authTab(tab || 'login');
+  _callWhenReady('authTab', [tab || 'login']);
 }
-function filterAch(f, btn) {
-  if (typeof rAchievements === 'function') {
-    window._achFilter = f;
-    document.querySelectorAll('.ach-nav button').forEach(function(b){b.classList.remove('btn-a');b.classList.add('btn-o');});
-    if(btn){btn.classList.add('btn-a');btn.classList.remove('btn-o');}
-    rAchievements();
-  }
-}
+function doLogin() { _callWhenReady('_doLoginReal', []); }
+function doRegister() { _callWhenReady('_doRegisterReal', []); }
+function authTab(t) { _callWhenReady('_authTabReal', [t]); }
+function filterAch(f, btn) { _callWhenReady('_filterAchReal', [f, btn]); }
+function go(id) { _callWhenReady('_goReal', [id]); }
+function toggleSb() { _callWhenReady('_toggleSbReal', []); }
+function toggleNotifs() { _callWhenReady('_toggleNotifsReal', []); }
+doLogin._isStub = doRegister._isStub = authTab._isStub = true;
+filterAch._isStub = go._isStub = toggleSb._isStub = true;
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -2346,6 +2352,26 @@ document.addEventListener('click', function(e) {
   const achf = e.target.getAttribute('data-achf');
   if (achf !== null) { filterAch(achf, e.target); }
 });
+
+// ── Назначаем реальные функции и стреляем событие готовности ──
+window._doLoginReal = doLogin;
+window._doRegisterReal = doRegister;
+window._authTabReal = authTab;
+window._filterAchReal = filterAch;
+window._goReal = go;
+window._toggleSbReal = toggleSb;
+window._toggleNotifsReal = toggleNotifs;
+// Перезаписываем заглушки реальными функциями
+window.doLogin = doLogin;
+window.doRegister = doRegister;
+window.authTab = authTab;
+window.filterAch = filterAch;
+window.go = go;
+window.toggleSb = toggleSb;
+window.toggleNotifs = toggleNotifs;
+window.showAuth = showAuth;
+// Сообщаем что скрипт готов
+document.dispatchEvent(new Event('scriptsReady'));
 
 // ── Window exports для onclick в HTML ──
 window.filterAch = filterAch;
