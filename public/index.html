@@ -1548,7 +1548,7 @@ function rMarket(){
 
   // Кнопка создания для админа
   var admBtn=document.getElementById('market-adm-btn');
-  if(admBtn)admBtn.innerHTML=isAdm?'<button class="btn btn-a" style="font-size:11px;padding:5px 12px" onclick="opm('m-add-market')">+ Добавить задачу</button>':'';
+  if(admBtn)admBtn.innerHTML=isAdm?'<button class="btn btn-a" style="font-size:11px;padding:5px 12px" onclick="opm(\'m-add-market\')">+ Добавить задачу</button>':'';
 
   var tasks=DB.marketTasks.filter(function(t){
     if(cat&&t.cat!==cat)return false;
@@ -1614,7 +1614,7 @@ function openMarketTask(id){
   h('m-market-detail-body',
     '<div style="margin-bottom:14px">'
     +'<div style="font-size:10px;color:#60a5fa;font-weight:700;margin-bottom:5px">'+(_catLabels[t.cat]||t.cat)+'</div>'
-    +'<div style="font-family:'Unbounded',sans-serif;font-size:15px;font-weight:700;margin-bottom:8px;line-height:1.3">'+t.title+'</div>'
+    +'<div style="font-family:Unbounded,sans-serif;font-size:15px;font-weight:700;margin-bottom:8px;line-height:1.3">'+t.title+'</div>'
     +'<div style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:12px">'+t.desc+'</div>'
     +'<div class="market-reward" style="margin-bottom:12px"><div class="market-reward-pts">+'+t.pts+'</div><div style="font-size:12px;color:var(--amber)">баллов</div></div>'
     +'<div style="display:flex;gap:12px;font-size:12px;color:var(--text2);flex-wrap:wrap;margin-bottom:12px">'
@@ -1630,8 +1630,8 @@ function openMarketTask(id){
     }).join('')+'</div>':'')
     +'</div>'
     +'<div class="modal-actions">'
-    +'<button class="btn btn-g" onclick="cpm('m-market-detail')">Закрыть</button>'
-    +(!isDone&&!isTaker&&!isFull&&t.status==='open'?'<button class="btn btn-a" onclick="takeMarketTask(null,'+t.id+');cpm('m-market-detail')">📋 Взять задачу</button>':'')
+    +'<button class="btn btn-g" onclick="cpm(\'\1\')">Закрыть</button>'
+    +(!isDone&&!isTaker&&!isFull&&t.status==='open'?'<button class="btn btn-a" onclick="takeMarketTask(null,'+t.id+');cpm(\'\1\')">📋 Взять задачу</button>':'')
     +(isTaker&&!isDone&&t.status!=='done'?'<button class="btn btn-am" onclick="submitMarketTask('+t.id+')">⬆️ Сдать на проверку</button>':'')
     +(isAdm&&t.status!=='done'?'<button class="btn btn-d" style="margin-left:auto" onclick="deleteMarketTask('+t.id+')">🗑 Удалить</button>':'')
     +'</div>'
