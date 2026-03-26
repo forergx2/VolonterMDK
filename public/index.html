@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>ВолонтёрМДК | МДК Мугунгхва</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;900&family=Golos+Text:wght@400;500;600&display=swap" rel="stylesheet">
@@ -10,7 +10,7 @@
 :root{--bg:#0a0e1a;--surface:#111827;--surface2:#1a2235;--surface3:#0f1a2e;--border:#1e2d45;--accent:#00d4aa;--accent-dim:rgba(0,212,170,0.12);--purple:#7c3aed;--purple-dim:rgba(124,58,237,0.12);--amber:#f59e0b;--amber-dim:rgba(245,158,11,0.12);--danger:#ef4444;--danger-dim:rgba(239,68,68,0.1);--blue:#3b82f6;--blue-dim:rgba(59,130,246,0.12);--text:#e2e8f0;--text2:#94a3b8;--text3:#475569;--r:14px}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
-#auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(ellipse at 25% 15%,rgba(0,212,170,.09) 0%,transparent 55%),radial-gradient(ellipse at 80% 85%,rgba(124,58,237,.11) 0%,transparent 55%),var(--bg)}
+#auth-screen{min-height:100vh;display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px;background:radial-gradient(ellipse at 25% 15%,rgba(0,212,170,.09) 0%,transparent 55%),radial-gradient(ellipse at 80% 85%,rgba(124,58,237,.11) 0%,transparent 55%),var(--bg)}
 .auth-card{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:48px 44px;width:100%;max-width:440px;box-shadow:0 32px 80px rgba(0,0,0,.55);position:relative;overflow:hidden}
 .auth-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--purple))}
 .auth-logo{font-family:'Unbounded',sans-serif;font-size:20px;font-weight:900;margin-bottom:4px;line-height:1.2}
@@ -28,6 +28,63 @@ body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--text);
 .btn-primary:hover{background:#00bfa0;transform:translateY(-1px)}
 .demo-hint{margin-top:16px;padding:12px 14px;background:rgba(0,212,170,.06);border:1px solid rgba(0,212,170,.2);border-radius:10px;font-size:12px;color:var(--text2);line-height:1.65}
 .demo-hint b{color:var(--accent)}
+
+/* ── МОБИЛЬНАЯ АДАПТАЦИЯ ── */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%);width:100% !important;min-width:0 !important}
+  .sidebar.open{transform:translateX(0)}
+  .hamburger{display:block !important}
+  .main{margin-left:0 !important}
+  .stats-row{grid-template-columns:repeat(2,1fr) !important}
+  .dash-grid{grid-template-columns:1fr !important}
+  .events-grid{grid-template-columns:1fr !important}
+  .g2{grid-template-columns:1fr !important}
+  .content{padding:12px !important}
+  .topbar{padding:10px 14px !important}
+  .auth-card{padding:28px 20px !important}
+  .modal{max-width:98vw !important;padding:18px 16px !important;margin:8px !important}
+  .modal-overlay{align-items:flex-end !important}
+  .modal{border-radius:18px 18px 0 0 !important}
+  table{font-size:11px !important}
+  .lb-item{padding:8px 10px !important}
+  #home-hero{padding:32px 18px 24px !important}
+  #home-stats{grid-template-columns:repeat(2,1fr) !important}
+  #home-anns{grid-template-columns:1fr !important}
+  .home-actions{flex-direction:column !important}
+}
+@media(max-width:400px){
+  .stats-row{grid-template-columns:1fr 1fr !important}
+  .auth-card{padding:22px 14px !important}
+}
+
+/* ── РАВНОМЕРНЫЙ LAYOUT ── */
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.dash-col-main,.dash-col-side{display:flex;flex-direction:column;gap:16px}
+.content{max-width:1400px;margin:0 auto;padding:22px;width:100%}
+
+/* ── ГЛАВНАЯ СТРАНИЦА ── */
+#home-hero{background:linear-gradient(135deg,var(--surface2),var(--surface3));border:1px solid var(--border);border-radius:20px;padding:40px 36px 32px;margin-bottom:22px;position:relative;overflow:hidden;text-align:center}
+#home-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(0,212,170,.12),transparent 70%);border-radius:50%}
+#home-hero::after{content:'';position:absolute;bottom:-40px;left:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(124,58,237,.1),transparent 70%);border-radius:50%}
+.home-hero-title{font-family:'Unbounded',sans-serif;font-size:26px;font-weight:900;margin-bottom:6px;position:relative}
+.home-hero-sub{font-size:14px;color:var(--text2);margin-bottom:20px;position:relative}
+.home-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;position:relative}
+#home-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px}
+.home-stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;cursor:pointer;transition:all .2s}
+.home-stat:hover{border-color:var(--accent);transform:translateY(-2px)}
+.home-stat-ico{font-size:22px;margin-bottom:6px}
+.home-stat-val{font-family:'Unbounded',sans-serif;font-size:20px;font-weight:700;color:var(--accent)}
+.home-stat-lbl{font-size:10px;color:var(--text2);margin-top:2px}
+#home-anns{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px}
+.home-ann-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .2s}
+.home-ann-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.home-ann-card.pinned{border-color:rgba(245,158,11,.35)}
+.home-ann-img{width:100%;height:120px;object-fit:cover}
+.home-ann-body{padding:12px 14px}
+.home-ann-title{font-weight:700;font-size:13px;margin-bottom:4px}
+.home-ann-text{font-size:12px;color:var(--text2);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.home-ann-date{font-size:10px;color:var(--text3);margin-top:6px}
+
 #reg-form{display:none}
 /* APP LAYOUT */
 #app{display:none}
@@ -56,13 +113,13 @@ body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--text);
 .btn-logout{width:100%;padding:8px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text2);cursor:pointer;font-size:12px;font-family:'Golos Text',sans-serif;transition:all .2s}
 .btn-logout:hover{border-color:var(--danger);color:var(--danger)}
 /* MAIN */
-.main{margin-left:256px;flex:1;min-height:100vh;display:flex;flex-direction:column}
+.main{margin-left:256px;flex:1;min-height:100vh;display:flex;flex-direction:column;min-width:0}
 .topbar{padding:14px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--surface);position:sticky;top:0;z-index:50;flex-shrink:0}
 .topbar-title{font-family:'Unbounded',sans-serif;font-size:15px;font-weight:700}
-.hamburger{display:none;padding:6px;background:transparent;border:none;color:var(--text);cursor:pointer;font-size:20px}
+.hamburger{display:none;padding:6px;background:transparent;border:none;color:var(--text);cursor:pointer;font-size:22px;line-height:1}
 .ovr-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99}
 .ovr-bg.show{display:block}
-.content{padding:22px;flex:1}
+.content-wrap{flex:1;display:flex;flex-direction:column}
 .page{display:none}
 .page.active{display:block;animation:fadeIn .2s ease}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
@@ -267,6 +324,9 @@ tbody td{padding:10px 11px;font-size:12.5px}
 @media(max-width:1100px){.split{flex-direction:column}.ss{width:100%}}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 @media(max-width:800px){.g2{grid-template-columns:1fr}}
+/* Контент занимает весь экран равномерно */
+.content{padding:22px;flex:1;max-width:1400px;width:100%;margin:0 auto;box-sizing:border-box}
+.page-inner{max-width:1200px;margin:0 auto}
 .empty{text-align:center;padding:32px 16px;color:var(--text2)}
 .empty .ei{font-size:40px;margin-bottom:10px}
 .pts-box{margin-top:12px;padding:14px;background:var(--surface3);border-radius:11px;border:1px solid var(--border)}
@@ -282,16 +342,123 @@ tbody td{padding:10px 11px;font-size:12.5px}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
 .ld{width:6px;height:6px;background:var(--accent);border-radius:50%;display:inline-block;animation:pulse 1.5s infinite;margin-right:4px}
 /* RESPONSIVE */
-@media(max-width:900px){.stats-row{grid-template-columns:repeat(2,1fr)}.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.content{padding:14px}.pf-form{grid-template-columns:1fr}.hamburger{display:flex}}
+/* Dashboard grid */
+.dash-grid{display:grid;grid-template-columns:1fr 380px;gap:16px;align-items:start}
+.dash-col-main{display:flex;flex-direction:column;gap:16px;min-width:0}
+.dash-col-side{display:flex;flex-direction:column;gap:16px;min-width:0}
+/* Announcement image */
+.ann-img{width:100%;max-height:220px;object-fit:cover;border-radius:10px;margin-bottom:10px;display:block}
+/* Mobile */
+@media(max-width:1100px){.dash-grid{grid-template-columns:1fr}}
+@media(max-width:900px){
+  .content{padding:14px !important}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .content{padding:12px}
+  .pf-form{grid-template-columns:1fr}
+  .hamburger{display:flex}
+  .topbar{padding:10px 14px}
+  .topbar-title{font-size:13px}
+  .card{padding:14px}
+  .ev-card .ev-body{padding:10px}
+  .modal{padding:18px;border-radius:14px}
+  .auth-card{padding:28px 22px}
+  .stats-row{gap:8px}
+  .stat-card{padding:12px}
+  .stat-val{font-size:18px}
+}
+@media(max-width:580px){
+  .stats-row{grid-template-columns:1fr 1fr}
+  .events-grid{grid-template-columns:1fr}
+  .content{padding:10px}
+  .dash-grid{gap:10px}
+}
 @media(max-width:580px){.stats-row{grid-template-columns:1fr 1fr}.events-grid{grid-template-columns:1fr}}
 select option{background:var(--surface2);color:var(--text)}
+
+/* ── Главный экран (landing) ── */
+#landing-screen{min-height:100vh;display:flex;flex-direction:column;background:radial-gradient(ellipse at 20% 20%,rgba(0,212,170,.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(124,58,237,.1) 0%,transparent 50%),var(--bg)}
+.landing-hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center}
+.landing-logo{font-family:'Unbounded',sans-serif;font-size:32px;font-weight:900;margin-bottom:8px;line-height:1.1}
+.landing-logo span{color:var(--accent)}
+.landing-sub{font-size:15px;color:var(--text2);margin-bottom:40px;max-width:480px}
+.landing-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;width:100%;max-width:860px;margin-bottom:40px}
+.landing-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px 18px;cursor:pointer;transition:all .2s;text-align:center}
+.landing-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,212,170,.1)}
+.landing-card-ico{font-size:32px;margin-bottom:10px}
+.landing-card-title{font-family:'Unbounded',sans-serif;font-size:12px;font-weight:700;margin-bottom:5px}
+.landing-card-sub{font-size:11px;color:var(--text2)}
+.landing-anns{width:100%;max-width:860px}
+.landing-ann-item{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:10px;display:flex;align-items:stretch;cursor:pointer;transition:border-color .2s}
+.landing-ann-item:hover{border-color:var(--accent)}
+.landing-ann-img{width:80px;min-width:80px;object-fit:cover}
+.landing-ann-body{padding:12px 14px;flex:1}
+.landing-ann-pin{font-size:10px;color:var(--amber);font-weight:700;margin-bottom:3px}
+.landing-ann-title{font-weight:700;font-size:13px;margin-bottom:3px}
+.landing-ann-text{font-size:11.5px;color:var(--text2);line-height:1.5}
+.landing-ann-date{font-size:10px;color:var(--text3);margin-top:4px}
+.landing-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:32px}
+@media(max-width:580px){
+  .landing-logo{font-size:22px}
+  .landing-cards{grid-template-columns:1fr 1fr}
+  .landing-card{padding:16px 12px}
+  .landing-card-ico{font-size:24px}
+}
+/* ── Объявления ── */
+.ann-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:14px;transition:border-color .2s}
+.ann-card:hover{border-color:rgba(0,212,170,.3)}
+.ann-card.pinned{border-color:rgba(245,158,11,.3)}
+.ann-card img.ann-full-img{width:100%;max-height:260px;object-fit:cover;display:block}
+.ann-card-body{padding:16px}
+.ann-notify-badge{display:inline-flex;align-items:center;gap:4px;background:var(--accent-dim);color:var(--accent);font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-bottom:8px;border:1px solid rgba(0,212,170,.25)}
+
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 <!-- AUTH -->
-<div id="auth-screen">
+<div id="landing-screen">
+  <div class="landing-hero">
+    <div class="landing-logo">Волонтёр<span>МДК</span></div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:6px;font-family:'Golos Text'">МДК «Мугунгхва» · Актобе</div>
+    <div class="landing-sub">Платформа для волонтёров — мероприятия, баллы, повышения и многое другое</div>
+    <div class="landing-btns">
+      <button class="btn btn-a" style="padding:12px 28px;font-size:13px" onclick="showAuth('login')">🚀 Войти</button>
+      <button class="btn btn-o" style="padding:12px 28px;font-size:13px" onclick="showAuth('reg')">✨ Регистрация</button>
+    </div>
+    <div class="landing-cards">
+      <div class="landing-card" onclick="showAuth('login')">
+        <div class="landing-card-ico">📅</div>
+        <div class="landing-card-title">Мероприятия</div>
+        <div class="landing-card-sub">Записывайся и получай баллы</div>
+      </div>
+      <div class="landing-card" onclick="showAuth('login')">
+        <div class="landing-card-ico">⭐</div>
+        <div class="landing-card-title">Система баллов</div>
+        <div class="landing-card-sub">Отслеживай прогресс и KPI</div>
+      </div>
+      <div class="landing-card" onclick="showAuth('login')">
+        <div class="landing-card-ico">⬆️</div>
+        <div class="landing-card-title">Повышение</div>
+        <div class="landing-card-sub">Кандидат → Волонтёр → Активист</div>
+      </div>
+      <div class="landing-card" onclick="showAuth('login')">
+        <div class="landing-card-ico">👥</div>
+        <div class="landing-card-title">Команда</div>
+        <div class="landing-card-sub">Единая платформа МДК</div>
+      </div>
+    </div>
+    <div class="landing-anns">
+      <div style="font-family:'Unbounded',sans-serif;font-size:12px;font-weight:700;margin-bottom:10px;color:var(--text2);text-align:left">📢 Последние объявления</div>
+      <div id="landing-ann-list"></div>
+    </div>
+  </div>
+</div>
+
+<div id="auth-screen" style="display:none">
   <div class="auth-card">
     <div class="auth-logo">Волонтёр<span>МДК</span><small>МДК &quot;Мугунгхва&quot;</small></div>
     <div class="auth-tabs">
@@ -315,7 +482,7 @@ select option{background:var(--surface2);color:var(--text)}
 </div>
 
 <!-- APP -->
-<div id="app">
+<div id="app" style="display:none">
   <div id="ovr" class="ovr-bg" onclick="closeSb()"></div>
   <input type="file" id="av-inp" accept="image/*" style="display:none" onchange="handleAvUpload(this)">
   <input type="file" id="ev-cover-inp" accept="image/*" style="display:none" onchange="handleEvCover(this)">
@@ -378,17 +545,59 @@ select option{background:var(--surface2);color:var(--text)}
       </div>
 
       <div class="content">
-        <!-- DASHBOARD -->
-        <div class="page active" id="page-dashboard">
-          <div class="stats-row" id="dash-stats"></div>
-          <div class="split">
-            <div class="sm">
-              <div class="card"><div class="card-hdr"><div class="card-title">Ближайшие мероприятия</div><button class="btn btn-o" style="padding:6px 12px;font-size:12px" onclick="go('events')">Все →</button></div><div id="dash-events"></div></div>
-              <div class="card"><div class="card-hdr"><div class="card-title">Прогресс</div></div><div id="dash-prog"></div></div>
+        <!-- HOME -->
+        <div class="page" id="page-home">
+          <div id="home-hero">
+            <div id="home-emoji" style="font-size:48px;margin-bottom:10px">🌱</div>
+            <div class="home-hero-title" id="home-title">ВолонтёрМДК</div>
+            <div class="home-hero-sub" id="home-sub">МДК «Мугунгхва» — Актобе</div>
+            <div class="home-actions">
+              <button class="btn btn-a" style="padding:10px 20px;font-size:13px" onclick="go('events')">📅 Мероприятия</button>
+              <button class="btn btn-o" style="padding:10px 20px;font-size:13px" onclick="go('dashboard')">📊 Мой дашборд</button>
+              <button class="btn btn-o" style="padding:10px 20px;font-size:13px" onclick="go('pts-log')">⭐ Мои баллы</button>
             </div>
-            <div class="ss">
-              <div class="card"><div class="card-title" style="margin-bottom:12px">Лента активности</div><div id="act-feed"></div></div>
-              <div class="card"><div class="card-title" style="margin-bottom:4px">Активность</div><div class="mini-chart" id="mini-ch"></div></div>
+          </div>
+          <div id="home-stats"></div>
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-hdr">
+              <div class="card-title">📢 Объявления</div>
+              <button class="btn btn-o" style="padding:5px 11px;font-size:11px" onclick="go('announcements')">Все →</button>
+            </div>
+            <div id="home-anns"></div>
+          </div>
+          <div class="card">
+            <div class="card-hdr">
+              <div class="card-title">📅 Ближайшие мероприятия</div>
+              <button class="btn btn-o" style="padding:5px 11px;font-size:11px" onclick="go('events')">Все →</button>
+            </div>
+            <div id="home-events"></div>
+          </div>
+        </div>
+
+        <!-- DASHBOARD -->
+        <div class="page" id="page-dashboard">
+          <!-- Приветствие -->
+          <div id="dash-welcome" style="margin-bottom:20px;padding:22px 24px;background:linear-gradient(135deg,var(--surface2),var(--surface3));border:1px solid var(--border);border-radius:16px;position:relative;overflow:hidden">
+            <div style="position:absolute;top:-20px;right:-20px;font-size:100px;opacity:0.06;pointer-events:none">🌟</div>
+            <div id="dash-greeting" style="font-family:'Unbounded',sans-serif;font-size:18px;font-weight:700;margin-bottom:4px"></div>
+            <div id="dash-subgreeting" style="font-size:13px;color:var(--text2);margin-bottom:14px"></div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn btn-a" style="font-size:12px;padding:7px 14px" onclick="go('events')">📅 Мероприятия</button>
+              <button class="btn btn-o" style="font-size:12px;padding:7px 14px" onclick="go('pts-log')">⭐ Мои баллы</button>
+              <button class="btn btn-o" style="font-size:12px;padding:7px 14px" onclick="go('promotion')">⬆️ Повышение</button>
+            </div>
+          </div>
+          <!-- Статы -->
+          <div class="stats-row" id="dash-stats" style="margin-bottom:20px"></div>
+          <!-- Основная сетка -->
+          <div class="dash-grid">
+            <div class="dash-col-main">
+              <div class="card"><div class="card-hdr"><div class="card-title">📅 Ближайшие мероприятия</div><button class="btn btn-o" style="padding:5px 11px;font-size:11px" onclick="go('events')">Все →</button></div><div id="dash-events"></div></div>
+              <div class="card"><div class="card-hdr"><div class="card-title">⬆️ Прогресс повышения</div><button class="btn btn-o" style="padding:5px 11px;font-size:11px" onclick="go('promotion')">Детали →</button></div><div id="dash-prog"></div></div>
+            </div>
+            <div class="dash-col-side">
+              <div class="card" id="dash-ann-card"><div class="card-hdr"><div class="card-title">📢 Объявления</div><button class="btn btn-o" style="padding:5px 11px;font-size:11px" onclick="go('announcements')">Все →</button></div><div id="dash-ann"></div></div>
+              <div class="card"><div class="card-title" style="margin-bottom:12px">🕐 Лента активности</div><div id="act-feed"></div></div>
             </div>
           </div>
         </div>
@@ -411,7 +620,9 @@ select option{background:var(--surface2);color:var(--text)}
         </div>
 
         <!-- ANNOUNCEMENTS -->
-        <div class="page" id="page-announcements"><div id="ann-list"></div></div>
+        <div class="page" id="page-announcements">
+          <div id="ann-list"></div>
+        </div>
 
         <!-- PROFILE -->
         <div class="page" id="page-profile">
@@ -669,6 +880,33 @@ select option{background:var(--surface2);color:var(--text)}
   </div>
 </div>
 
+
+<div class="modal-overlay" id="m-add-ann">
+  <div class="modal" style="max-width:540px">
+    <button class="modal-close" onclick="cpm('m-add-ann')">✕</button>
+    <div class="modal-title">📢 Новое объявление</div>
+    <div class="fg"><label>Заголовок</label><input id="ann-title" placeholder="Название объявления"></div>
+    <div class="fg"><label>Текст</label><textarea id="ann-text" rows="4" placeholder="Текст объявления..."></textarea></div>
+    <div class="fg">
+      <label>Фото (необязательно)</label>
+      <div id="ann-img-zone" style="border:2px dashed var(--border);border-radius:10px;padding:16px;text-align:center;cursor:pointer;color:var(--text2);font-size:13px" onclick="document.getElementById('ann-img-inp').click()">
+        🖼️ Нажмите чтобы добавить фото
+      </div>
+      <input type="file" id="ann-img-inp" accept="image/*" style="display:none" onchange="handleAnnImg(this)">
+      <img id="ann-img-preview" style="display:none;width:100%;max-height:180px;object-fit:cover;border-radius:8px;margin-top:8px">
+      <button id="ann-img-clear" class="btn btn-o" style="display:none;margin-top:6px;font-size:11px;padding:4px 10px" onclick="clearAnnImg()">✕ Убрать фото</button>
+    </div>
+    <div class="fg" style="display:flex;align-items:center;gap:10px">
+      <div class="toggle" id="ann-pin-toggle" onclick="this.classList.toggle('on')"></div>
+      <span style="font-size:13px">📌 Закрепить объявление</span>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-g" onclick="cpm('m-add-ann')">Отмена</button>
+      <button class="btn btn-a" onclick="addAnn()">Опубликовать</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"><span id="t-txt"></span></div>
 <script>
 // ════════════════════════════════════════════════════════════
@@ -778,7 +1016,7 @@ const DB={
 
 let CU=null,_confEvId=null,_detVolId=null,_pendingCoverData=null,_examAnswers={},_editPermsId=null,_editPosId=null,_notifOpen=false;
 
-const PT={dashboard:'Дашборд',events:'Мероприятия',tasks:'Мои задачи',announcements:'Объявления',profile:'Профиль',progress:'Мой прогресс',promotion:'Повышение','pts-log':'История баллов',leaderboard:'Рейтинг',documents:'Документы','tg-settings':'Telegram','adm-vol':'Сотрудники','adm-ev':'Мероприятия','adm-tasks':'Задачи','adm-promo':'Повышения','adm-kpi':'KPI','adm-tests':'Конструктор тестов','adm-perms':'Права доступа','adm-rep':'Отчёты'};
+const PT={home:'Главная',dashboard:'Дашборд',events:'Мероприятия',tasks:'Мои задачи',announcements:'Объявления',profile:'Профиль',progress:'Мой прогресс',promotion:'Повышение','pts-log':'История баллов',leaderboard:'Рейтинг',documents:'Документы','tg-settings':'Telegram','adm-vol':'Сотрудники','adm-ev':'Мероприятия','adm-tasks':'Задачи','adm-promo':'Повышения','adm-kpi':'KPI','adm-tests':'Конструктор тестов','adm-perms':'Права доступа','adm-rep':'Отчёты'};
 
 // ════════════════════════════════════════════════════════════
 //  UTILS
@@ -882,13 +1120,37 @@ function doRegister(){
   const nu={id:DB.users.length+1,email,phone,pw,name,age:'',district:'',school:'',work:'',points:0,events:0,tasks_done:0,joined:new Date().toISOString().split('T')[0],avatar:name[0].toUpperCase(),avatarData:null,bio:'',warnings:[],rank:'candidate',positionId:'cand_pos',dept:'volunteers',perms:null,kpiMonth:0,kpiGoal:50,kpiArchive:[],pointsLog:[],notifications:[],tgChatId:'',tgEnabled:false,promoConditions:{toVolunteer:{onboarding:false,staffAcademy:false,events3:false,active:false,leaderApproval:false},toActivist:{staffAcademyFull:false,events10:false,organized3:false,examPassed:false,leaderApproval:false}},organizedEvents:[],promoRequest:null,examResult:null,examRetry:{canRetry:true,lastAttempt:null,adminApproved:false}};
   DB.users.push(nu);CU=nu;launchApp();
 }
+
+function showAuth(tab) {
+  document.getElementById('landing-screen').style.display = 'none';
+  document.getElementById('auth-screen').style.display = 'flex';
+  authTab(tab || 'login');
+}
+
+function rLandingAnns() {
+  const el = document.getElementById('landing-ann-list');
+  if (!el) return;
+  const anns = [...DB.announcements].sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)).slice(0,3);
+  if (!anns.length) { el.innerHTML = '<div style="font-size:12px;color:var(--text3);text-align:center;padding:16px">Объявлений пока нет</div>'; return; }
+  el.innerHTML = anns.map(a => `
+    <div class="landing-ann-item" onclick="showAuth('login')">
+      ${a.imageData ? `<img src="${a.imageData}" class="landing-ann-img" alt="">` : ''}
+      <div class="landing-ann-body">
+        ${a.pinned ? '<div class="landing-ann-pin">📌 Закреплено</div>' : ''}
+        <div class="landing-ann-title">${a.title}</div>
+        <div class="landing-ann-text">${a.text.slice(0,100)}${a.text.length>100?'...':''}</div>
+        <div class="landing-ann-date">${a.date}</div>
+      </div>
+    </div>`).join('');
+}
+
 function doLogout(){CU=null;localStorage.removeItem('session_uid');document.getElementById('app').style.display='none';document.getElementById('auth-screen').style.display='flex';toast('👋 До встречи!')}
 function launchApp(){
   document.getElementById('auth-screen').style.display='none';
   document.getElementById('app').style.display='flex';
   updSidebar();
   if(canAdmin(CU)){document.querySelectorAll('.adm-only').forEach(el=>el.style.display='');document.getElementById('doc-btn').style.display='inline-flex';}
-  fillSelects();DB.users.forEach(checkAutoPromo);updBadges();updNotifBadge();go('dashboard');
+  fillSelects();DB.users.forEach(checkAutoPromo);updBadges();updNotifBadge();go('home');
 }
 function updSidebar(){
   const ini=CU.name.split(' ').map(x=>x[0]).join('').slice(0,2);
@@ -915,7 +1177,7 @@ function go(id){
   const nav=document.querySelector(`.nav-item[onclick="go('${id}')"]`);if(nav)nav.classList.add('active');
   document.getElementById('pg-title').textContent=PT[id]||id;
   closeSb();
-  const renders={dashboard:renderDashboard,events:rEvents,tasks:rTasks,announcements:rAnn,profile:rProfile,progress:rProg,promotion:rPromotion,'pts-log':rPointsLog,leaderboard:rLb,documents:rDocs,'tg-settings':rTelegramSettings,'adm-vol':rAdmVol,'adm-ev':rAdmEv,'adm-tasks':rAdmTasks,'adm-promo':rAdmPromo,'adm-kpi':rKpiAdmin,'adm-tests':rTestConstructor,'adm-perms':rAdmPerms,'adm-rep':rAdmRep};
+  const renders={home:renderHome,dashboard:renderDashboard,events:rEvents,tasks:rTasks,announcements:rAnn,profile:rProfile,progress:rProg,promotion:rPromotion,'pts-log':rPointsLog,leaderboard:rLb,documents:rDocs,'tg-settings':rTelegramSettings,'adm-vol':rAdmVol,'adm-ev':rAdmEv,'adm-tasks':rAdmTasks,'adm-promo':rAdmPromo,'adm-kpi':rKpiAdmin,'adm-tests':rTestConstructor,'adm-perms':rAdmPerms,'adm-rep':rAdmRep};
   renders[id]?.();
 }
 function toggleSb(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('ovr').classList.toggle('show')}
@@ -933,8 +1195,78 @@ function clearEvCover(){_pendingCoverData=null;const p=document.getElementById('
 // ════════════════════════════════════════════════════════════
 //  PAGE RENDERS
 // ════════════════════════════════════════════════════════════
+function renderHome(){
+  const u = CU, rank = getRank(u);
+  // Hero
+  const greet = new Date().getHours() < 12 ? 'Доброе утро' : new Date().getHours() < 18 ? 'Добрый день' : 'Добрый вечер';
+  document.getElementById('home-emoji').textContent = rank.emoji;
+  document.getElementById('home-title').textContent = `${greet}, ${u.name.split(' ')[1]||u.name.split(' ')[0]}!`;
+  document.getElementById('home-sub').textContent = `${rank.name} · МДК «Мугунгхва»`;
+
+  // Статистика
+  const goal = u.kpiGoal||KPI_GOALS[u.rank]||100, kpi = u.kpiMonth||0, pct = Math.round(kpi/goal*100);
+  h('home-stats', `
+    <div class="home-stat" onclick="go('pts-log')">
+      <div class="home-stat-ico">⭐</div>
+      <div class="home-stat-val">${u.points}</div>
+      <div class="home-stat-lbl">Мои баллы</div>
+    </div>
+    <div class="home-stat" onclick="go('dashboard')">
+      <div class="home-stat-ico">📊</div>
+      <div class="home-stat-val">${pct}%</div>
+      <div class="home-stat-lbl">KPI месяца</div>
+    </div>
+    <div class="home-stat" onclick="go('events')">
+      <div class="home-stat-ico">📅</div>
+      <div class="home-stat-val">${u.events}</div>
+      <div class="home-stat-lbl">Мероприятий</div>
+    </div>
+    <div class="home-stat" onclick="go('promotion')">
+      <div class="home-stat-ico">⬆️</div>
+      <div class="home-stat-val">${u.tasks_done}</div>
+      <div class="home-stat-lbl">Задач сделано</div>
+    </div>
+  `);
+
+  // Объявления
+  const anns = [...DB.announcements].sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)).slice(0,4);
+  h('home-anns', anns.length ? anns.map(a => `
+    <div class="home-ann-card${a.pinned?' pinned':''}" onclick="go('announcements')">
+      ${a.imageData ? `<img src="${a.imageData}" class="home-ann-img">` : ''}
+      <div class="home-ann-body">
+        <div class="home-ann-title">${a.pinned?'📌 ':''}${a.title}</div>
+        <div class="home-ann-text">${a.text}</div>
+        <div class="home-ann-date">${a.date}</div>
+      </div>
+    </div>`).join('') : '<div style="color:var(--text3);font-size:13px;padding:8px">Объявлений пока нет</div>');
+
+  // Ближайшие мероприятия
+  const evs = DB.events.filter(e=>e.status==='open').slice(0,3);
+  h('home-events', evs.length ? evs.map(e => `
+    <div style="display:flex;align-items:center;gap:12px;padding:10px;background:var(--surface2);border-radius:10px;margin-bottom:8px;cursor:pointer" onclick="openEvDetail(${e.id})">
+      <div style="width:42px;height:42px;border-radius:9px;background:linear-gradient(135deg,var(--purple),var(--accent));display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;overflow:hidden;position:relative">
+        ${e.coverData?`<img src="${e.coverData}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:9px">`:e.emoji}
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:600;font-size:13px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${e.title}</div>
+        <div style="font-size:11px;color:var(--text2)">📍 ${e.location} · ${fdate(e.date)}</div>
+      </div>
+      <div style="font-size:12px;color:var(--amber);font-weight:700;flex-shrink:0">+${e.points}б</div>
+    </div>`).join('') : '<div style="color:var(--text3);font-size:13px;padding:8px">Нет открытых мероприятий</div>');
+}
+
 function renderDashboard(){
   const u=CU,rank=getRank(u);
+  // Приветствие
+  const _hr=new Date().getHours();
+  const _greet=_hr<6?'Доброй ночи':_hr<12?'Доброе утро':_hr<18?'Добрый день':'Добрый вечер';
+  const _gwel=document.getElementById('dash-greeting');
+  const _gsub=document.getElementById('dash-subgreeting');
+  if(_gwel)_gwel.textContent=`${_greet}, ${u.name.split(' ')[1]||u.name.split(' ')[0]}! ${rank.emoji}`;
+  if(_gsub)_gsub.textContent=`${rank.name} · ${u.points} баллов · KPI: ${Math.round((u.kpiMonth||0)/(u.kpiGoal||100)*100)}%`;
+  // Объявления на дашборде (последние 3)
+  const _dAnn=document.getElementById('dash-ann');
+  if(_dAnn){const _anns=[...DB.announcements].sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)).slice(0,3);_dAnn.innerHTML=_anns.length?_anns.map(a=>`<div style="padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer" onclick="go('announcements')"><div style="font-weight:600;font-size:12.5px;margin-bottom:3px">${a.pinned?'📌 ':''}${a.title}</div><div style="font-size:11.5px;color:var(--text2);line-height:1.5">${a.text.slice(0,80)}${a.text.length>80?'...':''}</div><div style="font-size:10px;color:var(--text3);margin-top:3px">${a.date}</div></div>`).join(''):'<div style="font-size:12px;color:var(--text3);padding:8px 0">Объявлений нет</div>';}
   // Stats
   if(canAdmin(u)){
     h('dash-stats',`<div class="stat-card"><div class="stat-ico">👥</div><div class="stat-val sv-g">${DB.users.length}</div><div class="stat-lbl">Участников</div></div><div class="stat-card"><div class="stat-ico">📅</div><div class="stat-val sv-p">${DB.events.filter(e=>e.status==='open').length}</div><div class="stat-lbl">Открытых событий</div></div><div class="stat-card"><div class="stat-ico">⏳</div><div class="stat-val sv-a">${DB.tasks.filter(t=>!t.done).length}</div><div class="stat-lbl">Задач в работе</div></div><div class="stat-card"><div class="stat-ico">⬆️</div><div class="stat-val sv-r">${pendingPromos()}</div><div class="stat-lbl">Запросов</div></div>`);
@@ -1026,7 +1358,32 @@ function rTasks(){
 }
 function doTask(id){const t=DB.tasks.find(x=>x.id===id);if(!t)return;t.done=true;addPointsWithLog(CU.id,t.points,`Задача: ${t.title}`,'Система');CU.tasks_done++;toast(`⭐ +${t.points} баллов`);rTasks();}
 
-function rAnn(){h('ann-list',DB.announcements.map(a=>`<div class="ann-item${a.pinned?' pinned':''}"><div class="ann-hdr"><div class="ann-title">${a.title}${a.pinned?` <span style="font-size:10px;color:var(--amber)">📌</span>`:''}</div><div class="ann-date">${a.date}</div></div><div class="ann-txt">${a.text}</div></div>`).join(''))}
+function rAnn(){
+  const isAdm = hasPerm(CU,'manageEvents')||hasPerm(CU,'fullAdmin');
+  const sorted = [...DB.announcements].sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0));
+  const addBtn = isAdm?`<div style="margin-bottom:16px;display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn btn-a" onclick="opm('m-add-ann')">📢 + Новое объявление</button>
+  </div>`:'';
+  h('ann-list', addBtn + (sorted.length ? sorted.map(a=>`
+    <div class="ann-card${a.pinned?' pinned':''}">
+      ${a.imageData?`<img src="${a.imageData}" class="ann-full-img" alt="">`:''}
+      <div class="ann-card-body">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px">
+          <div>
+            ${a.pinned?`<div class="ann-notify-badge">📌 Закреплено</div>`:''}
+            <div style="font-weight:700;font-size:15px;line-height:1.3">${a.title}</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:3px">${a.date}</div>
+          </div>
+          ${isAdm?`<div style="display:flex;gap:4px;flex-shrink:0">
+            <button onclick="pinAnn(${a.id})" class="btn btn-o" style="padding:4px 8px;font-size:11px">${a.pinned?'📌 Открепить':'📍 Закрепить'}</button>
+            <button onclick="delAnn(${a.id})" class="btn btn-d" style="padding:4px 8px;font-size:11px">🗑</button>
+          </div>`:''}
+        </div>
+        <div style="font-size:13.5px;color:var(--text2);line-height:1.7;white-space:pre-wrap">${a.text}</div>
+      </div>
+    </div>`).join('') : '<div class="empty"><div class="ei">📢</div><p>Объявлений пока нет</p></div>'));
+  rLandingAnns();
+}
 
 function rProfile(){
   const u=CU,ini=u.name.split(' ').map(x=>x[0]).join('').slice(0,2);
@@ -1112,6 +1469,75 @@ function rPromotion(){
 function toggleCond(uid,stage,key){const u=DB.users.find(x=>x.id===uid);if(!u)return;u.promoConditions[stage][key]=!u.promoConditions[stage][key];syncToServer();rPromotion();toast('✅ Обновлено');updBadges();}
 function sendPromoRequest(){if(CU.promoRequest){toast('⏳ Запрос уже отправлен');return;}const now=new Date();CU.promoRequest={status:'pending',date:`${now.getDate()}.${String(now.getMonth()+1).padStart(2,'0')}.${now.getFullYear()}`,fromRank:CU.rank};syncToServer();toast('✅ Запрос отправлен руководству!');rPromotion();updBadges();}
 
+let _pendingAnnImg = null;
+function handleAnnImg(inp){
+  const file=inp.files[0];if(!file)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    _pendingAnnImg=e.target.result;
+    const prev=document.getElementById('ann-img-preview');
+    prev.src=_pendingAnnImg;prev.style.display='block';
+    document.getElementById('ann-img-zone').style.display='none';
+    document.getElementById('ann-img-clear').style.display='inline-flex';
+  };
+  r.readAsDataURL(file);
+}
+function clearAnnImg(){
+  _pendingAnnImg=null;
+  document.getElementById('ann-img-preview').style.display='none';
+  document.getElementById('ann-img-preview').src='';
+  document.getElementById('ann-img-zone').style.display='';
+  document.getElementById('ann-img-clear').style.display='none';
+  document.getElementById('ann-img-inp').value='';
+}
+
+function editAnn(id){
+  const a = DB.announcements.find(x => x.id === id); if(!a) return;
+  document.getElementById('ann-title').value = a.title;
+  document.getElementById('ann-text').value = a.text;
+  if(a.pinned) document.getElementById('ann-pin-toggle')?.classList.add('on');
+  if(a.imageData){
+    _pendingAnnImg = a.imageData;
+    const prev = document.getElementById('ann-img-preview');
+    prev.src = a.imageData; prev.style.display = 'block';
+    document.getElementById('ann-img-zone').style.display = 'none';
+    document.getElementById('ann-img-clear').style.display = 'inline-flex';
+  }
+  // Удаляем старое и откроем модалку для редактирования
+  DB.announcements = DB.announcements.filter(x => x.id !== id);
+  opm('m-add-ann');
+}
+function addAnn(){
+  const title=document.getElementById('ann-title')?.value.trim();
+  const text=document.getElementById('ann-text')?.value.trim();
+  if(!title||!text){toast('⚠️ Заполните заголовок и текст');return;}
+  const pinned=document.getElementById('ann-pin-toggle')?.classList.contains('on')||false;
+  const now=new Date();
+  const dateStr=`${now.getDate()} ${['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'][now.getMonth()]} ${now.getFullYear()}`;
+  const newAnn = {id:Date.now(),title,text,date:dateStr,pinned,imageData:_pendingAnnImg||null};
+  DB.announcements.unshift(newAnn);
+  // Оповещаем всех пользователей
+  DB.users.forEach(u => { addNotif(u.id, `📢 Новое объявление: ${title}`); });
+  syncToServer();
+  cpm('m-add-ann');
+  clearAnnImg();
+  document.getElementById('ann-title').value='';
+  document.getElementById('ann-text').value='';
+  document.getElementById('ann-pin-toggle')?.classList.remove('on');
+  toast('✅ Объявление опубликовано');
+  rAnn();
+  renderDashboard();
+}
+function delAnn(id){
+  if(!confirm('Удалить объявление?'))return;
+  DB.announcements=DB.announcements.filter(a=>a.id!==id);
+  syncToServer();toast('🗑️ Удалено');rAnn();renderDashboard();
+}
+function pinAnn(id){
+  const a=DB.announcements.find(x=>x.id===id);if(!a)return;
+  a.pinned=!a.pinned;syncToServer();rAnn();renderDashboard();
+  toast(a.pinned?'📌 Закреплено':'Откреплено');
+}
 function rPointsLog(){
   const log=CU?.pointsLog||[];
   h('pts-log-body',log.length?`<div class="table-wrap"><table><thead><tr><th>Дата</th><th>Кто начислил</th><th>Основание</th><th>Баллы</th></tr></thead><tbody>${log.map(l=>`<tr><td style="font-size:11px;color:var(--text2)">${l.date}</td><td style="font-size:12px">${l.by}</td><td style="font-size:12.5px">${l.reason}</td><td><b style="color:${l.type==='plus'?'var(--accent)':'var(--danger)'}">${l.type==='plus'?'+':l.type==='minus'?'-':''}${l.amount}</b></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty"><div class="ei">📃</div><p>История пуста</p></div>');
@@ -1573,6 +1999,30 @@ function doRegister() {
   launchApp();
 }
 
+
+function showAuth(tab) {
+  document.getElementById('landing-screen').style.display = 'none';
+  document.getElementById('auth-screen').style.display = 'flex';
+  authTab(tab || 'login');
+}
+
+function rLandingAnns() {
+  const el = document.getElementById('landing-ann-list');
+  if (!el) return;
+  const anns = [...DB.announcements].sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)).slice(0,3);
+  if (!anns.length) { el.innerHTML = '<div style="font-size:12px;color:var(--text3);text-align:center;padding:16px">Объявлений пока нет</div>'; return; }
+  el.innerHTML = anns.map(a => `
+    <div class="landing-ann-item" onclick="showAuth('login')">
+      ${a.imageData ? `<img src="${a.imageData}" class="landing-ann-img" alt="">` : ''}
+      <div class="landing-ann-body">
+        ${a.pinned ? '<div class="landing-ann-pin">📌 Закреплено</div>' : ''}
+        <div class="landing-ann-title">${a.title}</div>
+        <div class="landing-ann-text">${a.text.slice(0,100)}${a.text.length>100?'...':''}</div>
+        <div class="landing-ann-date">${a.date}</div>
+      </div>
+    </div>`).join('');
+}
+
 function doLogout(){
   CU = null;
   localStorage.removeItem(LS_SES);
@@ -1621,6 +2071,8 @@ window.doWarn = function(){ _origDoWarn(); syncToServer(); };
 
 // Старт
 window.addEventListener('load', async () => {
+  // Показываем landing по умолчанию
+  document.getElementById('landing-screen').style.display = 'flex';
   const ok = initFirebase();
   if (ok) {
     const loaded = await loadDBFromFirestore();
@@ -1636,6 +2088,7 @@ window.addEventListener('load', async () => {
     const savedUser = DB.users.find(u => String(u.id) === savedUid);
     if (savedUser) {
       CU = savedUser;
+      document.getElementById('landing-screen').style.display = 'none';
       launchApp();
       return;
     } else {
@@ -1643,6 +2096,15 @@ window.addEventListener('load', async () => {
     }
   }
 });
+
+window.showAuth = showAuth;
+window.rLandingAnns = rLandingAnns;
+window.clearAnnImg = clearAnnImg;
+window.handleAnnImg = handleAnnImg;
+window.pinAnn = pinAnn;
+window.delAnn = delAnn;
+window.addAnn = addAnn;
+window.saveProfile = saveProfile;
 
 </script>
 </body>
