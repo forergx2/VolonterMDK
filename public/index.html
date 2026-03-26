@@ -1,32 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<script>
-// ── Заглушки — работают сразу, перезапишутся после загрузки основного скрипта ──
-function _callWhenReady(fn, args) {
-  if (typeof window[fn] === 'function' && window[fn]._isStub !== true) {
-    window[fn].apply(null, args);
-  } else {
-    document.addEventListener('scriptsReady', function() {
-      if (typeof window[fn] === 'function') window[fn].apply(null, args);
-    }, {once: true});
-  }
-}
-function showAuth(tab) {
-  document.getElementById('landing-screen').style.display = 'none';
-  document.getElementById('auth-screen').style.display = 'flex';
-  _callWhenReady('authTab', [tab || 'login']);
-}
-function doLogin() { _callWhenReady('_doLoginReal', []); }
-function doRegister() { _callWhenReady('_doRegisterReal', []); }
-function authTab(t) { _callWhenReady('_authTabReal', [t]); }
-function filterAch(f, btn) { _callWhenReady('_filterAchReal', [f, btn]); }
-function go(id) { _callWhenReady('_goReal', [id]); }
-function toggleSb() { _callWhenReady('_toggleSbReal', []); }
-function toggleNotifs() { _callWhenReady('_toggleNotifsReal', []); }
-doLogin._isStub = doRegister._isStub = authTab._isStub = true;
-filterAch._isStub = go._isStub = toggleSb._isStub = true;
-</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>ВолонтёрМДК | МДК Мугунгхва</title>
@@ -467,26 +441,26 @@ select option{background:var(--surface2);color:var(--text)}
     <div style="font-size:11px;color:var(--text3);margin-bottom:6px;font-family:'Golos Text'">МДК «Мугунгхва» · Актобе</div>
     <div class="landing-sub">Платформа для волонтёров — мероприятия, баллы, повышения и многое другое</div>
     <div class="landing-btns">
-      <button class="btn btn-a" style="padding:12px 28px;font-size:13px" onclick="showAuth('login')">🚀 Войти</button>
-      <button class="btn btn-o" style="padding:12px 28px;font-size:13px" onclick="showAuth('reg')">✨ Регистрация</button>
+      <button class="btn btn-a" style="padding:12px 28px;font-size:13px" data-action="showAuth-login">🚀 Войти</button>
+      <button class="btn btn-o" style="padding:12px 28px;font-size:13px" data-action="showAuth-reg">✨ Регистрация</button>
     </div>
     <div class="landing-cards">
-      <div class="landing-card" onclick="showAuth('login')">
+      <div class="landing-card" data-action="showAuth-login">
         <div class="landing-card-ico">📅</div>
         <div class="landing-card-title">Мероприятия</div>
         <div class="landing-card-sub">Записывайся и получай баллы</div>
       </div>
-      <div class="landing-card" onclick="showAuth('login')">
+      <div class="landing-card" data-action="showAuth-login">
         <div class="landing-card-ico">⭐</div>
         <div class="landing-card-title">Система баллов</div>
         <div class="landing-card-sub">Отслеживай прогресс и KPI</div>
       </div>
-      <div class="landing-card" onclick="showAuth('login')">
+      <div class="landing-card" data-action="showAuth-login">
         <div class="landing-card-ico">⬆️</div>
         <div class="landing-card-title">Повышение</div>
         <div class="landing-card-sub">Кандидат → Волонтёр → Активист</div>
       </div>
-      <div class="landing-card" onclick="showAuth('login')">
+      <div class="landing-card" data-action="showAuth-login">
         <div class="landing-card-ico">👥</div>
         <div class="landing-card-title">Команда</div>
         <div class="landing-card-sub">Единая платформа МДК</div>
@@ -503,13 +477,13 @@ select option{background:var(--surface2);color:var(--text)}
   <div class="auth-card">
     <div class="auth-logo">Волонтёр<span>МДК</span><small>МДК &quot;Мугунгхва&quot;</small></div>
     <div class="auth-tabs">
-      <div class="auth-tab active" onclick="authTab('login')">Войти</div>
-      <div class="auth-tab" onclick="authTab('reg')">Регистрация</div>
+      <div class="auth-tab active" data-action="authTab-login">Войти</div>
+      <div class="auth-tab" data-action="authTab-reg">Регистрация</div>
     </div>
     <div id="login-form">
       <div class="fg"><label>Email или телефон</label><input id="li-id" placeholder="+7 777 000 00 00"></div>
       <div class="fg"><label>Пароль</label><input id="li-pw" type="password" placeholder="••••••••"></div>
-      <button class="btn-primary" onclick="doLogin()">Войти</button>
+      <button class="btn-primary" id="btn-login" data-action="doLogin">Войти</button>
 
     </div>
     <div id="reg-form">
@@ -517,7 +491,7 @@ select option{background:var(--surface2);color:var(--text)}
       <div class="fg"><label>Email</label><input id="rg-email" type="email" placeholder="email@mail.ru"></div>
       <div class="fg"><label>Телефон</label><input id="rg-phone" type="tel" placeholder="+7 777 000 00 00"></div>
       <div class="fg"><label>Пароль</label><input id="rg-pw" type="password" placeholder="Минимум 6 символов"></div>
-      <button class="btn-primary" onclick="doRegister()">Зарегистрироваться</button>
+      <button class="btn-primary" id="btn-register" data-action="doRegister">Зарегистрироваться</button>
     </div>
   </div>
 </div>
@@ -1346,7 +1320,7 @@ function rLandingAnns() {
   const anns = [...DB.announcements].sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)).slice(0,3);
   if (!anns.length) { el.innerHTML = '<div style="font-size:12px;color:var(--text3);text-align:center;padding:16px">Объявлений пока нет</div>'; return; }
   el.innerHTML = anns.map(a => `
-    <div class="landing-ann-item" onclick="showAuth('login')">
+    <div class="landing-ann-item" data-action="showAuth-login">
       ${a.imageData ? `<img src="${a.imageData}" class="landing-ann-img" alt="">` : ''}
       <div class="landing-ann-body">
         ${a.pinned ? '<div class="landing-ann-pin">📌 Закреплено</div>' : ''}
@@ -2283,7 +2257,7 @@ function rLandingAnns() {
   const anns = [...DB.announcements].sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)).slice(0,3);
   if (!anns.length) { el.innerHTML = '<div style="font-size:12px;color:var(--text3);text-align:center;padding:16px">Объявлений пока нет</div>'; return; }
   el.innerHTML = anns.map(a => `
-    <div class="landing-ann-item" onclick="showAuth('login')">
+    <div class="landing-ann-item" data-action="showAuth-login">
       ${a.imageData ? `<img src="${a.imageData}" class="landing-ann-img" alt="">` : ''}
       <div class="landing-ann-body">
         ${a.pinned ? '<div class="landing-ann-pin">📌 Закреплено</div>' : ''}
@@ -2353,25 +2327,18 @@ document.addEventListener('click', function(e) {
   if (achf !== null) { filterAch(achf, e.target); }
 });
 
-// ── Назначаем реальные функции и стреляем событие готовности ──
-window._doLoginReal = doLogin;
-window._doRegisterReal = doRegister;
-window._authTabReal = authTab;
-window._filterAchReal = filterAch;
-window._goReal = go;
-window._toggleSbReal = toggleSb;
-window._toggleNotifsReal = toggleNotifs;
-// Перезаписываем заглушки реальными функциями
-window.doLogin = doLogin;
-window.doRegister = doRegister;
-window.authTab = authTab;
-window.filterAch = filterAch;
-window.go = go;
-window.toggleSb = toggleSb;
-window.toggleNotifs = toggleNotifs;
-window.showAuth = showAuth;
-// Сообщаем что скрипт готов
-document.dispatchEvent(new Event('scriptsReady'));
+// ── Обработчик кликов для auth кнопок ──
+document.addEventListener('click', function(e) {
+  var el = e.target.closest('[data-action]');
+  if (!el) return;
+  var action = el.getAttribute('data-action');
+  if (action === 'showAuth-login') { showAuth('login'); }
+  else if (action === 'showAuth-reg') { showAuth('reg'); }
+  else if (action === 'authTab-login') { authTab('login'); }
+  else if (action === 'authTab-reg') { authTab('reg'); }
+  else if (action === 'doLogin') { doLogin(); }
+  else if (action === 'doRegister') { doRegister(); }
+});
 
 // ── Window exports для onclick в HTML ──
 window.filterAch = filterAch;
