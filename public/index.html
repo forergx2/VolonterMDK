@@ -414,9 +414,24 @@ select option{background:var(--surface2);color:var(--text)}
 .ann-card-body{padding:16px}
 .ann-notify-badge{display:inline-flex;align-items:center;gap:4px;background:var(--accent-dim);color:var(--accent);font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-bottom:8px;border:1px solid rgba(0,212,170,.25)}
 
+
+/* ── Ачивки ── */
+.ach-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.ach-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 14px;text-align:center;transition:all .2s;position:relative;overflow:hidden}
+.ach-card.earned{border-color:rgba(0,212,170,.4);background:linear-gradient(135deg,rgba(0,212,170,.06),var(--surface))}
+.ach-card.locked{opacity:.45;filter:grayscale(.6)}
+.ach-card:hover{transform:translateY(-2px)}
+.ach-ico{font-size:36px;margin-bottom:8px;display:block}
+.ach-name{font-weight:700;font-size:12px;margin-bottom:4px}
+.ach-cond{font-size:10px;color:var(--text2);line-height:1.4;margin-bottom:6px}
+.ach-xp{font-size:11px;color:var(--amber);font-weight:700}
+.ach-type-badge{position:absolute;top:8px;right:8px;font-size:8px;font-weight:700;padding:2px 6px;border-radius:8px;text-transform:uppercase}
+.ach-auto{background:var(--accent-dim);color:var(--accent);border:1px solid rgba(0,212,170,.2)}
+.ach-manual{background:var(--purple-dim);color:#a78bfa;border:1px solid rgba(124,58,237,.2)}
+.ach-earned-stamp{position:absolute;bottom:8px;right:8px;font-size:9px;color:var(--accent);font-weight:700}
+.ach-nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.ach-nav button{font-size:11px;padding:5px 12px}
 </style>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 <!-- AUTH -->
@@ -512,6 +527,7 @@ select option{background:var(--surface2);color:var(--text)}
         <div class="nav-item" onclick="go('progress')"><span class="ico">🚀</span>Мой прогресс</div>
         <div class="nav-item" onclick="go('promotion')"><span class="ico">⬆️</span>Повышение<span class="nb rd" id="nb-promo" style="display:none">!</span></div>
         <div class="nav-item" onclick="go('pts-log')"><span class="ico">📋</span>История баллов</div>
+        <div class="nav-item" onclick="go('achievements')"><span class="ico">🏆</span>Ачивки</div>
         <div class="nav-item" onclick="go('leaderboard')"><span class="ico">🏆</span>Рейтинг</div>
         <div class="nav-item" onclick="go('documents')"><span class="ico">📁</span>Документы</div>
         <div class="nav-item" onclick="go('tg-settings')"><span class="ico">📱</span>Telegram</div>
@@ -622,6 +638,18 @@ select option{background:var(--surface2);color:var(--text)}
         <!-- ANNOUNCEMENTS -->
         <div class="page" id="page-announcements">
           <div id="ann-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:16px;align-items:start"></div>
+        </div>
+
+        <!-- ACHIEVEMENTS -->
+        <div class="page" id="page-achievements">
+          <div class="ach-nav">
+            <button class="btn btn-o active-filter" data-achf="all">Все</button>
+            <button class="btn btn-o" data-achf="earned">✅ Получены</button>
+            <button class="btn btn-o" data-achf="locked">🔒 Не получены</button>
+            <button class="btn btn-o" data-achf="auto">⚡ Авто</button>
+            <button class="btn btn-o" data-achf="manual">🎖️ Вручную</button>
+          </div>
+          <div class="ach-grid" id="ach-grid"></div>
         </div>
 
         <!-- PROFILE -->
@@ -772,6 +800,20 @@ select option{background:var(--surface2);color:var(--text)}
       <img id="ev-cover-preview" class="upload-prev" style="display:none">
       <div id="ev-cover-clear" style="display:none;margin-top:6px"><button class="btn btn-g" style="font-size:12px;padding:5px 10px" onclick="clearEvCover()">✕ Удалить</button></div>
     </div>
+    <div class="fg" style="background:var(--purple-dim);border:1px solid rgba(124,58,237,.2);border-radius:10px;padding:12px">
+      <div style="font-size:11px;font-weight:700;color:#a78bfa;margin-bottom:8px">🏆 Ачивка за мероприятие (необязательно)</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <div class="toggle" id="ev-ach-toggle" onclick="this.classList.toggle('on');document.getElementById('ev-ach-form').style.display=this.classList.contains('on')?'block':'none'"></div>
+        <span style="font-size:12px">Создать уникальную ачивку</span>
+      </div>
+      <div id="ev-ach-form" style="display:none">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div class="fg" style="margin-bottom:8px"><label>Иконка</label><input id="ev-ach-ico" placeholder="🎯" maxlength="2" value="🎯"></div>
+          <div class="fg" style="margin-bottom:8px"><label>XP баллы</label><input id="ev-ach-xp" type="number" value="300"></div>
+        </div>
+        <div class="fg" style="margin-bottom:0"><label>Название ачивки</label><input id="ev-ach-name" placeholder="Участник субботника"></div>
+      </div>
+    </div>
     <div class="modal-actions"><button class="btn btn-g" onclick="cpm('m-add-ev')">Отмена</button><button class="btn btn-a" onclick="addEv()">Создать</button></div>
   </div>
 </div>
@@ -805,6 +847,7 @@ select option{background:var(--surface2);color:var(--text)}
     <div class="modal-title" id="m-vol-nm">Профиль</div>
     <div id="m-vol-body"></div>
     <div id="rank-change-block" style="display:none"></div>
+    <div id="ach-block-vol"></div>
     <div class="pts-box">
       <div class="pts-box-title">⭐ Управление баллами</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px">
@@ -910,6 +953,10 @@ select option{background:var(--surface2);color:var(--text)}
 
 <div id="toast"><span id="t-txt"></span></div>
 <script>
+// ── Форварды для onclick (будут переназначены после определения функций) ──
+// Используем proxy чтобы onclick работал до полной загрузки скрипта
+// Будут назначены после определения:
+
 // ════════════════════════════════════════════════════════════
 //  CONSTANTS & CONFIG
 // ════════════════════════════════════════════════════════════
@@ -1017,7 +1064,7 @@ const DB={
 
 let CU=null,_confEvId=null,_detVolId=null,_pendingCoverData=null,_examAnswers={},_editPermsId=null,_editPosId=null,_notifOpen=false;
 
-const PT={home:'Главная',dashboard:'Дашборд',events:'Мероприятия',tasks:'Мои задачи',announcements:'Объявления',profile:'Профиль',progress:'Мой прогресс',promotion:'Повышение','pts-log':'История баллов',leaderboard:'Рейтинг',documents:'Документы','tg-settings':'Telegram','adm-vol':'Сотрудники','adm-ev':'Мероприятия','adm-tasks':'Задачи','adm-promo':'Повышения','adm-kpi':'KPI','adm-tests':'Конструктор тестов','adm-perms':'Права доступа','adm-rep':'Отчёты'};
+const PT={home:'Главная',achievements:'Мои ачивки',dashboard:'Дашборд',events:'Мероприятия',tasks:'Мои задачи',announcements:'Объявления',profile:'Профиль',progress:'Мой прогресс',promotion:'Повышение','pts-log':'История баллов',leaderboard:'Рейтинг',documents:'Документы','tg-settings':'Telegram','adm-vol':'Сотрудники','adm-ev':'Мероприятия','adm-tasks':'Задачи','adm-promo':'Повышения','adm-kpi':'KPI','adm-tests':'Конструктор тестов','adm-perms':'Права доступа','adm-rep':'Отчёты'};
 
 // ════════════════════════════════════════════════════════════
 //  UTILS
@@ -1178,7 +1225,7 @@ function go(id){
   const nav=document.querySelector(`.nav-item[onclick="go('${id}')"]`);if(nav)nav.classList.add('active');
   document.getElementById('pg-title').textContent=PT[id]||id;
   closeSb();
-  const renders={home:renderHome,dashboard:renderDashboard,events:rEvents,tasks:rTasks,announcements:rAnn,profile:rProfile,progress:rProg,promotion:rPromotion,'pts-log':rPointsLog,leaderboard:rLb,documents:rDocs,'tg-settings':rTelegramSettings,'adm-vol':rAdmVol,'adm-ev':rAdmEv,'adm-tasks':rAdmTasks,'adm-promo':rAdmPromo,'adm-kpi':rKpiAdmin,'adm-tests':rTestConstructor,'adm-perms':rAdmPerms,'adm-rep':rAdmRep};
+  const renders={home:renderHome,achievements:rAchievements,dashboard:renderDashboard,events:rEvents,tasks:rTasks,announcements:rAnn,profile:rProfile,progress:rProg,promotion:rPromotion,'pts-log':rPointsLog,leaderboard:rLb,documents:rDocs,'tg-settings':rTelegramSettings,'adm-vol':rAdmVol,'adm-ev':rAdmEv,'adm-tasks':rAdmTasks,'adm-promo':rAdmPromo,'adm-kpi':rKpiAdmin,'adm-tests':rTestConstructor,'adm-perms':rAdmPerms,'adm-rep':rAdmRep};
   renders[id]?.();
 }
 function toggleSb(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('ovr').classList.toggle('show')}
@@ -1634,6 +1681,10 @@ function showVol(id){
     rankBlock.style.display = 'none';
   }
 
+  // Рендерим ачивки
+  const achBlock = document.getElementById('ach-block-vol');
+  if (achBlock) achBlock.innerHTML = renderVolAchs(id);
+
   const pi=document.getElementById('pts-inp'),pr=document.getElementById('pts-reason'),wr=document.getElementById('warn-reason');
   if(pi)pi.value='';if(pr)pr.value='';if(wr)wr.value='';
   const wl=document.getElementById('warn-list-modal');
@@ -1852,7 +1903,8 @@ function rAdmEv(){
 }
 function editEvCover(evId){const e=DB.events.find(x=>x.id===evId);if(!e)return;const tmp=document.createElement('input');tmp.type='file';tmp.accept='image/*';tmp.onchange=function(){const file=tmp.files[0];if(!file)return;const r=new FileReader();r.onload=ev=>{e.coverData=ev.target.result;rAdmEv();toast('🖼️ Обновлена');};r.readAsDataURL(file);};tmp.click();}
 function openConf(evId){const e=DB.events.find(x=>x.id===evId);if(!e)return;_confEvId=evId;document.getElementById('m-conf-title').textContent=`Участники: ${e.title}`;h('m-conf-list',e.registered.length?e.registered.map(uid=>{const u=DB.users.find(x=>x.id===uid)||{name:'?',avatar:'?'};const iC=e.confirmed.includes(uid);return`<div class="conf-row"><div style="display:flex;align-items:center;gap:8px"><div class="mini-av">${avImg(u)}${u.avatarData?'':u.avatar}</div><div style="font-size:12.5px;font-weight:500">${u.name.split(' ').slice(0,2).join(' ')}</div></div><div>${iC?`<span class="tag tag-cf" style="font-size:10px">✓ Подтверждено</span>`:`<button class="btn btn-a" style="padding:4px 9px;font-size:11px" onclick="confOne(${evId},${uid})">Подтвердить</button>`}</div></div>`;}).join(''):'<div style="font-size:13px;color:var(--text2);padding:9px 0">Никто не записался</div>');opm('m-confirm');}
-function confOne(evId,uid){const e=DB.events.find(x=>x.id===evId);if(!e||e.confirmed.includes(uid))return;e.confirmed.push(uid);const u=DB.users.find(x=>x.id===uid);if(u){addPointsWithLog(uid,e.points,`Участие в «${e.title}»`,CU?.name.split(' ').slice(0,2).join(' '));checkAutoPromo(u);}toast(`✅ Подтверждено — начислено ${e.points} баллов`);openConf(evId);rAdmEv();}
+function confOne(evId,uid){const e=DB.events.find(x=>x.id===evId);if(!e||e.confirmed.includes(uid))return;e.confirmed.push(uid);const u=DB.users.find(x=>x.id===uid);if(u){addPointsWithLog(uid,e.points,`Участие в «${e.title}»`,CU?.name.split(' ').slice(0,2).join(' '));checkAutoPromo(u);checkAutoAchs(u);// Выдаём ачивку за мероприятие если есть
+if(e.achievement&&!hasAch(u,'EVT-'+e.id)){if(!u.achievements)u.achievements=[];u.achievements.push({id:'EVT-'+e.id,earnedAt:new Date().toLocaleDateString('ru')});u.points=(u.points||0)+e.achievement.xp;addNotif(uid,`🏆 Ачивка: ${e.achievement.ico} ${e.achievement.name} (+${e.achievement.xp} XP)!`);}}toast(`✅ Подтверждено — начислено ${e.points} баллов`);openConf(evId);rAdmEv();}
 function confirmAll(){const e=DB.events.find(x=>x.id===_confEvId);if(!e)return;const unc=e.registered.filter(id=>!e.confirmed.includes(id));unc.forEach(uid=>{e.confirmed.push(uid);const u=DB.users.find(x=>x.id===uid);if(u){addPointsWithLog(uid,e.points,`Участие в «${e.title}»`,CU?.name.split(' ').slice(0,2).join(' '));checkAutoPromo(u);}});toast(`✅ Подтверждено ${unc.length} участников`);openConf(_confEvId);rAdmEv();}
 function delEv(id){if(!confirm('Удалить мероприятие?'))return;DB.events.splice(DB.events.findIndex(e=>e.id===id),1);toast('🗑️ Удалено');rAdmEv();}
 function rAdmTasks(){h('adm-tasks-tbl',DB.tasks.map(t=>{const u=DB.users.find(x=>x.id===t.assignee);return`<tr><td>${t.title}</td><td>${u?u.name.split(' ').slice(0,2).join(' '):'—'}</td><td><span style="color:var(--amber);font-weight:600">+${t.points}</span></td><td>${fdate(t.due)}</td><td>${t.done?'<span style="color:var(--accent)">✓</span>':'<span style="color:var(--amber)">⏳</span>'}</td><td>${!t.done?`<button class="btn btn-a" style="padding:4px 9px;font-size:11px" onclick="admDoneTask(${t.id})">Подтвердить</button>`:''}</td></tr>`;}).join(''));}
@@ -1867,7 +1919,14 @@ function xrep(nm){toast(`📥 "${nm}" формируется...`);setTimeout(()=
 function addEv(){
   const t=v('ev-title'),d=v('ev-date');if(!t||!d){toast('⚠️ Заполните название и дату');return;}
   const orgId=parseInt(v('ev-org'))||null;
-  const newEv={id:DB.events.length+1,title:t,date:d,location:v('ev-loc'),points:parseInt(v('ev-pts'))||60,max:parseInt(v('ev-max'))||30,registered:[],confirmed:[],emoji:'🎯',coverData:_pendingCoverData||null,organizerId:orgId,desc:v('ev-desc'),status:'open',comments:[]};
+  // Ачивка за мероприятие
+  const achOn = document.getElementById('ev-ach-toggle')?.classList.contains('on');
+  const achData = achOn ? {
+    name: v('ev-ach-name') || t,
+    ico:  document.getElementById('ev-ach-ico')?.value || '🎯',
+    xp:   parseInt(document.getElementById('ev-ach-xp')?.value) || 300
+  } : null;
+  const newEv={id:DB.events.length+1,title:t,date:d,location:v('ev-loc'),points:parseInt(v('ev-pts'))||60,max:parseInt(v('ev-max'))||30,registered:[],confirmed:[],emoji:'🎯',coverData:_pendingCoverData||null,organizerId:orgId,desc:v('ev-desc'),status:'open',comments:[],achievement:achData};
   DB.events.push(newEv);
   if(orgId){const u=DB.users.find(x=>x.id===orgId);if(u){if(!u.organizedEvents)u.organizedEvents=[];u.organizedEvents.push(newEv.id);checkAutoPromo(u);}}
   toast(`✅ Создано: «${t}»`);clearEvCover();['ev-title','ev-date','ev-loc','ev-desc'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});cpm('m-add-ev');rAdmEv();updBadges();
@@ -2117,33 +2176,22 @@ const _origDoWarn = doWarn;
 window.doWarn = function(){ _origDoWarn(); syncToServer(); };
 
 // Старт
-window.addEventListener('load', async () => {
-  // Показываем landing по умолчанию
-  document.getElementById('landing-screen').style.display = 'flex';
-  const ok = initFirebase();
-  if (ok) {
-    const loaded = await loadDBFromFirestore();
-    if (!loaded) {
-      console.log('Firestore пуст — сохраняем демо-данные');
-      syncToServer();
-    }
-    subscribeFirestore();
-  }
-
-  const savedUid = localStorage.getItem(LS_SES);
-  if (savedUid) {
-    const savedUser = DB.users.find(u => String(u.id) === savedUid);
-    if (savedUser) {
-      CU = savedUser;
-      document.getElementById('landing-screen').style.display = 'none';
-      launchApp();
-      return;
-    } else {
-      localStorage.removeItem(LS_SES);
-    }
-  }
+// load event moved to separate script block
+</script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+// Запускаем после загрузки Firebase SDK
+// ── Навешиваем события через JS (не через onclick в HTML) ──
+document.addEventListener('click', function(e) {
+  const achf = e.target.getAttribute('data-achf');
+  if (achf !== null) { filterAch(achf, e.target); }
 });
 
+// ── Window exports для onclick в HTML ──
+window.filterAch = filterAch;
+window.giveAch = giveAch;
+window.revokeAch = revokeAch;
 window.setRankDirect = setRankDirect;
 window.showAuth = showAuth;
 window.rLandingAnns = rLandingAnns;
@@ -2153,7 +2201,85 @@ window.pinAnn = pinAnn;
 window.delAnn = delAnn;
 window.addAnn = addAnn;
 window.saveProfile = saveProfile;
+window.doLogin = doLogin;
+window.doRegister = doRegister;
+window.doLogout = doLogout;
+window.authTab = authTab;
+window.go = go;
+window.toggleSb = toggleSb;
+window.closeSb = closeSb;
+window.filterEvs = filterEvs;
+window.filterEvsSt = filterEvsSt;
+window.openEvDetail = openEvDetail;
+window.postCmt = window.postCmt || postCmt;
+window.handleAvUpload = handleAvUpload;
+window.handleEvCover = handleEvCover;
+window.handleEvDrop = handleEvDrop;
+window.clearEvCover = clearEvCover;
+window.startExam = startExam;
+window.selectOpt = selectOpt;
+window.submitExam = submitExam;
+window.toggleCond = toggleCond;
+window.sendPromoRequest = sendPromoRequest;
+window.doAddPts = doAddPts;
+window.showVol = showVol;
+window.openPosModal = openPosModal;
+window.openPermsModal = openPermsModal;
+window.approvePromo = approvePromo;
+window.rejectPromo = rejectPromo;
+window.approveExamRetry = approveExamRetry;
+window.openConf = openConf;
+window.editEvCover = editEvCover;
+window.xrep = xrep;
+window.addAnn = addAnn;
+window.openPromoAdmin = openPromoAdmin;
+window.toggleCondAdmin = toggleCondAdmin;
+window.fireUser = fireUser;
+window.filterVolRank = filterVolRank;
+window.filterPermSearch = filterPermSearch;
+window.addTest = addTest;
+window.toggleTest = toggleTest;
+window.delTest = delTest;
+window.addQuestion = addQuestion;
+window.saveTgSettings = saveTgSettings;
+window.testTG = testTG;
+window.toggleNotifs = toggleNotifs;
+window.opm = opm;
+window.cpm = cpm;
+window.removeWarn = removeWarn;
+window.admDoneTask = window.admDoneTask || admDoneTask;
+window.doWarn = window.doWarn || doWarn;
+window.exportKpiCsv = exportKpiCsv;
+window.resetKPI = resetKPI;
+window.rKpiAdmin = rKpiAdmin;
+window.uploadDoc = uploadDoc;
 
+window.addEventListener('load', function() {
+  if(typeof firebase !== 'undefined') {
+    var ok = initFirebase();
+    if(ok) {
+      loadDBFromFirestore().then(function(loaded) {
+        if(!loaded) syncToServer();
+        subscribeFirestore();
+        rLandingAnns();
+        var uid = localStorage.getItem('vmdk_uid');
+        if(uid) {
+          var u = DB.users.find(function(x){ return String(x.id)===uid; });
+          if(u) { CU=u; document.getElementById('landing-screen').style.display='none'; launchApp(); }
+          else localStorage.removeItem('vmdk_uid');
+        }
+      });
+    }
+  } else {
+    console.warn('Firebase SDK не загружен');
+    rLandingAnns();
+    var uid = localStorage.getItem('vmdk_uid');
+    if(uid) {
+      var u = DB.users.find(function(x){ return String(x.id)===uid; });
+      if(u) { CU=u; document.getElementById('landing-screen').style.display='none'; launchApp(); }
+    }
+  }
+});
 </script>
 </body>
 </html>
