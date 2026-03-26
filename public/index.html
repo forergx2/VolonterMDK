@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ВолонтёрМДК | МДК Мугунгхва</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;900&family=Golos+Text:wght@400;500;600&display=swap" rel="stylesheet">
@@ -10,7 +10,7 @@
 :root{--bg:#0a0e1a;--surface:#111827;--surface2:#1a2235;--surface3:#0f1a2e;--border:#1e2d45;--accent:#00d4aa;--accent-dim:rgba(0,212,170,0.12);--purple:#7c3aed;--purple-dim:rgba(124,58,237,0.12);--amber:#f59e0b;--amber-dim:rgba(245,158,11,0.12);--danger:#ef4444;--danger-dim:rgba(239,68,68,0.1);--blue:#3b82f6;--blue-dim:rgba(59,130,246,0.12);--text:#e2e8f0;--text2:#94a3b8;--text3:#475569;--r:14px}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
-#auth-screen{min-height:100vh;display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px;background:radial-gradient(ellipse at 25% 15%,rgba(0,212,170,.09) 0%,transparent 55%),radial-gradient(ellipse at 80% 85%,rgba(124,58,237,.11) 0%,transparent 55%),var(--bg)}
+#auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(ellipse at 25% 15%,rgba(0,212,170,.09) 0%,transparent 55%),radial-gradient(ellipse at 80% 85%,rgba(124,58,237,.11) 0%,transparent 55%),var(--bg)}
 .auth-card{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:48px 44px;width:100%;max-width:440px;box-shadow:0 32px 80px rgba(0,0,0,.55);position:relative;overflow:hidden}
 .auth-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--purple))}
 .auth-logo{font-family:'Unbounded',sans-serif;font-size:20px;font-weight:900;margin-bottom:4px;line-height:1.2}
@@ -28,63 +28,6 @@ body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--text);
 .btn-primary:hover{background:#00bfa0;transform:translateY(-1px)}
 .demo-hint{margin-top:16px;padding:12px 14px;background:rgba(0,212,170,.06);border:1px solid rgba(0,212,170,.2);border-radius:10px;font-size:12px;color:var(--text2);line-height:1.65}
 .demo-hint b{color:var(--accent)}
-
-/* ── МОБИЛЬНАЯ АДАПТАЦИЯ ── */
-@media(max-width:768px){
-  .sidebar{transform:translateX(-100%);width:100% !important;min-width:0 !important}
-  .sidebar.open{transform:translateX(0)}
-  .hamburger{display:block !important}
-  .main{margin-left:0 !important}
-  .stats-row{grid-template-columns:repeat(2,1fr) !important}
-  .dash-grid{grid-template-columns:1fr !important}
-  .events-grid{grid-template-columns:1fr !important}
-  .g2{grid-template-columns:1fr !important}
-  .content{padding:12px !important}
-  .topbar{padding:10px 14px !important}
-  .auth-card{padding:28px 20px !important}
-  .modal{max-width:98vw !important;padding:18px 16px !important;margin:8px !important}
-  .modal-overlay{align-items:flex-end !important}
-  .modal{border-radius:18px 18px 0 0 !important}
-  table{font-size:11px !important}
-  .lb-item{padding:8px 10px !important}
-  #home-hero{padding:32px 18px 24px !important}
-  #home-stats{grid-template-columns:repeat(2,1fr) !important}
-  #home-anns{grid-template-columns:1fr !important}
-  .home-actions{flex-direction:column !important}
-}
-@media(max-width:400px){
-  .stats-row{grid-template-columns:1fr 1fr !important}
-  .auth-card{padding:22px 14px !important}
-}
-
-/* ── РАВНОМЕРНЫЙ LAYOUT ── */
-.dash-grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:16px;width:100%}
-.dash-col-main,.dash-col-side{display:flex;flex-direction:column;gap:16px}
-.content{padding:22px 28px;width:100%;box-sizing:border-box}
-
-/* ── ГЛАВНАЯ СТРАНИЦА ── */
-#home-hero{background:linear-gradient(135deg,var(--surface2),var(--surface3));border:1px solid var(--border);border-radius:20px;padding:40px 36px 32px;margin-bottom:22px;position:relative;overflow:hidden;text-align:center}
-#home-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(0,212,170,.12),transparent 70%);border-radius:50%}
-#home-hero::after{content:'';position:absolute;bottom:-40px;left:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(124,58,237,.1),transparent 70%);border-radius:50%}
-.home-hero-title{font-family:'Unbounded',sans-serif;font-size:26px;font-weight:900;margin-bottom:6px;position:relative}
-.home-hero-sub{font-size:14px;color:var(--text2);margin-bottom:20px;position:relative}
-.home-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;position:relative}
-#home-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px}
-.home-stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;cursor:pointer;transition:all .2s}
-.home-stat:hover{border-color:var(--accent);transform:translateY(-2px)}
-.home-stat-ico{font-size:22px;margin-bottom:6px}
-.home-stat-val{font-family:'Unbounded',sans-serif;font-size:20px;font-weight:700;color:var(--accent)}
-.home-stat-lbl{font-size:10px;color:var(--text2);margin-top:2px}
-#home-anns{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px}
-.home-ann-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .2s}
-.home-ann-card:hover{border-color:var(--accent);transform:translateY(-2px)}
-.home-ann-card.pinned{border-color:rgba(245,158,11,.35)}
-.home-ann-img{width:100%;height:120px;object-fit:cover}
-.home-ann-body{padding:12px 14px}
-.home-ann-title{font-weight:700;font-size:13px;margin-bottom:4px}
-.home-ann-text{font-size:12px;color:var(--text2);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.home-ann-date{font-size:10px;color:var(--text3);margin-top:6px}
-
 #reg-form{display:none}
 /* APP LAYOUT */
 #app{display:none}
@@ -113,13 +56,13 @@ body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--text);
 .btn-logout{width:100%;padding:8px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text2);cursor:pointer;font-size:12px;font-family:'Golos Text',sans-serif;transition:all .2s}
 .btn-logout:hover{border-color:var(--danger);color:var(--danger)}
 /* MAIN */
-.main{margin-left:256px;flex:1;min-height:100vh;display:flex;flex-direction:column;min-width:0}
+.main{margin-left:256px;flex:1;min-height:100vh;display:flex;flex-direction:column}
 .topbar{padding:14px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--surface);position:sticky;top:0;z-index:50;flex-shrink:0}
 .topbar-title{font-family:'Unbounded',sans-serif;font-size:15px;font-weight:700}
-.hamburger{display:none;padding:6px;background:transparent;border:none;color:var(--text);cursor:pointer;font-size:22px;line-height:1}
+.hamburger{display:none;padding:6px;background:transparent;border:none;color:var(--text);cursor:pointer;font-size:20px}
 .ovr-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99}
 .ovr-bg.show{display:block}
-.content-wrap{flex:1;display:flex;flex-direction:column}
+.content{padding:22px;flex:1}
 .page{display:none}
 .page.active{display:block;animation:fadeIn .2s ease}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
@@ -135,7 +78,7 @@ body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--text);
 .card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px}
 .card-title{font-family:'Unbounded',sans-serif;font-size:13px;font-weight:700}
 /* STATS */
-.stats-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:20px}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;transition:all .2s;position:relative;overflow:hidden}
 .stat-card:hover{transform:translateY(-2px);border-color:var(--accent)}
 .stat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent);opacity:0;transition:opacity .2s}
@@ -160,7 +103,7 @@ body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--text);
 .pos-badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:600;background:var(--purple-dim);color:#a78bfa;border:1px solid rgba(124,58,237,.25)}
 .warn-badge{display:inline-flex;align-items:center;gap:3px;background:var(--amber-dim);color:var(--amber);font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:5px;border:1px solid rgba(245,158,11,.25)}
 /* EVENTS */
-.events-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;width:100%}
+.events-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
 .ev-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:all .2s;display:flex;flex-direction:column}
 .ev-card:hover{transform:translateY(-2px);border-color:var(--accent);box-shadow:0 6px 24px rgba(0,212,170,.08)}
 .ev-banner{height:90px;display:flex;align-items:center;justify-content:center;position:relative;background:linear-gradient(135deg,var(--purple),var(--accent));overflow:hidden;cursor:pointer;flex-shrink:0}
@@ -324,9 +267,6 @@ tbody td{padding:10px 11px;font-size:12.5px}
 @media(max-width:1100px){.split{flex-direction:column}.ss{width:100%}}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 @media(max-width:800px){.g2{grid-template-columns:1fr}}
-/* Контент занимает весь экран равномерно */
-.content{padding:22px;flex:1;max-width:1400px;width:100%;margin:0 auto;box-sizing:border-box}
-.page-inner{max-width:1200px;margin:0 auto}
 .empty{text-align:center;padding:32px 16px;color:var(--text2)}
 .empty .ei{font-size:40px;margin-bottom:10px}
 .pts-box{margin-top:12px;padding:14px;background:var(--surface3);border-radius:11px;border:1px solid var(--border)}
@@ -342,177 +282,14 @@ tbody td{padding:10px 11px;font-size:12.5px}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
 .ld{width:6px;height:6px;background:var(--accent);border-radius:50%;display:inline-block;animation:pulse 1.5s infinite;margin-right:4px}
 /* RESPONSIVE */
-/* Dashboard grid */
-.dash-grid{display:grid;grid-template-columns:1fr 380px;gap:16px;align-items:start}
-.dash-col-main{display:flex;flex-direction:column;gap:16px;min-width:0}
-.dash-col-side{display:flex;flex-direction:column;gap:16px;min-width:0}
-/* Announcement image */
-.ann-img{width:100%;max-height:220px;object-fit:cover;border-radius:10px;margin-bottom:10px;display:block}
-/* Mobile */
-@media(max-width:1100px){.dash-grid{grid-template-columns:1fr}}
-@media(max-width:900px){
-  .content{padding:14px !important}
-  .stats-row{grid-template-columns:repeat(2,1fr)}
-  .sidebar{transform:translateX(-100%)}
-  .sidebar.open{transform:translateX(0)}
-  .main{margin-left:0}
-  .content{padding:12px}
-  .pf-form{grid-template-columns:1fr}
-  .hamburger{display:flex}
-  .topbar{padding:10px 14px}
-  .topbar-title{font-size:13px}
-  .card{padding:14px}
-  .ev-card .ev-body{padding:10px}
-  .modal{padding:18px;border-radius:14px}
-  .auth-card{padding:28px 22px}
-  .stats-row{gap:8px}
-  .stat-card{padding:12px}
-  .stat-val{font-size:18px}
-}
-@media(max-width:580px){
-  .stats-row{grid-template-columns:1fr 1fr}
-  .events-grid{grid-template-columns:1fr}
-  .content{padding:10px}
-  .dash-grid{gap:10px}
-}
+@media(max-width:900px){.stats-row{grid-template-columns:repeat(2,1fr)}.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.content{padding:14px}.pf-form{grid-template-columns:1fr}.hamburger{display:flex}}
 @media(max-width:580px){.stats-row{grid-template-columns:1fr 1fr}.events-grid{grid-template-columns:1fr}}
 select option{background:var(--surface2);color:var(--text)}
-
-/* ── Главный экран (landing) ── */
-#landing-screen{min-height:100vh;display:flex;flex-direction:column;background:radial-gradient(ellipse at 20% 20%,rgba(0,212,170,.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(124,58,237,.1) 0%,transparent 50%),var(--bg)}
-.landing-hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center}
-.landing-logo{font-family:'Unbounded',sans-serif;font-size:32px;font-weight:900;margin-bottom:8px;line-height:1.1}
-.landing-logo span{color:var(--accent)}
-.landing-sub{font-size:15px;color:var(--text2);margin-bottom:40px;max-width:480px}
-.landing-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;width:100%;max-width:860px;margin-bottom:40px}
-.landing-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px 18px;cursor:pointer;transition:all .2s;text-align:center}
-.landing-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,212,170,.1)}
-.landing-card-ico{font-size:32px;margin-bottom:10px}
-.landing-card-title{font-family:'Unbounded',sans-serif;font-size:12px;font-weight:700;margin-bottom:5px}
-.landing-card-sub{font-size:11px;color:var(--text2)}
-.landing-anns{width:100%;max-width:860px}
-.landing-ann-item{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:10px;display:flex;align-items:stretch;cursor:pointer;transition:border-color .2s}
-.landing-ann-item:hover{border-color:var(--accent)}
-.landing-ann-img{width:80px;min-width:80px;object-fit:cover}
-.landing-ann-body{padding:12px 14px;flex:1}
-.landing-ann-pin{font-size:10px;color:var(--amber);font-weight:700;margin-bottom:3px}
-.landing-ann-title{font-weight:700;font-size:13px;margin-bottom:3px}
-.landing-ann-text{font-size:11.5px;color:var(--text2);line-height:1.5}
-.landing-ann-date{font-size:10px;color:var(--text3);margin-top:4px}
-.landing-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:32px}
-@media(max-width:580px){
-  .landing-logo{font-size:22px}
-  .landing-cards{grid-template-columns:1fr 1fr}
-  .landing-card{padding:16px 12px}
-  .landing-card-ico{font-size:24px}
-}
-/* ── Объявления ── */
-.ann-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:14px;transition:border-color .2s}
-.ann-card:hover{border-color:rgba(0,212,170,.3)}
-.ann-card.pinned{border-color:rgba(245,158,11,.3)}
-.ann-card img.ann-full-img{width:100%;max-height:260px;object-fit:cover;display:block}
-.ann-card-body{padding:16px}
-.ann-notify-badge{display:inline-flex;align-items:center;gap:4px;background:var(--accent-dim);color:var(--accent);font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-bottom:8px;border:1px solid rgba(0,212,170,.25)}
-
-
-/* ── Ачивки ── */
-.ach-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
-.ach-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 14px;text-align:center;transition:all .2s;position:relative;overflow:hidden}
-.ach-card.earned{border-color:rgba(0,212,170,.4);background:linear-gradient(135deg,rgba(0,212,170,.06),var(--surface))}
-.ach-card.locked{opacity:.45;filter:grayscale(.6)}
-.ach-card:hover{transform:translateY(-2px)}
-.ach-ico{font-size:36px;margin-bottom:8px;display:block}
-.ach-name{font-weight:700;font-size:12px;margin-bottom:4px}
-.ach-cond{font-size:10px;color:var(--text2);line-height:1.4;margin-bottom:6px}
-.ach-xp{font-size:11px;color:var(--amber);font-weight:700}
-.ach-type-badge{position:absolute;top:8px;right:8px;font-size:8px;font-weight:700;padding:2px 6px;border-radius:8px;text-transform:uppercase}
-.ach-auto{background:var(--accent-dim);color:var(--accent);border:1px solid rgba(0,212,170,.2)}
-.ach-manual{background:var(--purple-dim);color:#a78bfa;border:1px solid rgba(124,58,237,.2)}
-.ach-earned-stamp{position:absolute;bottom:8px;right:8px;font-size:9px;color:var(--accent);font-weight:700}
-.ach-nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
-.ach-nav button{font-size:11px;padding:5px 12px}
 </style>
-<script>
-// Все функции вызываемые из onclick в HTML — определяем ДО загрузки страницы
-// showAuth defined in head
-function doLogin() {
-  // Ждём пока основной скрипт загрузится
-  if (typeof _doLogin === 'function') { _doLogin(); return; }
-  var id = (document.getElementById('li-id')||{}).value||'';
-  var pw = (document.getElementById('li-pw')||{}).value||'';
-  window._pendingLogin = {id: id.trim(), pw: pw.trim()};
-}
-function doRegister() {
-  if (typeof _doRegister === 'function') { _doRegister(); return; }
-  window._pendingRegister = true;
-}
-function showAuth(tab) {
-  var ls = document.getElementById('landing-screen');
-  var as = document.getElementById('auth-screen');
-  if (ls) ls.style.display = 'none';
-  if (as) as.style.display = 'flex';
-  window._pendingAuthTab = tab || 'login';
-  if (typeof authTab === 'function') authTab(tab || 'login');
-}
-function authTab(t) {
-  var lf = document.getElementById('login-form');
-  var rf = document.getElementById('reg-form');
-  var tabs = document.querySelectorAll('.auth-tab');
-  if (lf) lf.style.display = t === 'login' ? 'block' : 'none';
-  if (rf) rf.style.display = t === 'reg' ? 'block' : 'none';
-  tabs.forEach(function(el, i) {
-    el.classList.toggle('active', (t==='login'&&i===0)||(t==='reg'&&i===1));
-  });
-}
-function closeSb() {
-  var sb = document.getElementById('sidebar');
-  var ov = document.getElementById('ovr');
-  if (sb) sb.classList.remove('open');
-  if (ov) ov.classList.remove('show');
-}
-</script>
 </head>
 <body>
 <!-- AUTH -->
-<div id="landing-screen">
-  <div class="landing-hero">
-    <div class="landing-logo">Волонтёр<span>МДК</span></div>
-    <div style="font-size:11px;color:var(--text3);margin-bottom:6px;font-family:'Golos Text'">МДК «Мугунгхва» · Актобе</div>
-    <div class="landing-sub">Платформа для волонтёров — мероприятия, баллы, повышения и многое другое</div>
-    <div class="landing-btns">
-      <button class="btn btn-a" style="padding:12px 28px;font-size:13px" onclick="showAuth('login')">🚀 Войти</button>
-      <button class="btn btn-o" style="padding:12px 28px;font-size:13px" onclick="showAuth('reg')">✨ Регистрация</button>
-    </div>
-    <div class="landing-cards">
-      <div class="landing-card" onclick="showAuth('login')">
-        <div class="landing-card-ico">📅</div>
-        <div class="landing-card-title">Мероприятия</div>
-        <div class="landing-card-sub">Записывайся и получай баллы</div>
-      </div>
-      <div class="landing-card" onclick="showAuth('login')">
-        <div class="landing-card-ico">⭐</div>
-        <div class="landing-card-title">Система баллов</div>
-        <div class="landing-card-sub">Отслеживай прогресс и KPI</div>
-      </div>
-      <div class="landing-card" onclick="showAuth('login')">
-        <div class="landing-card-ico">⬆️</div>
-        <div class="landing-card-title">Повышение</div>
-        <div class="landing-card-sub">Кандидат → Волонтёр → Активист</div>
-      </div>
-      <div class="landing-card" onclick="showAuth('login')">
-        <div class="landing-card-ico">👥</div>
-        <div class="landing-card-title">Команда</div>
-        <div class="landing-card-sub">Единая платформа МДК</div>
-      </div>
-    </div>
-    <div class="landing-anns">
-      <div style="font-family:'Unbounded',sans-serif;font-size:12px;font-weight:700;margin-bottom:10px;color:var(--text2);text-align:left">📢 Последние объявления</div>
-      <div id="landing-ann-list"></div>
-    </div>
-  </div>
-</div>
-
-<div id="auth-screen" style="display:none">
+<div id="auth-screen">
   <div class="auth-card">
     <div class="auth-logo">Волонтёр<span>МДК</span><small>МДК &quot;Мугунгхва&quot;</small></div>
     <div class="auth-tabs">
@@ -536,7 +313,7 @@ function closeSb() {
 </div>
 
 <!-- APP -->
-<div id="app" style="display:none">
+<div id="app">
   <div id="ovr" class="ovr-bg" onclick="closeSb()"></div>
   <input type="file" id="av-inp" accept="image/*" style="display:none" onchange="handleAvUpload(this)">
   <input type="file" id="ev-cover-inp" accept="image/*" style="display:none" onchange="handleEvCover(this)">
@@ -566,7 +343,6 @@ function closeSb() {
         <div class="nav-item" onclick="go('progress')"><span class="ico">🚀</span>Мой прогресс</div>
         <div class="nav-item" onclick="go('promotion')"><span class="ico">⬆️</span>Повышение<span class="nb rd" id="nb-promo" style="display:none">!</span></div>
         <div class="nav-item" onclick="go('pts-log')"><span class="ico">📋</span>История баллов</div>
-        <div class="nav-item" onclick="go('achievements')"><span class="ico">🏆</span>Ачивки</div>
         <div class="nav-item" onclick="go('leaderboard')"><span class="ico">🏆</span>Рейтинг</div>
         <div class="nav-item" onclick="go('documents')"><span class="ico">📁</span>Документы</div>
         <div class="nav-item" onclick="go('tg-settings')"><span class="ico">📱</span>Telegram</div>
@@ -600,59 +376,17 @@ function closeSb() {
       </div>
 
       <div class="content">
-        <!-- HOME -->
-        <div class="page" id="page-home">
-          <div id="home-hero">
-            <div id="home-emoji" style="font-size:48px;margin-bottom:10px">🌱</div>
-            <div class="home-hero-title" id="home-title">ВолонтёрМДК</div>
-            <div class="home-hero-sub" id="home-sub">МДК «Мугунгхва» — Актобе</div>
-            <div class="home-actions">
-              <button class="btn btn-a" style="padding:10px 20px;font-size:13px" onclick="go('events')">📅 Мероприятия</button>
-              <button class="btn btn-o" style="padding:10px 20px;font-size:13px" onclick="go('dashboard')">📊 Мой дашборд</button>
-              <button class="btn btn-o" style="padding:10px 20px;font-size:13px" onclick="go('pts-log')">⭐ Мои баллы</button>
-            </div>
-          </div>
-          <div id="home-stats"></div>
-          <div class="card" style="margin-bottom:16px">
-            <div class="card-hdr">
-              <div class="card-title">📢 Объявления</div>
-              <button class="btn btn-o" style="padding:5px 11px;font-size:11px" onclick="go('announcements')">Все →</button>
-            </div>
-            <div id="home-anns"></div>
-          </div>
-          <div class="card">
-            <div class="card-hdr">
-              <div class="card-title">📅 Ближайшие мероприятия</div>
-              <button class="btn btn-o" style="padding:5px 11px;font-size:11px" onclick="go('events')">Все →</button>
-            </div>
-            <div id="home-events"></div>
-          </div>
-        </div>
-
         <!-- DASHBOARD -->
-        <div class="page" id="page-dashboard">
-          <!-- Приветствие -->
-          <div id="dash-welcome" style="margin-bottom:20px;padding:26px 30px;background:linear-gradient(135deg,var(--surface2),var(--surface3));border:1px solid var(--border);border-radius:16px;position:relative;overflow:hidden;width:100%">
-            <div style="position:absolute;top:-20px;right:-20px;font-size:100px;opacity:0.06;pointer-events:none">🌟</div>
-            <div id="dash-greeting" style="font-family:'Unbounded',sans-serif;font-size:18px;font-weight:700;margin-bottom:4px"></div>
-            <div id="dash-subgreeting" style="font-size:13px;color:var(--text2);margin-bottom:14px"></div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <button class="btn btn-a" style="font-size:12px;padding:7px 14px" onclick="go('events')">📅 Мероприятия</button>
-              <button class="btn btn-o" style="font-size:12px;padding:7px 14px" onclick="go('pts-log')">⭐ Мои баллы</button>
-              <button class="btn btn-o" style="font-size:12px;padding:7px 14px" onclick="go('promotion')">⬆️ Повышение</button>
+        <div class="page active" id="page-dashboard">
+          <div class="stats-row" id="dash-stats"></div>
+          <div class="split">
+            <div class="sm">
+              <div class="card"><div class="card-hdr"><div class="card-title">Ближайшие мероприятия</div><button class="btn btn-o" style="padding:6px 12px;font-size:12px" onclick="go('events')">Все →</button></div><div id="dash-events"></div></div>
+              <div class="card"><div class="card-hdr"><div class="card-title">Прогресс</div></div><div id="dash-prog"></div></div>
             </div>
-          </div>
-          <!-- Статы -->
-          <div class="stats-row" id="dash-stats" style="margin-bottom:20px"></div>
-          <!-- Основная сетка -->
-          <div class="dash-grid">
-            <div class="dash-col-main">
-              <div class="card"><div class="card-hdr"><div class="card-title">📅 Ближайшие мероприятия</div><button class="btn btn-o" style="padding:5px 11px;font-size:11px" onclick="go('events')">Все →</button></div><div id="dash-events"></div></div>
-              <div class="card"><div class="card-hdr"><div class="card-title">⬆️ Прогресс повышения</div><button class="btn btn-o" style="padding:5px 11px;font-size:11px" onclick="go('promotion')">Детали →</button></div><div id="dash-prog"></div></div>
-            </div>
-            <div class="dash-col-side">
-              <div class="card" id="dash-ann-card"><div class="card-hdr"><div class="card-title">📢 Объявления</div><button class="btn btn-o" style="padding:5px 11px;font-size:11px" onclick="go('announcements')">Все →</button></div><div id="dash-ann"></div></div>
-              <div class="card"><div class="card-title" style="margin-bottom:12px">🕐 Лента активности</div><div id="act-feed"></div></div>
+            <div class="ss">
+              <div class="card"><div class="card-title" style="margin-bottom:12px">Лента активности</div><div id="act-feed"></div></div>
+              <div class="card"><div class="card-title" style="margin-bottom:4px">Активность</div><div class="mini-chart" id="mini-ch"></div></div>
             </div>
           </div>
         </div>
@@ -675,21 +409,7 @@ function closeSb() {
         </div>
 
         <!-- ANNOUNCEMENTS -->
-        <div class="page" id="page-announcements">
-          <div id="ann-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:16px;align-items:start"></div>
-        </div>
-
-        <!-- ACHIEVEMENTS -->
-        <div class="page" id="page-achievements">
-          <div class="ach-nav">
-            <button class="btn btn-o active-filter" data-achf="all">Все</button>
-            <button class="btn btn-o" data-achf="earned">✅ Получены</button>
-            <button class="btn btn-o" data-achf="locked">🔒 Не получены</button>
-            <button class="btn btn-o" data-achf="auto">⚡ Авто</button>
-            <button class="btn btn-o" data-achf="manual">🎖️ Вручную</button>
-          </div>
-          <div class="ach-grid" id="ach-grid"></div>
-        </div>
+        <div class="page" id="page-announcements"><div id="ann-list"></div></div>
 
         <!-- PROFILE -->
         <div class="page" id="page-profile">
@@ -839,20 +559,6 @@ function closeSb() {
       <img id="ev-cover-preview" class="upload-prev" style="display:none">
       <div id="ev-cover-clear" style="display:none;margin-top:6px"><button class="btn btn-g" style="font-size:12px;padding:5px 10px" onclick="clearEvCover()">✕ Удалить</button></div>
     </div>
-    <div class="fg" style="background:var(--purple-dim);border:1px solid rgba(124,58,237,.2);border-radius:10px;padding:12px">
-      <div style="font-size:11px;font-weight:700;color:#a78bfa;margin-bottom:8px">🏆 Ачивка за мероприятие (необязательно)</div>
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-        <div class="toggle" id="ev-ach-toggle" onclick="this.classList.toggle('on');document.getElementById('ev-ach-form').style.display=this.classList.contains('on')?'block':'none'"></div>
-        <span style="font-size:12px">Создать уникальную ачивку</span>
-      </div>
-      <div id="ev-ach-form" style="display:none">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <div class="fg" style="margin-bottom:8px"><label>Иконка</label><input id="ev-ach-ico" placeholder="🎯" maxlength="2" value="🎯"></div>
-          <div class="fg" style="margin-bottom:8px"><label>XP баллы</label><input id="ev-ach-xp" type="number" value="300"></div>
-        </div>
-        <div class="fg" style="margin-bottom:0"><label>Название ачивки</label><input id="ev-ach-name" placeholder="Участник субботника"></div>
-      </div>
-    </div>
     <div class="modal-actions"><button class="btn btn-g" onclick="cpm('m-add-ev')">Отмена</button><button class="btn btn-a" onclick="addEv()">Создать</button></div>
   </div>
 </div>
@@ -884,9 +590,8 @@ function closeSb() {
   <div class="modal" style="max-width:520px">
     <button class="modal-close" onclick="cpm('m-vol')">✕</button>
     <div class="modal-title" id="m-vol-nm">Профиль</div>
+    <div id="rank-block" style="display:none"></div>
     <div id="m-vol-body"></div>
-    <div id="rank-change-block" style="display:none"></div>
-    <div id="ach-block-vol"></div>
     <div class="pts-box">
       <div class="pts-box-title">⭐ Управление баллами</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px">
@@ -963,178 +668,8 @@ function closeSb() {
   </div>
 </div>
 
-
-<div class="modal-overlay" id="m-add-ann">
-  <div class="modal" style="max-width:540px">
-    <button class="modal-close" onclick="cpm('m-add-ann')">✕</button>
-    <div class="modal-title">📢 Новое объявление</div>
-    <div class="fg"><label>Заголовок</label><input id="ann-title" placeholder="Название объявления"></div>
-    <div class="fg"><label>Текст</label><textarea id="ann-text" rows="4" placeholder="Текст объявления..."></textarea></div>
-    <div class="fg">
-      <label>Фото (необязательно)</label>
-      <div id="ann-img-zone" style="border:2px dashed var(--border);border-radius:10px;padding:16px;text-align:center;cursor:pointer;color:var(--text2);font-size:13px" onclick="document.getElementById('ann-img-inp').click()">
-        🖼️ Нажмите чтобы добавить фото
-      </div>
-      <input type="file" id="ann-img-inp" accept="image/*" style="display:none" onchange="handleAnnImg(this)">
-      <img id="ann-img-preview" style="display:none;width:100%;max-height:180px;object-fit:cover;border-radius:8px;margin-top:8px">
-      <button id="ann-img-clear" class="btn btn-o" style="display:none;margin-top:6px;font-size:11px;padding:4px 10px" onclick="clearAnnImg()">✕ Убрать фото</button>
-    </div>
-    <div class="fg" style="display:flex;align-items:center;gap:10px">
-      <div class="toggle" id="ann-pin-toggle" onclick="this.classList.toggle('on')"></div>
-      <span style="font-size:13px">📌 Закрепить объявление</span>
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-g" onclick="cpm('m-add-ann')">Отмена</button>
-      <button class="btn btn-a" onclick="addAnn()">Опубликовать</button>
-    </div>
-  </div>
-</div>
-
 <div id="toast"><span id="t-txt"></span></div>
 <script>
-
-// ════════════════════════════════════════════════════════════
-//  СИСТЕМА АЧИВОК
-// ════════════════════════════════════════════════════════════
-const ACHIEVEMENTS = [
-  {id:'ACT-01', name:'Новичок',           ico:'🐣', xp:100,  type:'auto',   cond:'Участие в 1 мероприятии',               check:function(u){return u.events>=1}},
-  {id:'ACT-02', name:'Постоянный гость',  ico:'🏃', xp:500,  type:'auto',   cond:'Участие в 10 мероприятиях',             check:function(u){return u.events>=10}},
-  {id:'ACT-03', name:'Профи-волонтёр',    ico:'🏅', xp:1500, type:'auto',   cond:'Участие в 25 мероприятиях',             check:function(u){return u.events>=25}},
-  {id:'ACT-04', name:'Легенда движения',  ico:'💎', xp:5000, type:'auto',   cond:'Участие в 50 мероприятиях',             check:function(u){return u.events>=50}},
-  {id:'TIME-01',name:'Испытательный срок',ico:'🗓️',xp:200,  type:'auto',   cond:'1 месяц в организации',                 check:function(u){return u.joined&&(Date.now()-new Date(u.joined))>=30*24*3600*1000}},
-  {id:'TIME-02',name:'Старожил',          ico:'⏳', xp:1000, type:'auto',   cond:'1 год в организации',                   check:function(u){return u.joined&&(Date.now()-new Date(u.joined))>=365*24*3600*1000}},
-  {id:'IT-01',  name:'Хакер-помощник',    ico:'💻', xp:600,  type:'auto',   cond:'Участие в 5+ мероприятиях',             check:function(u){return u.events>=5}},
-  {id:'EDU-01', name:'Студент',           ico:'📚', xp:300,  type:'auto',   cond:'Посещение 5 образовательных событий',   check:function(u){return u.events>=5}},
-  {id:'LDR-01', name:'Лидер группы',      ico:'📢', xp:500,  type:'manual', cond:'Назначение ответственным за сектор',    check:null},
-  {id:'LDR-02', name:'Организатор',       ico:'🛠️',xp:700,  type:'manual', cond:'Самостоятельная подготовка этапа',      check:null},
-  {id:'SPEC-01',name:'Герой дня',         ico:'🦸', xp:1000, type:'manual', cond:'За особый вклад в критической ситуации',check:null},
-  {id:'SPEC-02',name:'Креативщик',        ico:'💡', xp:400,  type:'manual', cond:'За предложенную и внедренную идею',     check:null},
-  {id:'SOC-01', name:'Медиа-лицо',        ico:'📱', xp:300,  type:'manual', cond:'10 упоминаний организации в соцсетях',  check:null},
-  {id:'NIGHT-01',name:'Ночная смена',     ico:'🌙', xp:450,  type:'manual', cond:'Участие в ночных дежурствах',           check:null},
-  {id:'TEAM-01',name:'Душа компании',     ico:'✨', xp:300,  type:'manual', cond:'За помощь в сплочении команды',         check:null},
-];
-
-let _achFilter = 'all';
-
-function getUserAchs(u){ return u.achievements||[]; }
-function hasAch(u,id){ return getUserAchs(u).some(function(a){return a.id===id;}); }
-
-function checkAutoAchs(u){
-  if(!u)return;
-  var changed=false;
-  ACHIEVEMENTS.filter(function(a){return a.type==='auto'&&a.check;}).forEach(function(a){
-    if(!hasAch(u,a.id)&&a.check(u)){
-      if(!u.achievements)u.achievements=[];
-      u.achievements.push({id:a.id,earnedAt:new Date().toLocaleDateString('ru')});
-      u.points=(u.points||0)+a.xp;
-      addNotif(u.id,'🏆 Новая ачивка: '+a.ico+' '+a.name+' (+'+a.xp+' XP)!');
-      changed=true;
-    }
-  });
-  if(changed)syncToServer();
-}
-
-function giveAch(uid,achId){
-  var u=DB.users.find(function(x){return x.id===uid;});
-  var a=ACHIEVEMENTS.find(function(x){return x.id===achId;});
-  if(!u||!a)return;
-  if(hasAch(u,achId)){toast('⚠️ Ачивка уже выдана');return;}
-  if(!u.achievements)u.achievements=[];
-  u.achievements.push({id:achId,earnedAt:new Date().toLocaleDateString('ru'),by:CU&&CU.name.split(' ')[0]});
-  u.points=(u.points||0)+a.xp;
-  addNotif(u.id,'🏆 Новая ачивка: '+a.ico+' '+a.name+' (+'+a.xp+' XP)! Выдал: '+(CU&&CU.name.split(' ')[0]));
-  syncToServer();
-  toast('✅ '+a.ico+' '+a.name+' выдана — '+u.name.split(' ')[0]);
-  showVol(uid);
-}
-
-function revokeAch(uid,achId){
-  var u=DB.users.find(function(x){return x.id===uid;});
-  var a=ACHIEVEMENTS.find(function(x){return x.id===achId;});
-  if(!u||!a)return;
-  u.achievements=(u.achievements||[]).filter(function(x){return x.id!==achId;});
-  u.points=Math.max(0,(u.points||0)-a.xp);
-  syncToServer();
-  toast('↩️ Ачивка '+a.name+' отозвана');
-  showVol(uid);
-}
-
-function filterAch(f,btn){
-  _achFilter=f;
-  document.querySelectorAll('.ach-nav button').forEach(function(b){b.classList.remove('btn-a');b.classList.add('btn-o');});
-  if(btn){btn.classList.add('btn-a');btn.classList.remove('btn-o');}
-  rAchievements();
-}
-
-function getAllAchs(){
-  var all=ACHIEVEMENTS.slice();
-  (DB.events||[]).forEach(function(e){
-    if(e.achievement)all.push({id:'EVT-'+e.id,name:e.achievement.name,ico:e.achievement.ico,xp:e.achievement.xp,type:'auto',cond:'За участие в «'+e.title+'»',check:null});
-  });
-  return all;
-}
-
-function rAchievements(){
-  var u=CU;if(!u)return;
-  var earned=getUserAchs(u);
-  var allAchs=getAllAchs();
-  var filtered=allAchs;
-  if(_achFilter==='earned')filtered=allAchs.filter(function(a){return earned.some(function(e){return e.id===a.id;});});
-  else if(_achFilter==='locked')filtered=allAchs.filter(function(a){return!earned.some(function(e){return e.id===a.id;});});
-  else if(_achFilter==='auto')filtered=allAchs.filter(function(a){return a.type==='auto';});
-  else if(_achFilter==='manual')filtered=allAchs.filter(function(a){return a.type==='manual';});
-
-  var totalXP=earned.reduce(function(sum,e){
-    var a=allAchs.find(function(x){return x.id===e.id;});
-    return sum+(a?a.xp:0);
-  },0);
-
-  var el=document.getElementById('ach-grid');if(!el)return;
-  el.innerHTML='<div style="grid-column:1/-1;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:12px;display:flex;gap:20px;flex-wrap:wrap;margin-bottom:4px">'
-    +'<div><div style="font-size:10px;color:var(--text3);margin-bottom:2px">ПОЛУЧЕНО</div><div style="font-family:'Unbounded',sans-serif;font-size:18px;font-weight:700;color:var(--accent)">'+earned.length+'<span style="font-size:12px;color:var(--text2)">/'+allAchs.length+'</span></div></div>'
-    +'<div><div style="font-size:10px;color:var(--text3);margin-bottom:2px">TOTAL XP</div><div style="font-family:'Unbounded',sans-serif;font-size:18px;font-weight:700;color:var(--amber)">'+totalXP.toLocaleString()+'</div></div>'
-    +'</div>'
-    +filtered.map(function(a){
-      var e=earned.find(function(x){return x.id===a.id;});
-      return '<div class="ach-card '+(e?'earned':'locked')+'">'
-        +'<span class="ach-type-badge '+(a.type==='auto'?'ach-auto':'ach-manual')+'">'+(a.type==='auto'?'⚡авто':'🎖️ручн.')+'</span>'
-        +'<span class="ach-ico">'+a.ico+'</span>'
-        +'<div class="ach-name">'+a.name+'</div>'
-        +'<div class="ach-cond">'+a.cond+'</div>'
-        +'<div class="ach-xp">+'+a.xp+' XP</div>'
-        +(e?'<div class="ach-earned-stamp">✅ '+e.earnedAt+'</div>':'')
-        +'</div>';
-    }).join('');
-}
-
-function renderVolAchs(uid){
-  var u=DB.users.find(function(x){return x.id===uid;});
-  if(!u)return'';
-  var earned=getUserAchs(u);
-  var allAchs=getAllAchs();
-  var canGive=hasPerm(CU,'approvePromo')||hasPerm(CU,'fullAdmin');
-  var manualAchs=allAchs.filter(function(a){return a.type==='manual';});
-  return '<div style="margin-bottom:10px">'
-    +'<div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">🏆 Ачивки ('+earned.length+')</div>'
-    +(earned.length?'<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">'+earned.map(function(e){
-      var a=allAchs.find(function(x){return x.id===e.id;});if(!a)return'';
-      return '<div title="'+a.name+': '+a.cond+'" style="background:var(--surface2);border:1px solid rgba(0,212,170,.2);border-radius:8px;padding:4px 8px;font-size:12px;display:inline-flex;align-items:center;gap:4px">'
-        +a.ico+' <span style="font-size:11px;color:var(--accent)">'+a.name+'</span>'
-        +(canGive?'<button onclick="revokeAch('+uid+',''+a.id+'')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:10px;padding:0 2px" title="Отозвать">✕</button>':'')
-        +'</div>';
-    }).join('')+'</div>':'<div style="font-size:11px;color:var(--text3);margin-bottom:8px">Нет ачивок</div>')
-    +(canGive?'<div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Выдать вручную:</div>'
-      +'<div style="display:flex;flex-wrap:wrap;gap:5px">'+manualAchs.map(function(a){
-        var already=earned.some(function(e){return e.id===a.id;});
-        return '<button class="btn '+(already?'btn-g':'btn-o')+'" style="font-size:10px;padding:3px 8px;opacity:'+(already?'.4':'1')+'" '+(already?'disabled':'')+' onclick="giveAch('+uid+',''+a.id+'')" title="'+a.cond+'">'+a.ico+' '+a.name+'</button>';
-      }).join('')+'</div>':'')
-    +'</div>';
-}
-
-// ── Форварды для onclick (будут переназначены после определения функций) ──
-// Используем proxy чтобы onclick работал до полной загрузки скрипта
-// Будут назначены после определения:
-
 // ════════════════════════════════════════════════════════════
 //  CONSTANTS & CONFIG
 // ════════════════════════════════════════════════════════════
@@ -1187,7 +722,7 @@ const PERM_META=[
   {key:'viewStats',label:'Просматривать статистику',sub:'Отчёты и KPI'},
   {key:'assignPos',label:'Назначать должности',sub:'Изменение должностей'},
   {key:'managePerms',label:'Управлять правами',sub:'Редактирование прав других'},
-  {key:'fullAdmin',label:'⭐ Полный админский доступ',sub:'Все права сразу (суперадмин)'},
+  {key:'fullAdmin',label:'⭐ Полный админский доступ',sub:'Все права сразу'},
 ];
 
 // ════════════════════════════════════════════════════════════
@@ -1242,7 +777,7 @@ const DB={
 
 let CU=null,_confEvId=null,_detVolId=null,_pendingCoverData=null,_examAnswers={},_editPermsId=null,_editPosId=null,_notifOpen=false;
 
-const PT={home:'Главная',achievements:'Мои ачивки',dashboard:'Дашборд',events:'Мероприятия',tasks:'Мои задачи',announcements:'Объявления',profile:'Профиль',progress:'Мой прогресс',promotion:'Повышение','pts-log':'История баллов',leaderboard:'Рейтинг',documents:'Документы','tg-settings':'Telegram','adm-vol':'Сотрудники','adm-ev':'Мероприятия','adm-tasks':'Задачи','adm-promo':'Повышения','adm-kpi':'KPI','adm-tests':'Конструктор тестов','adm-perms':'Права доступа','adm-rep':'Отчёты'};
+const PT={'adm-promo':'Повышения',dashboard:'Дашборд',events:'Мероприятия',tasks:'Мои задачи',announcements:'Объявления',profile:'Профиль',progress:'Мой прогресс',promotion:'Повышение','pts-log':'История баллов',leaderboard:'Рейтинг',documents:'Документы','tg-settings':'Telegram','adm-vol':'Сотрудники','adm-ev':'Мероприятия','adm-tasks':'Задачи','adm-promo':'Повышения','adm-kpi':'KPI','adm-tests':'Конструктор тестов','adm-perms':'Права доступа','adm-rep':'Отчёты'};
 
 // ════════════════════════════════════════════════════════════
 //  UTILS
@@ -1254,8 +789,8 @@ function avImg(u){return u&&u.avatarData?`<img src="${u.avatarData}">`:''}
 function getPos(u){return POSITIONS.find(p=>p.id===u.positionId)||{name:'Кандидат',level:8,id:'cand_pos'}}
 function getRank(u){return RANKS[u.rank]||RANKS.candidate}
 function getPerms(u){const base=POS_PERMS[u.positionId]||POS_PERMS['cand_pos'];if(!u.perms)return{...base};return{...base,...u.perms}}
-function hasPerm(u,key){const p=getPerms(u);return !!(p['fullAdmin']||p[key])}
-function canAdmin(u){const p=getPerms(u);return !!(p['fullAdmin'])||Object.values(p).some(Boolean)}
+function hasPerm(u,key){var p=getPerms(u);return !!(p['fullAdmin']||p[key]);}
+function canAdmin(u){var p=getPerms(u);return !!(p['fullAdmin'])||Object.values(p).some(Boolean);}
 function opm(id){document.getElementById(id)?.classList.add('open')}
 function cpm(id){document.getElementById(id)?.classList.remove('open')}
 document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
@@ -1328,50 +863,20 @@ function checkAutoPromo(u){
 // ════════════════════════════════════════════════════════════
 //  AUTH & INIT
 // ════════════════════════════════════════════════════════════
-// authTab defined in head
-
-function _doLoginLocal(){
-  const id=v('li-id').trim(),pw=v('li-pw').trim();
-  const u=DB.users.find(x=>(x.email===id||x.phone===id)&&x.pw===pw);
-  if(!u){toast('❌ Неверный логин или пароль');return;}
-  CU=u;launchApp();
+function authTab(t){
+  document.querySelectorAll('.auth-tab').forEach((el,i)=>el.classList.toggle('active',(t==='login'&&i===0)||(t==='reg'&&i===1)));
+  document.getElementById('login-form').style.display=t==='login'?'block':'none';
+  document.getElementById('reg-form').style.display=t==='reg'?'block':'none';
 }
-function _doRegisterLocal(){
-  const name=v('rg-name').trim(),email=v('rg-email').trim(),phone=v('rg-phone').trim(),pw=v('rg-pw').trim();
-  if(!name||!email||!phone||!pw){toast('⚠️ Заполните все поля');return;}
-  if(DB.users.find(x=>x.email===email)){toast('❌ Email уже используется');return;}
-  const nu={id:DB.users.length+1,email,phone,pw,name,age:'',district:'',school:'',work:'',points:0,events:0,tasks_done:0,joined:new Date().toISOString().split('T')[0],avatar:name[0].toUpperCase(),avatarData:null,bio:'',warnings:[],rank:'candidate',positionId:'cand_pos',dept:'volunteers',perms:null,kpiMonth:0,kpiGoal:50,kpiArchive:[],pointsLog:[],notifications:[],tgChatId:'',tgEnabled:false,promoConditions:{toVolunteer:{onboarding:false,staffAcademy:false,events3:false,active:false,leaderApproval:false},toActivist:{staffAcademyFull:false,events10:false,organized3:false,examPassed:false,leaderApproval:false}},organizedEvents:[],promoRequest:null,examResult:null,examRetry:{canRetry:true,lastAttempt:null,adminApproved:false}};
-  DB.users.push(nu);CU=nu;launchApp();
-}
+// doLogin defined in firebase layer
+// doRegister defined in firebase layer
 
-// showAuth defined in head
-
-function rLandingAnns() {
-  const el = document.getElementById('landing-ann-list');
-  if (!el) return;
-  const anns = [...DB.announcements].sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)).slice(0,3);
-  if (!anns.length) { el.innerHTML = '<div style="font-size:12px;color:var(--text3);text-align:center;padding:16px">Объявлений пока нет</div>'; return; }
-  el.innerHTML = anns.map(a => `
-    <div class="landing-ann-item" onclick="showAuth('login')">
-      ${a.imageData ? `<img src="${a.imageData}" class="landing-ann-img" alt="">` : ''}
-      <div class="landing-ann-body">
-        ${a.pinned ? '<div class="landing-ann-pin">📌 Закреплено</div>' : ''}
-        <div class="landing-ann-title">${a.title}</div>
-        <div class="landing-ann-text">${a.text.slice(0,100)}${a.text.length>100?'...':''}</div>
-        <div class="landing-ann-date">${a.date}</div>
-      </div>
-    </div>`).join('');
-}
-
-function doLogout(){CU=null;localStorage.removeItem('session_uid');document.getElementById('app').style.display='none';document.getElementById('auth-screen').style.display='flex';toast('👋 До встречи!')}
-// Применяем отложенный таб если был
-if (window._pendingTab) { authTab(window._pendingTab); window._pendingTab = null; }
 function launchApp(){
   document.getElementById('auth-screen').style.display='none';
   document.getElementById('app').style.display='flex';
   updSidebar();
   if(canAdmin(CU)){document.querySelectorAll('.adm-only').forEach(el=>el.style.display='');document.getElementById('doc-btn').style.display='inline-flex';}
-  fillSelects();DB.users.forEach(checkAutoPromo);updBadges();updNotifBadge();go('home');
+  fillSelects();DB.users.forEach(checkAutoPromo);updBadges();updNotifBadge();go('dashboard');
 }
 function updSidebar(){
   const ini=CU.name.split(' ').map(x=>x[0]).join('').slice(0,2);
@@ -1398,16 +903,17 @@ function go(id){
   const nav=document.querySelector(`.nav-item[onclick="go('${id}')"]`);if(nav)nav.classList.add('active');
   document.getElementById('pg-title').textContent=PT[id]||id;
   closeSb();
-  const renders={home:renderHome,achievements:rAchievements,dashboard:renderDashboard,events:rEvents,tasks:rTasks,announcements:rAnn,profile:rProfile,progress:rProg,promotion:rPromotion,'pts-log':rPointsLog,leaderboard:rLb,documents:rDocs,'tg-settings':rTelegramSettings,'adm-vol':rAdmVol,'adm-ev':rAdmEv,'adm-tasks':rAdmTasks,'adm-promo':rAdmPromo,'adm-kpi':rKpiAdmin,'adm-tests':rTestConstructor,'adm-perms':rAdmPerms,'adm-rep':rAdmRep};
+  const renders={dashboard:renderDashboard,events:rEvents,tasks:rTasks,announcements:rAnn,profile:rProfile,progress:rProg,promotion:rPromotion,'pts-log':rPointsLog,leaderboard:rLb,documents:rDocs,'tg-settings':rTelegramSettings,'adm-vol':rAdmVol,'adm-ev':rAdmEv,'adm-tasks':rAdmTasks,'adm-promo':rAdmPromo,'adm-kpi':rKpiAdmin,'adm-tests':rTestConstructor,'adm-perms':rAdmPerms,'adm-rep':rAdmRep};
   renders[id]?.();
 }
 function toggleSb(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('ovr').classList.toggle('show')}
+function closeSb(){document.getElementById('sidebar').classList.remove('open');document.getElementById('ovr').classList.remove('show')}
 function fillSelects(){
   const tv=document.getElementById('task-vol'),eo=document.getElementById('ev-org');
   if(tv)DB.users.forEach(u=>{const o=document.createElement('option');o.value=u.id;o.textContent=u.name.split(' ').slice(0,2).join(' ');tv.appendChild(o)});
   if(eo)DB.users.forEach(u=>{const o=document.createElement('option');o.value=u.id;o.textContent=u.name.split(' ').slice(0,2).join(' ');eo.appendChild(o)});
 }
-function handleAvUpload(inp){const file=inp.files[0];if(!file)return;const r=new FileReader();r.onload=e=>{CU.avatarData=e.target.result;syncToServer();rProfile();updSidebar();toast('✅ Фото обновлено');inp.value='';};r.readAsDataURL(file);}
+function handleAvUpload(inp){const file=inp.files[0];if(!file)return;const r=new FileReader();r.onload=e=>{CU.avatarData=e.target.result;rProfile();updSidebar();toast('✅ Фото обновлено');inp.value='';};r.readAsDataURL(file);}
 function handleEvCover(inp){const file=inp.files[0];if(!file)return;const r=new FileReader();r.onload=e=>{_pendingCoverData=e.target.result;const p=document.getElementById('ev-cover-preview');p.src=_pendingCoverData;p.style.display='block';document.getElementById('ev-cover-zone').style.display='none';document.getElementById('ev-cover-clear').style.display='block';inp.value='';toast('🖼️ Обложка выбрана');};r.readAsDataURL(file);}
 function handleEvDrop(e){e.preventDefault();document.getElementById('ev-cover-zone').classList.remove('drag');const file=e.dataTransfer.files[0];if(file?.type.startsWith('image/')){const dt=new DataTransfer();dt.items.add(file);document.getElementById('ev-cover-inp').files=dt.files;handleEvCover(document.getElementById('ev-cover-inp'));}}
 function clearEvCover(){_pendingCoverData=null;const p=document.getElementById('ev-cover-preview');p.style.display='none';p.src='';document.getElementById('ev-cover-zone').style.display='';document.getElementById('ev-cover-clear').style.display='none';}
@@ -1415,78 +921,8 @@ function clearEvCover(){_pendingCoverData=null;const p=document.getElementById('
 // ════════════════════════════════════════════════════════════
 //  PAGE RENDERS
 // ════════════════════════════════════════════════════════════
-function renderHome(){
-  const u = CU, rank = getRank(u);
-  // Hero
-  const greet = new Date().getHours() < 12 ? 'Доброе утро' : new Date().getHours() < 18 ? 'Добрый день' : 'Добрый вечер';
-  document.getElementById('home-emoji').textContent = rank.emoji;
-  document.getElementById('home-title').textContent = `${greet}, ${u.name.split(' ')[1]||u.name.split(' ')[0]}!`;
-  document.getElementById('home-sub').textContent = `${rank.name} · МДК «Мугунгхва»`;
-
-  // Статистика
-  const goal = u.kpiGoal||KPI_GOALS[u.rank]||100, kpi = u.kpiMonth||0, pct = Math.round(kpi/goal*100);
-  h('home-stats', `
-    <div class="home-stat" onclick="go('pts-log')">
-      <div class="home-stat-ico">⭐</div>
-      <div class="home-stat-val">${u.points}</div>
-      <div class="home-stat-lbl">Мои баллы</div>
-    </div>
-    <div class="home-stat" onclick="go('dashboard')">
-      <div class="home-stat-ico">📊</div>
-      <div class="home-stat-val">${pct}%</div>
-      <div class="home-stat-lbl">KPI месяца</div>
-    </div>
-    <div class="home-stat" onclick="go('events')">
-      <div class="home-stat-ico">📅</div>
-      <div class="home-stat-val">${u.events}</div>
-      <div class="home-stat-lbl">Мероприятий</div>
-    </div>
-    <div class="home-stat" onclick="go('promotion')">
-      <div class="home-stat-ico">⬆️</div>
-      <div class="home-stat-val">${u.tasks_done}</div>
-      <div class="home-stat-lbl">Задач сделано</div>
-    </div>
-  `);
-
-  // Объявления
-  const anns = [...DB.announcements].sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)).slice(0,4);
-  h('home-anns', anns.length ? anns.map(a => `
-    <div class="home-ann-card${a.pinned?' pinned':''}" onclick="go('announcements')">
-      ${a.imageData ? `<img src="${a.imageData}" class="home-ann-img">` : ''}
-      <div class="home-ann-body">
-        <div class="home-ann-title">${a.pinned?'📌 ':''}${a.title}</div>
-        <div class="home-ann-text">${a.text}</div>
-        <div class="home-ann-date">${a.date}</div>
-      </div>
-    </div>`).join('') : '<div style="color:var(--text3);font-size:13px;padding:8px">Объявлений пока нет</div>');
-
-  // Ближайшие мероприятия
-  const evs = DB.events.filter(e=>e.status==='open').slice(0,3);
-  h('home-events', evs.length ? evs.map(e => `
-    <div style="display:flex;align-items:center;gap:12px;padding:10px;background:var(--surface2);border-radius:10px;margin-bottom:8px;cursor:pointer" onclick="openEvDetail(${e.id})">
-      <div style="width:42px;height:42px;border-radius:9px;background:linear-gradient(135deg,var(--purple),var(--accent));display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;overflow:hidden;position:relative">
-        ${e.coverData?`<img src="${e.coverData}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:9px">`:e.emoji}
-      </div>
-      <div style="flex:1;min-width:0">
-        <div style="font-weight:600;font-size:13px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${e.title}</div>
-        <div style="font-size:11px;color:var(--text2)">📍 ${e.location} · ${fdate(e.date)}</div>
-      </div>
-      <div style="font-size:12px;color:var(--amber);font-weight:700;flex-shrink:0">+${e.points}б</div>
-    </div>`).join('') : '<div style="color:var(--text3);font-size:13px;padding:8px">Нет открытых мероприятий</div>');
-}
-
 function renderDashboard(){
   const u=CU,rank=getRank(u);
-  // Приветствие
-  const _hr=new Date().getHours();
-  const _greet=_hr<6?'Доброй ночи':_hr<12?'Доброе утро':_hr<18?'Добрый день':'Добрый вечер';
-  const _gwel=document.getElementById('dash-greeting');
-  const _gsub=document.getElementById('dash-subgreeting');
-  if(_gwel)_gwel.textContent=`${_greet}, ${u.name.split(' ')[1]||u.name.split(' ')[0]}! ${rank.emoji}`;
-  if(_gsub)_gsub.textContent=`${rank.name} · ${u.points} баллов · KPI: ${Math.round((u.kpiMonth||0)/(u.kpiGoal||100)*100)}%`;
-  // Объявления на дашборде (последние 3)
-  const _dAnn=document.getElementById('dash-ann');
-  if(_dAnn){const _anns=[...DB.announcements].sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)).slice(0,3);_dAnn.innerHTML=_anns.length?_anns.map(a=>`<div style="padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer" onclick="go('announcements')"><div style="font-weight:600;font-size:12.5px;margin-bottom:3px">${a.pinned?'📌 ':''}${a.title}</div><div style="font-size:11.5px;color:var(--text2);line-height:1.5">${a.text.slice(0,80)}${a.text.length>80?'...':''}</div><div style="font-size:10px;color:var(--text3);margin-top:3px">${a.date}</div></div>`).join(''):'<div style="font-size:12px;color:var(--text3);padding:8px 0">Объявлений нет</div>';}
   // Stats
   if(canAdmin(u)){
     h('dash-stats',`<div class="stat-card"><div class="stat-ico">👥</div><div class="stat-val sv-g">${DB.users.length}</div><div class="stat-lbl">Участников</div></div><div class="stat-card"><div class="stat-ico">📅</div><div class="stat-val sv-p">${DB.events.filter(e=>e.status==='open').length}</div><div class="stat-lbl">Открытых событий</div></div><div class="stat-card"><div class="stat-ico">⏳</div><div class="stat-val sv-a">${DB.tasks.filter(t=>!t.done).length}</div><div class="stat-lbl">Задач в работе</div></div><div class="stat-card"><div class="stat-ico">⬆️</div><div class="stat-val sv-r">${pendingPromos()}</div><div class="stat-lbl">Запросов</div></div>`);
@@ -1578,32 +1014,7 @@ function rTasks(){
 }
 function doTask(id){const t=DB.tasks.find(x=>x.id===id);if(!t)return;t.done=true;addPointsWithLog(CU.id,t.points,`Задача: ${t.title}`,'Система');CU.tasks_done++;toast(`⭐ +${t.points} баллов`);rTasks();}
 
-function rAnn(){
-  const isAdm = hasPerm(CU,'manageEvents')||hasPerm(CU,'fullAdmin');
-  const sorted = [...DB.announcements].sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0));
-  const addBtn = isAdm?`<div style="margin-bottom:16px;display:flex;gap:8px;flex-wrap:wrap">
-    <button class="btn btn-a" onclick="opm('m-add-ann')">📢 + Новое объявление</button>
-  </div>`:'';
-  h('ann-list', addBtn + (sorted.length ? sorted.map(a=>`
-    <div class="ann-card${a.pinned?' pinned':''}">
-      ${a.imageData?`<img src="${a.imageData}" class="ann-full-img" alt="">`:''}
-      <div class="ann-card-body">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px">
-          <div>
-            ${a.pinned?`<div class="ann-notify-badge">📌 Закреплено</div>`:''}
-            <div style="font-weight:700;font-size:15px;line-height:1.3">${a.title}</div>
-            <div style="font-size:11px;color:var(--text3);margin-top:3px">${a.date}</div>
-          </div>
-          ${isAdm?`<div style="display:flex;gap:4px;flex-shrink:0">
-            <button onclick="pinAnn(${a.id})" class="btn btn-o" style="padding:4px 8px;font-size:11px">${a.pinned?'📌 Открепить':'📍 Закрепить'}</button>
-            <button onclick="delAnn(${a.id})" class="btn btn-d" style="padding:4px 8px;font-size:11px">🗑</button>
-          </div>`:''}
-        </div>
-        <div style="font-size:13.5px;color:var(--text2);line-height:1.7;white-space:pre-wrap">${a.text}</div>
-      </div>
-    </div>`).join('') : '<div class="empty"><div class="ei">📢</div><p>Объявлений пока нет</p></div>'));
-  rLandingAnns();
-}
+function rAnn(){h('ann-list',DB.announcements.map(a=>`<div class="ann-item${a.pinned?' pinned':''}"><div class="ann-hdr"><div class="ann-title">${a.title}${a.pinned?` <span style="font-size:10px;color:var(--amber)">📌</span>`:''}</div><div class="ann-date">${a.date}</div></div><div class="ann-txt">${a.text}</div></div>`).join(''))}
 
 function rProfile(){
   const u=CU,ini=u.name.split(' ').map(x=>x[0]).join('').slice(0,2);
@@ -1625,8 +1036,6 @@ function rProfile(){
     <div class="fg full"><label>О себе</label><input id="pf-bio" value="${u.bio||''}" placeholder="Расскажите о себе..."></div>
   `);
 }
-function saveProfile(){CU.age=v('pf-age');CU.phone=v('pf-phone');CU.email=v('pf-email');CU.district=v('pf-dist');CU.school=v('pf-school');CU.work=v('pf-work');CU.bio=v('pf-bio');updSidebar();toast('✅ Профиль сохранён')}
-
 function rProg(){
   const u=CU,rank=getRank(u),pos=getPos(u);
   const goal=u.kpiGoal||KPI_GOALS[u.rank]||100,kpi=u.kpiMonth||0,pct=Math.round(kpi/goal*100),over=kpi>goal;
@@ -1680,7 +1089,7 @@ function rPromotion(){
       <div class="cond-ico">${c[cr.key]?'✅':'⭕'}</div>
       <div class="cond-txt"><div class="cond-title">${cr.title}${cr.auto?` <span style="font-size:9px;color:var(--accent)">●авто</span>`:''}</div><div class="cond-sub">${cr.sub}</div></div>
       ${!c[cr.key]&&cr.key==='examPassed'?`<button class="btn btn-a" style="padding:5px 10px;font-size:11px" onclick="startExam()">Пройти тест</button>`:''}
-      ${!c[cr.key]&&cr.key!=='examPassed'&&cr.key!=='events3'&&cr.key!=='events10'&&(hasPerm(CU,'approvePromo')||u.id===CU.id)?`<button class="btn btn-a" style="padding:5px 10px;font-size:11px" onclick="toggleCond(${u.id},'${stage}','${cr.key}')">✓ Отметить</button>`:''}
+      ${!c[cr.key]&&hasPerm(CU,'approvePromo')&&cr.key!=='examPassed'&&cr.key!=='events3'&&cr.key!=='events10'?`<button class="btn btn-a" style="padding:5px 10px;font-size:11px" onclick="toggleCond(${u.id},'${stage}','${cr.key}')">✓</button>`:''}
     </div>`).join('')}
     ${p.complete&&!u.promoRequest?`<div style="margin-top:14px;padding:13px;background:var(--accent-dim);border-radius:11px;border:1px solid rgba(0,212,170,.25);text-align:center"><div style="font-size:12.5px;color:var(--accent);font-weight:600;margin-bottom:9px">🎉 Все условия выполнены!</div><button class="btn btn-a" onclick="sendPromoRequest()">⬆️ Отправить запрос на повышение</button></div>`:''}
     ${u.promoRequest?`<div style="margin-top:12px;padding:11px;background:var(--amber-dim);border-radius:10px;border:1px solid rgba(245,158,11,.25);font-size:12.5px;color:var(--amber)">⏳ Запрос отправлен ${u.promoRequest.date} — ожидает одобрения</div>`:''}
@@ -1689,75 +1098,6 @@ function rPromotion(){
 function toggleCond(uid,stage,key){const u=DB.users.find(x=>x.id===uid);if(!u)return;u.promoConditions[stage][key]=!u.promoConditions[stage][key];syncToServer();rPromotion();toast('✅ Обновлено');updBadges();}
 function sendPromoRequest(){if(CU.promoRequest){toast('⏳ Запрос уже отправлен');return;}const now=new Date();CU.promoRequest={status:'pending',date:`${now.getDate()}.${String(now.getMonth()+1).padStart(2,'0')}.${now.getFullYear()}`,fromRank:CU.rank};syncToServer();toast('✅ Запрос отправлен руководству!');rPromotion();updBadges();}
 
-let _pendingAnnImg = null;
-function handleAnnImg(inp){
-  const file=inp.files[0];if(!file)return;
-  const r=new FileReader();
-  r.onload=e=>{
-    _pendingAnnImg=e.target.result;
-    const prev=document.getElementById('ann-img-preview');
-    prev.src=_pendingAnnImg;prev.style.display='block';
-    document.getElementById('ann-img-zone').style.display='none';
-    document.getElementById('ann-img-clear').style.display='inline-flex';
-  };
-  r.readAsDataURL(file);
-}
-function clearAnnImg(){
-  _pendingAnnImg=null;
-  document.getElementById('ann-img-preview').style.display='none';
-  document.getElementById('ann-img-preview').src='';
-  document.getElementById('ann-img-zone').style.display='';
-  document.getElementById('ann-img-clear').style.display='none';
-  document.getElementById('ann-img-inp').value='';
-}
-
-function editAnn(id){
-  const a = DB.announcements.find(x => x.id === id); if(!a) return;
-  document.getElementById('ann-title').value = a.title;
-  document.getElementById('ann-text').value = a.text;
-  if(a.pinned) document.getElementById('ann-pin-toggle')?.classList.add('on');
-  if(a.imageData){
-    _pendingAnnImg = a.imageData;
-    const prev = document.getElementById('ann-img-preview');
-    prev.src = a.imageData; prev.style.display = 'block';
-    document.getElementById('ann-img-zone').style.display = 'none';
-    document.getElementById('ann-img-clear').style.display = 'inline-flex';
-  }
-  // Удаляем старое и откроем модалку для редактирования
-  DB.announcements = DB.announcements.filter(x => x.id !== id);
-  opm('m-add-ann');
-}
-function addAnn(){
-  const title=document.getElementById('ann-title')?.value.trim();
-  const text=document.getElementById('ann-text')?.value.trim();
-  if(!title||!text){toast('⚠️ Заполните заголовок и текст');return;}
-  const pinned=document.getElementById('ann-pin-toggle')?.classList.contains('on')||false;
-  const now=new Date();
-  const dateStr=`${now.getDate()} ${['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'][now.getMonth()]} ${now.getFullYear()}`;
-  const newAnn = {id:Date.now(),title,text,date:dateStr,pinned,imageData:_pendingAnnImg||null};
-  DB.announcements.unshift(newAnn);
-  // Оповещаем всех пользователей
-  DB.users.forEach(u => { addNotif(u.id, `📢 Новое объявление: ${title}`); });
-  syncToServer();
-  cpm('m-add-ann');
-  clearAnnImg();
-  document.getElementById('ann-title').value='';
-  document.getElementById('ann-text').value='';
-  document.getElementById('ann-pin-toggle')?.classList.remove('on');
-  toast('✅ Объявление опубликовано');
-  rAnn();
-  renderDashboard();
-}
-function delAnn(id){
-  if(!confirm('Удалить объявление?'))return;
-  DB.announcements=DB.announcements.filter(a=>a.id!==id);
-  syncToServer();toast('🗑️ Удалено');rAnn();renderDashboard();
-}
-function pinAnn(id){
-  const a=DB.announcements.find(x=>x.id===id);if(!a)return;
-  a.pinned=!a.pinned;syncToServer();rAnn();renderDashboard();
-  toast(a.pinned?'📌 Закреплено':'Откреплено');
-}
 function rPointsLog(){
   const log=CU?.pointsLog||[];
   h('pts-log-body',log.length?`<div class="table-wrap"><table><thead><tr><th>Дата</th><th>Кто начислил</th><th>Основание</th><th>Баллы</th></tr></thead><tbody>${log.map(l=>`<tr><td style="font-size:11px;color:var(--text2)">${l.date}</td><td style="font-size:12px">${l.by}</td><td style="font-size:12.5px">${l.reason}</td><td><b style="color:${l.type==='plus'?'var(--accent)':'var(--danger)'}">${l.type==='plus'?'+':l.type==='minus'?'-':''}${l.amount}</b></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty"><div class="ei">📃</div><p>История пуста</p></div>');
@@ -1766,7 +1106,6 @@ function rLb(){
   const rc=['gold','silver','bronze'];
   h('lb-list',[...DB.users].sort((a,b)=>b.points-a.points).map((u,i)=>{const rank=getRank(u),pos=getPos(u);return`<div class="lb-item${u.id===CU.id?' me':''}"><div class="lb-rank ${rc[i]||''}">${i+1}</div><div class="mini-av">${avImg(u)}${u.avatarData?'':u.avatar}</div><div class="lb-info"><div class="lb-name">${u.name.split(' ').slice(0,2).join(' ')} ${u.id===CU.id?'<span style="font-size:10px;color:var(--accent)">(вы)</span>':''}</div><div class="lb-sub">${rank.emoji} ${rank.name} · ${pos.name}</div></div><div class="lb-pts">${u.points}</div></div>`;}).join(''));
 }
-function rDocs(){h('docs-grid',DB.documents.map(d=>`<div class="doc-card" onclick="toast('📥 Скачивание: ${d.name}')"><div style="font-size:30px">${d.icon}</div><div style="font-size:11.5px;font-weight:600">${d.name}</div><div style="font-size:10px;color:var(--text3)">${d.size} · ${d.date}</div></div>`).join(''))}
 function rTelegramSettings(){
   const u=CU;
   h('tg-settings-body',`<div style="padding:15px;background:var(--surface2);border-radius:12px;border:1px solid var(--border);margin-bottom:13px"><div style="display:flex;align-items:center;gap:11px;margin-bottom:13px"><div style="font-size:28px">📱</div><div><div style="font-weight:700;font-size:14px">Telegram-уведомления</div><div style="font-size:12px;color:var(--text2)">Получайте уведомления о баллах, KPI и повышениях</div></div></div><div class="fg"><label>Ваш Telegram Chat ID</label><input id="tg-chat-id" value="${u.tgChatId||''}" placeholder="123456789 (найдите через @userinfobot)"></div><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><div class="toggle${u.tgEnabled?' on':''}" id="tg-toggle" onclick="this.classList.toggle('on')"></div><span style="font-size:13px">Включить уведомления</span></div><div style="display:flex;gap:8px"><button class="btn btn-a" onclick="saveTgSettings()">Сохранить</button><button class="btn btn-o" onclick="testTG()">📤 Тест</button></div></div><div style="padding:12px;background:var(--blue-dim);border-radius:11px;border:1px solid rgba(59,130,246,.2);font-size:12px;color:var(--text2)"><b style="color:#60a5fa">🧩 Как подключиться:</b><br>1. Напишите боту <b>@userinfobot</b> любое сообщение<br>2. Скопируйте ваш Chat ID (цифры)<br>3. Вставьте Chat ID выше и включите уведомления</div>`);
@@ -1808,7 +1147,6 @@ function submitExam(){
   if(passed){CU.promoConditions.toActivist.examPassed=true;addNotif(CU.id,`🎉 Экзамен сдан! ${score}/${test.questions.length}`);sendTG(CU.id,`🎉 Экзамен на Активиста сдан! ${score}/${test.questions.length}`);}
   else{addNotif(CU.id,`Тест не сдан: ${score}/${test.questions.length}. Ждите одобрения на пересдачу`);}
   setTimeout(()=>{h('exam-body',`<div style="text-align:center;padding:18px"><div style="font-size:44px;margin-bottom:9px">${passed?'🎉':'😔'}</div><div style="font-family:'Unbounded',sans-serif;font-size:15px;font-weight:700;margin-bottom:7px">${passed?'Экзамен сдан!':'Попробуйте ещё раз'}</div><div style="font-size:12.5px;color:var(--text2);margin-bottom:10px">Результат: ${score}/${test.questions.length} · Проходной: ${test.passScore}</div>${!passed?'<div style="font-size:11.5px;color:var(--amber);margin-bottom:10px">⏳ Пересдача после одобрения администратора</div>':''}<button class="btn btn-g" onclick="cpm(\'m-exam\');rPromotion()">Закрыть</button></div>`);},1800);
-  syncToServer();
   rPromotion();updBadges();
 }
 function approveExamRetry(uid){const u=DB.users.find(x=>x.id===uid);if(!u)return;if(!u.examRetry)u.examRetry={};u.examRetry.adminApproved=true;u.examRetry.canRetry=true;u.examRetry.lastAttempt=null;addNotif(uid,'✅ Пересдача экзамена одобрена!');sendTG(uid,'✅ Пересдача экзамена одобрена!');toast(`✅ Пересдача одобрена — ${u.name.split(' ')[0]}`);rAdmPromo();}
@@ -1826,7 +1164,7 @@ function rAdmVol(){
     const rank=getRank(u),pos=getPos(u),goal=u.kpiGoal||KPI_GOALS[u.rank]||100,kpi=u.kpiMonth||0,pct=Math.round(kpi/goal*100);
     const wb=u.warnings?.length?`<span class="warn-badge">⚠️${u.warnings.length}</span>`:'';
     const pr=u.promoRequest?`<span style="background:var(--amber-dim);color:var(--amber);font-size:9px;font-weight:700;padding:1px 6px;border-radius:7px;margin-left:4px;border:1px solid rgba(245,158,11,.2)">⬆️</span>`:'';
-    return`<tr><td><div class="td-nm"><div class="mini-av">${avImg(u)}${u.avatarData?'':u.avatar}</div>${u.name.split(' ').slice(0,2).join(' ')}${wb}${pr}</div></td><td><span class="rank-badge ${rank.cls}" style="font-size:9px;padding:2px 8px">${rank.emoji} ${rank.name}</span></td><td style="font-size:11px;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${pos.name}</td><td><b style="color:var(--accent)">${u.points}</b></td><td style="font-weight:700;color:${pct>=100?'var(--accent)':'var(--text2)'}">${pct}%</td><td>${u.events}</td><td><button class="btn btn-o" style="padding:4px 9px;font-size:11px" onclick="showVol(${u.id})">Профиль</button></td></tr>`;
+    return`<tr><td><div class="td-nm"><div class="mini-av">${avImg(u)}${u.avatarData?'':u.avatar}</div>${u.name.split(' ').slice(0,2).join(' ')}${wb}${pr}</div></td><td><span class="rank-badge ${rank.cls}" style="font-size:9px;padding:2px 8px">${rank.emoji} ${rank.name}</span></td><td style="font-size:11px;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${pos.name}</td><td><b style="color:var(--accent)">${u.points}</b></td><td style="font-weight:700;color:${pct>=100?'var(--accent)':'var(--text2)'}">${pct}%</td><td>${u.events}</td><td><button class="btn btn-o" style="padding:4px 9px;font-size:11px" onclick="showVol(${u.id})">Профиль</button>${hasPerm(CU,'approvePromo')?`<button class="btn btn-a" style="padding:4px 9px;font-size:11px" onclick="openPromoAdmin(${u.id})">✓ Условия</button>`:''}</td></tr>`;
   }).join(''));
 }
 function showVol(id){
@@ -1836,91 +1174,12 @@ function showVol(id){
   h('m-vol-body',`<div style="display:flex;align-items:center;gap:11px;margin-bottom:13px"><div style="width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--purple));display:flex;align-items:center;justify-content:center;font-family:'Unbounded',sans-serif;font-size:18px;font-weight:700;color:#fff;flex-shrink:0;position:relative;overflow:hidden">${avImg(u)}${u.avatarData?'':u.avatar}</div><div><div style="font-weight:700;font-size:14px">${u.name}</div><div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:4px"><span class="rank-badge ${rank.cls}" style="font-size:9px;padding:2px 7px">${rank.emoji} ${rank.name}</span><span class="pos-badge" style="font-size:9px">${pos.name}</span></div></div></div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px"><div style="background:var(--surface2);border-radius:9px;padding:11px"><div style="font-size:9px;color:var(--text3);margin-bottom:3px">БАЛЛЫ</div><div style="font-family:'Unbounded',sans-serif;font-size:20px;font-weight:700;color:var(--accent)">${u.points}</div></div><div style="background:var(--surface2);border-radius:9px;padding:11px"><div style="font-size:9px;color:var(--text3);margin-bottom:3px">KPI МЕСЯЦА</div><div style="font-size:18px;font-weight:700;color:${pct>=100?'var(--accent)':'var(--text)'}">${pct}%<span style="font-size:11px;color:var(--text3);font-weight:400;margin-left:4px">${kpi}/${goal}</span></div></div><div style="background:var(--surface2);border-radius:9px;padding:11px"><div style="font-size:9px;color:var(--text3);margin-bottom:3px">МЕРОПРИЯТИЙ</div><div style="font-size:17px;font-weight:700">${u.events}</div></div><div style="background:var(--surface2);border-radius:9px;padding:11px"><div style="font-size:9px;color:var(--text3);margin-bottom:3px">ЗАДАЧ</div><div style="font-size:17px;font-weight:700">${u.tasks_done}</div></div></div>
   <div style="font-size:12px;color:var(--text2);line-height:1.85"><div>📧 ${u.email}</div><div>📱 ${u.phone||'—'}</div><div>📍 ${u.district||'—'}</div><div>🎓 ${u.school||'—'}</div>${u.work?`<div>💼 ${u.work}</div>`:''}<div>🎂 ${u.age||'—'} лет · 📅 с ${fdate(u.joined)}</div>${u.examResult?`<div>📝 Экзамен: ${u.examResult.passed?`✅ Сдан (${u.examResult.score}/${u.examResult.total})`:`❌ Не сдан (${u.examResult.score}/${u.examResult.total}) ${!u.examRetry?.canRetry?'— <button class="btn btn-am" style="font-size:10px;padding:3px 8px" onclick="approveExamRetry('+u.id+')">Одобрить пересдачу</button>':''}`}</div>`:''}</div>`);
-  // Блок прямой смены ранга (только для тех у кого есть approvePromo)
-  const rankBlock = document.getElementById('rank-change-block');
-  if(rankBlock && hasPerm(CU,'approvePromo') && u.id !== CU.id){
-    rankBlock.style.display = '';
-    rankBlock.innerHTML = `
-      <div style="padding:11px 13px;background:var(--purple-dim);border:1px solid rgba(124,58,237,.25);border-radius:10px;margin-bottom:10px">
-        <div style="font-size:11px;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">🎖️ Изменить ранг напрямую</div>
-        <div style="display:flex;gap:7px;flex-wrap:wrap">
-          <button class="btn ${u.rank==='candidate'?'btn-a':'btn-o'}" style="font-size:11px;padding:5px 12px" onclick="setRankDirect(${u.id},'candidate')">🌱 Кандидат</button>
-          <button class="btn ${u.rank==='volunteer'?'btn-a':'btn-o'}" style="font-size:11px;padding:5px 12px" onclick="setRankDirect(${u.id},'volunteer')">⚡ Волонтёр</button>
-          <button class="btn ${u.rank==='activist'?'btn-a':'btn-o'}" style="font-size:11px;padding:5px 12px" onclick="setRankDirect(${u.id},'activist')">🌟 Активист</button>
-        </div>
-      </div>`;
-  } else if(rankBlock) {
-    rankBlock.style.display = 'none';
-  }
-
-  // Рендерим ачивки
-  const achBlock = document.getElementById('ach-block-vol');
-  if (achBlock) achBlock.innerHTML = renderVolAchs(id);
-
   const pi=document.getElementById('pts-inp'),pr=document.getElementById('pts-reason'),wr=document.getElementById('warn-reason');
   if(pi)pi.value='';if(pr)pr.value='';if(wr)wr.value='';
   const wl=document.getElementById('warn-list-modal');
   if(wl){const warns=u.warnings||[];wl.innerHTML=warns.length?warns.map(w=>`<div class="warn-row"><span style="font-size:13px">⚠️</span><div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--amber)">${w.reason}</div><div style="font-size:10px;color:var(--text3)">${w.date}</div></div><button onclick="removeWarn(${u.id},${w.id})" style="background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:0 3px">✕</button></div>`).join(''):'<div style="font-size:11.5px;color:var(--text3)">Предупреждений нет</div>';}
-  // Кнопка увольнения
-  const modalActions = document.querySelector('#m-vol .modal-actions');
-  if(modalActions){
-    const existFireBtn = document.getElementById('fire-btn');
-    if(existFireBtn) existFireBtn.remove();
-    if(hasPerm(CU,'manageUsers') && u.id !== CU.id){
-      const fireBtn = document.createElement('button');
-      fireBtn.id = 'fire-btn';
-      fireBtn.className = 'btn btn-d';
-      fireBtn.style.marginLeft = 'auto';
-      fireBtn.textContent = '🔥 Уволить';
-      fireBtn.onclick = ()=>fireUser(u.id);
-      modalActions.appendChild(fireBtn);
-    }
-  }
   opm('m-vol');
 }
-function fireUser(uid){
-  const u=DB.users.find(x=>x.id===uid);
-  if(!u)return;
-  if(u.id===CU.id){toast('❌ Нельзя уволить себя');return;}
-  if(!confirm(`Уволить ${u.name.split(' ').slice(0,2).join(' ')}? Это удалит его из системы.`))return;
-  DB.users=DB.users.filter(x=>x.id!==uid);
-  // Убираем из событий и задач
-  DB.events.forEach(e=>{e.registered=e.registered.filter(x=>x!==uid);e.confirmed=e.confirmed.filter(x=>x!==uid);});
-  DB.tasks=DB.tasks.filter(t=>t.assignee!==uid);
-  syncToServer();
-  cpm('m-vol');
-  toast(`✅ ${u.name.split(' ')[0]} уволен`);
-  rAdmVol();
-}
-function setRankDirect(uid, newRank){
-  const u = DB.users.find(x => x.id === uid);
-  if(!u) return;
-  const rankMap = {
-    candidate: {rank:'candidate', positionId:'cand_pos'},
-    volunteer: {rank:'volunteer', positionId:'vol_pos'},
-    activist:  {rank:'activist',  positionId:'activist_pos'}
-  };
-  const rm = rankMap[newRank];
-  if(!rm) return;
-  const oldRankName = getRank(u).name;
-  u.rank = rm.rank;
-  u.positionId = rm.positionId;
-  u.promoRequest = null;
-  // Ставим все условия выполненными
-  if(newRank === 'volunteer' || newRank === 'activist'){
-    u.promoConditions.toVolunteer = {onboarding:true,staffAcademy:true,events3:true,active:true,leaderApproval:true};
-  }
-  if(newRank === 'activist'){
-    u.promoConditions.toActivist = {staffAcademyFull:true,events10:true,organized3:true,examPassed:true,leaderApproval:true};
-  }
-  syncToServer();
-  addNotif(uid, `🎖️ Ваш ранг изменён на «${getRank(u).name}» администратором`);
-  toast(`✅ ${u.name.split(' ')[0]} → ${getRank(u).name}`);
-  showVol(uid);
-  rAdmVol();
-  if(u.id === CU?.id) updSidebar();
-}
-
 function doAddPts(dir){
   const p=parseInt(document.getElementById('pts-inp')?.value);if(!p||isNaN(p)||p<1){toast('⚠️ Введите количество');return;}
   const reason=document.getElementById('pts-reason')?.value||'Ручное начисление';
@@ -1930,8 +1189,8 @@ function doAddPts(dir){
   showVol(_detVolId);rAdmVol();
   toast(dir>0?`➕ Начислено ${p} баллов`:`➖ Снято ${p} баллов`);
 }
-function doWarn(){const reason=document.getElementById('warn-reason')?.value.trim();if(!reason){toast('⚠️ Укажите причину');return;}const u=DB.users.find(x=>x.id===_detVolId);if(!u)return;if(!u.warnings)u.warnings=[];const now=new Date();u.warnings.push({id:Date.now(),reason,date:`${now.getDate()}.${String(now.getMonth()+1).padStart(2,'0')}.${now.getFullYear()}`});document.getElementById('warn-reason').value='';syncToServer();showVol(_detVolId);toast(`⚠️ Варн выдан — ${u.name.split(' ')[0]}`);rAdmVol();}
-function removeWarn(uid,wid){const u=DB.users.find(x=>x.id===uid);if(!u)return;u.warnings=u.warnings.filter(w=>w.id!==wid);syncToServer();showVol(uid);toast('✅ Предупреждение снято');rAdmVol();}
+function doWarn(){const reason=document.getElementById('warn-reason')?.value.trim();if(!reason){toast('⚠️ Укажите причину');return;}const u=DB.users.find(x=>x.id===_detVolId);if(!u)return;if(!u.warnings)u.warnings=[];const now=new Date();u.warnings.push({id:Date.now(),reason,date:`${now.getDate()}.${String(now.getMonth()+1).padStart(2,'0')}.${now.getFullYear()}`});document.getElementById('warn-reason').value='';showVol(_detVolId);toast(`⚠️ Варн выдан — ${u.name.split(' ')[0]}`);rAdmVol();}
+function removeWarn(uid,wid){const u=DB.users.find(x=>x.id===uid);if(!u)return;u.warnings=u.warnings.filter(w=>w.id!==wid);showVol(uid);toast('✅ Предупреждение снято');rAdmVol();}
 
 function rAdmPromo(){
   const pending=DB.users.filter(u=>u.promoRequest?.status==='pending');
@@ -1956,56 +1215,12 @@ function rAdmPromo(){
           ${u.promoRequest?'<span style="font-size:9px;background:var(--amber-dim);color:var(--amber);padding:1px 6px;border-radius:7px;border:1px solid rgba(245,158,11,.2)">⬆️запрос</span>':''}
         </div>
       </div>
-      <div style="display:flex;gap:5px">${hasPerm(CU,'approvePromo')?`<button class="btn btn-a" style="padding:4px 9px;font-size:11px" onclick="openPromoAdmin(${u.id})">✓ Условия</button>`:''}<button class="btn btn-o" style="padding:4px 9px;font-size:11px" onclick="showVol(${u.id})">Профиль</button></div>
+      <button class="btn btn-o" style="padding:4px 9px;font-size:11px" onclick="showVol(${u.id})">Профиль</button>
     </div>`;
   }).join(''));
 }
-
-function openPromoAdmin(uid){
-  const u=DB.users.find(x=>x.id===uid);if(!u||u.rank==='activist')return;
-  const isToVol=u.rank==='candidate';
-  const stage=isToVol?'toVolunteer':'toActivist';
-  const p=isToVol?promoToVol(u):promoToAct(u);
-  const condRows=isToVol?[
-    {key:'onboarding',title:'Пройти Онбординг',auto:false},
-    {key:'staffAcademy',title:'Вступить в Staff Academy',auto:false},
-    {key:'events3',title:`Участие в 3+ мероприятиях (${u.events}/3)`,auto:true},
-    {key:'active',title:'Быть активным и инициативным',auto:false},
-    {key:'leaderApproval',title:'Допуск от руководства',auto:false},
-  ]:[
-    {key:'staffAcademyFull',title:'Завершить Staff Academy',auto:false},
-    {key:'events10',title:`Посетить 10+ мероприятий (${u.events}/10)`,auto:true},
-    {key:'organized3',title:`Организовать 3+ мероприятия`,auto:false},
-    {key:'examPassed',title:'Пройти экзамен',auto:true},
-    {key:'leaderApproval',title:'Одобрение руководства',auto:false},
-  ];
-  const c=p.conds;
-  const rows=condRows.map(cr=>`
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 11px;background:var(--surface2);border-radius:8px;margin-bottom:5px;border:1px solid ${c[cr.key]?'rgba(0,212,170,.25)':'var(--border)'}">
-      <div style="display:flex;align-items:center;gap:8px">
-        <span style="font-size:16px">${c[cr.key]?'✅':'⭕'}</span>
-        <span style="font-size:12.5px;color:${c[cr.key]?'var(--accent)':'var(--text)'}">${cr.title}</span>
-        ${cr.auto?'<span style="font-size:9px;color:var(--accent);background:var(--accent-dim);padding:1px 5px;border-radius:5px">авто</span>':''}
-      </div>
-      ${!c[cr.key]&&!cr.auto?`<button class="btn btn-a" style="padding:3px 10px;font-size:11px" onclick="toggleCondAdmin(${uid},'${stage}','${cr.key}')">✓ Отметить</button>`:''}
-      ${c[cr.key]&&!cr.auto?`<button class="btn btn-o" style="padding:3px 10px;font-size:11px" onclick="toggleCondAdmin(${uid},'${stage}','${cr.key}')">↩ Снять</button>`:''}
-    </div>`).join('');
-  document.getElementById('m-promo-admin-title').textContent=`Условия: ${u.name.split(' ').slice(0,2).join(' ')}`;
-  document.getElementById('m-promo-admin-body').innerHTML=`<div style="font-size:11px;color:var(--text2);margin-bottom:10px;padding:7px;background:var(--surface2);border-radius:7px">Прогресс: <b style="color:var(--accent)">${p.pct}%</b> · ${isToVol?'Кандидат → Волонтёр':'Волонтёр → Активист'}</div>${rows}`;
-  document.getElementById('m-promo-admin').classList.add('open');
-}
-function toggleCondAdmin(uid,stage,key){
-  const u=DB.users.find(x=>x.id===uid);if(!u)return;
-  u.promoConditions[stage][key]=!u.promoConditions[stage][key];
-  syncToServer();
-  toast('✅ Условие обновлено');
-  openPromoAdmin(uid);
-  rAdmPromo();
-  updBadges();
-}
-
-function approvePromo(uid){const u=DB.users.find(x=>x.id===uid);if(!u)return;if(u.rank==='candidate'){u.rank='volunteer';u.positionId='vol_pos';}else if(u.rank==='volunteer'){u.rank='activist';u.positionId='activist_pos';}u.promoRequest=null;addNotif(uid,`🎉 Поздравляем! Вы повышены до ранга «${getRank(u).name}»!`);sendTG(uid,`🎉 Поздравляем с повышением до ранга «${getRank(u).name}»!`);syncToServer();toast(`🎉 ${u.name.split(' ')[0]} повышен до «${getRank(u).name}»!`);rAdmPromo();updBadges();if(u.id===CU?.id){updSidebar();rPromotion();}}
-function rejectPromo(uid){const u=DB.users.find(x=>x.id===uid);if(!u)return;u.promoRequest=null;addNotif(uid,'Ваш запрос на повышение отклонён. Обратитесь к руководству.');syncToServer();toast(`↩️ Запрос отклонён — ${u.name.split(' ')[0]}`);rAdmPromo();updBadges();}
+function approvePromo(uid){const u=DB.users.find(x=>x.id===uid);if(!u)return;if(u.rank==='candidate'){u.rank='volunteer';u.positionId='vol_pos';}else if(u.rank==='volunteer'){u.rank='activist';u.positionId='activist_pos';}u.promoRequest=null;addNotif(uid,`🎉 Поздравляем! Вы повышены до ранга «${getRank(u).name}»!`);sendTG(uid,`🎉 Поздравляем с повышением до ранга «${getRank(u).name}»!`);toast(`🎉 ${u.name.split(' ')[0]} повышен до «${getRank(u).name}»!`);rAdmPromo();updBadges();if(u.id===CU?.id){updSidebar();rPromotion();}}
+function rejectPromo(uid){const u=DB.users.find(x=>x.id===uid);if(!u)return;u.promoRequest=null;addNotif(uid,'Ваш запрос на повышение отклонён. Обратитесь к руководству.');toast(`↩️ Запрос отклонён — ${u.name.split(' ')[0]}`);rAdmPromo();updBadges();}
 
 function rKpiAdmin(){
   const filter=document.getElementById('kpi-filter')?.value||'all';
@@ -2022,7 +1237,6 @@ function rKpiAdmin(){
 }
 function setKpiGoal(uid,val){const u=DB.users.find(x=>x.id===uid);if(u){u.kpiGoal=parseInt(val)||100;toast(`🎯 Цель: ${u.name.split(' ')[0]} → ${u.kpiGoal}б`);}}
 function showKpiArchive(){const w=document.getElementById('kpi-archive-wrap');if(!w)return;if(w.style.display==='none'){h('kpi-archive-wrap',`<div class="card"><div class="card-title" style="margin-bottom:12px">📅 Архив KPI</div>${DB.users.slice(0,5).map(u=>`<div style="margin-bottom:12px"><div style="font-weight:600;font-size:12.5px;margin-bottom:6px">${u.name.split(' ').slice(0,2).join(' ')}</div><div style="display:flex;gap:6px;flex-wrap:wrap">${(u.kpiArchive||[]).slice(0,6).map(a=>`<div style="padding:7px 10px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);min-width:100px"><div style="font-size:9px;color:var(--text3);margin-bottom:2px">${a.month}</div><div style="font-size:14px;font-weight:700;color:${a.pct>=100?'var(--accent)':'var(--danger)'}">${a.pct}%</div><div style="font-size:10px;color:var(--text2)">${a.points}/${a.goal} б</div></div>`).join('')}</div></div>`).join('')}</div>`);w.style.display='block';}else w.style.display='none';}
-function resetKPI(){if(!confirm('Сбросить KPI всем участникам? Данные уйдут в архив.'))return;const now=new Date(),ms=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;DB.users.forEach(u=>{if(!u.kpiArchive)u.kpiArchive=[];const goal=u.kpiGoal||KPI_GOALS[u.rank]||100;u.kpiArchive.unshift({month:ms,points:u.kpiMonth||0,goal,pct:Math.round((u.kpiMonth||0)/goal*100)});u.kpiMonth=0;if(!u.pointsLog)u.pointsLog=[];u.pointsLog.unshift({date:now.toLocaleDateString('ru'),by:'Система',reason:`Сброс KPI за ${ms}`,amount:0,type:'reset'});addNotif(u.id,`📅 KPI за ${ms} заархивирован. Новый месяц!`);});syncToServer();toast('✅ KPI обнулён и сохранён');rKpiAdmin();renderDashboard();}
 function exportKpiCsv(){const rows=['\uFEFFИмя,Ранг,KPI баллы,Цель,%,Статус'];DB.users.forEach(u=>{const goal=u.kpiGoal||KPI_GOALS[u.rank]||100,kpi=u.kpiMonth||0,pct=Math.round(kpi/goal*100);rows.push(`"${u.name}","${getRank(u).name}",${kpi},${goal},${pct}%,"${pct>=100?(pct>100?'Перевыполнен':'Выполнен'):'Не выполнен'}"`)});const b=new Blob([rows.join('\n')],{type:'text/csv;charset=utf-8;'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`kpi_${new Date().toISOString().slice(0,10)}.csv`;a.click();toast('📥 CSV скачан');}
 
 function rTestConstructor(){
@@ -2075,8 +1289,7 @@ function rAdmEv(){
 }
 function editEvCover(evId){const e=DB.events.find(x=>x.id===evId);if(!e)return;const tmp=document.createElement('input');tmp.type='file';tmp.accept='image/*';tmp.onchange=function(){const file=tmp.files[0];if(!file)return;const r=new FileReader();r.onload=ev=>{e.coverData=ev.target.result;rAdmEv();toast('🖼️ Обновлена');};r.readAsDataURL(file);};tmp.click();}
 function openConf(evId){const e=DB.events.find(x=>x.id===evId);if(!e)return;_confEvId=evId;document.getElementById('m-conf-title').textContent=`Участники: ${e.title}`;h('m-conf-list',e.registered.length?e.registered.map(uid=>{const u=DB.users.find(x=>x.id===uid)||{name:'?',avatar:'?'};const iC=e.confirmed.includes(uid);return`<div class="conf-row"><div style="display:flex;align-items:center;gap:8px"><div class="mini-av">${avImg(u)}${u.avatarData?'':u.avatar}</div><div style="font-size:12.5px;font-weight:500">${u.name.split(' ').slice(0,2).join(' ')}</div></div><div>${iC?`<span class="tag tag-cf" style="font-size:10px">✓ Подтверждено</span>`:`<button class="btn btn-a" style="padding:4px 9px;font-size:11px" onclick="confOne(${evId},${uid})">Подтвердить</button>`}</div></div>`;}).join(''):'<div style="font-size:13px;color:var(--text2);padding:9px 0">Никто не записался</div>');opm('m-confirm');}
-function confOne(evId,uid){const e=DB.events.find(x=>x.id===evId);if(!e||e.confirmed.includes(uid))return;e.confirmed.push(uid);const u=DB.users.find(x=>x.id===uid);if(u){addPointsWithLog(uid,e.points,`Участие в «${e.title}»`,CU?.name.split(' ').slice(0,2).join(' '));checkAutoPromo(u);checkAutoAchs(u);// Выдаём ачивку за мероприятие если есть
-if(e.achievement&&!hasAch(u,'EVT-'+e.id)){if(!u.achievements)u.achievements=[];u.achievements.push({id:'EVT-'+e.id,earnedAt:new Date().toLocaleDateString('ru')});u.points=(u.points||0)+e.achievement.xp;addNotif(uid,`🏆 Ачивка: ${e.achievement.ico} ${e.achievement.name} (+${e.achievement.xp} XP)!`);}}toast(`✅ Подтверждено — начислено ${e.points} баллов`);openConf(evId);rAdmEv();}
+function confOne(evId,uid){const e=DB.events.find(x=>x.id===evId);if(!e||e.confirmed.includes(uid))return;e.confirmed.push(uid);const u=DB.users.find(x=>x.id===uid);if(u){addPointsWithLog(uid,e.points,`Участие в «${e.title}»`,CU?.name.split(' ').slice(0,2).join(' '));checkAutoPromo(u);}toast(`✅ Подтверждено — начислено ${e.points} баллов`);openConf(evId);rAdmEv();}
 function confirmAll(){const e=DB.events.find(x=>x.id===_confEvId);if(!e)return;const unc=e.registered.filter(id=>!e.confirmed.includes(id));unc.forEach(uid=>{e.confirmed.push(uid);const u=DB.users.find(x=>x.id===uid);if(u){addPointsWithLog(uid,e.points,`Участие в «${e.title}»`,CU?.name.split(' ').slice(0,2).join(' '));checkAutoPromo(u);}});toast(`✅ Подтверждено ${unc.length} участников`);openConf(_confEvId);rAdmEv();}
 function delEv(id){if(!confirm('Удалить мероприятие?'))return;DB.events.splice(DB.events.findIndex(e=>e.id===id),1);toast('🗑️ Удалено');rAdmEv();}
 function rAdmTasks(){h('adm-tasks-tbl',DB.tasks.map(t=>{const u=DB.users.find(x=>x.id===t.assignee);return`<tr><td>${t.title}</td><td>${u?u.name.split(' ').slice(0,2).join(' '):'—'}</td><td><span style="color:var(--amber);font-weight:600">+${t.points}</span></td><td>${fdate(t.due)}</td><td>${t.done?'<span style="color:var(--accent)">✓</span>':'<span style="color:var(--amber)">⏳</span>'}</td><td>${!t.done?`<button class="btn btn-a" style="padding:4px 9px;font-size:11px" onclick="admDoneTask(${t.id})">Подтвердить</button>`:''}</td></tr>`;}).join(''));}
@@ -2091,14 +1304,7 @@ function xrep(nm){toast(`📥 "${nm}" формируется...`);setTimeout(()=
 function addEv(){
   const t=v('ev-title'),d=v('ev-date');if(!t||!d){toast('⚠️ Заполните название и дату');return;}
   const orgId=parseInt(v('ev-org'))||null;
-  // Ачивка за мероприятие
-  const achOn = document.getElementById('ev-ach-toggle')?.classList.contains('on');
-  const achData = achOn ? {
-    name: v('ev-ach-name') || t,
-    ico:  document.getElementById('ev-ach-ico')?.value || '🎯',
-    xp:   parseInt(document.getElementById('ev-ach-xp')?.value) || 300
-  } : null;
-  const newEv={id:DB.events.length+1,title:t,date:d,location:v('ev-loc'),points:parseInt(v('ev-pts'))||60,max:parseInt(v('ev-max'))||30,registered:[],confirmed:[],emoji:'🎯',coverData:_pendingCoverData||null,organizerId:orgId,desc:v('ev-desc'),status:'open',comments:[],achievement:achData};
+  const newEv={id:DB.events.length+1,title:t,date:d,location:v('ev-loc'),points:parseInt(v('ev-pts'))||60,max:parseInt(v('ev-max'))||30,registered:[],confirmed:[],emoji:'🎯',coverData:_pendingCoverData||null,organizerId:orgId,desc:v('ev-desc'),status:'open',comments:[]};
   DB.events.push(newEv);
   if(orgId){const u=DB.users.find(x=>x.id===orgId);if(u){if(!u.organizedEvents)u.organizedEvents=[];u.organizedEvents.push(newEv.id);checkAutoPromo(u);}}
   toast(`✅ Создано: «${t}»`);clearEvCover();['ev-title','ev-date','ev-loc','ev-desc'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});cpm('m-add-ev');rAdmEv();updBadges();
@@ -2116,343 +1322,205 @@ function rDocs(){
   if(!list)return;
   list.innerHTML=DB.documents.map(function(d){return '<div class="task-item"><div style="font-size:20px">'+d.icon+'</div><div class="task-main"><div class="task-ttl">'+d.name+'</div><div class="task-sub">'+d.size+' · '+d.date+'</div></div></div>';}).join('');
 }
-
 // ════════════════════════════════════════════════════════════
-//  FIREBASE FIRESTORE
+//  FIREBASE + ХРАНИЛИЩЕ
 // ════════════════════════════════════════════════════════════
+var _db=null,_docRef=null,_syncTimer=null,_unsubscribe=null;
+var LS_SES='vmdk_uid';
 
-const LS_SES = 'vmdk_uid';
-let _db = null;
-let _docRef = null;
-let _syncTimer = null;
-let _unsubscribe = null;
-
-function initFirebase() {
-  const firebaseConfig = {
-    apiKey: "AIzaSyAhqqUSmiTsMOSXM0OlzT31wTMhzQ3t0Q8",
-    authDomain: "volontermdk.firebaseapp.com",
-    projectId: "volontermdk",
-    storageBucket: "volontermdk.firebasestorage.app",
-    messagingSenderId: "719971816104",
-    appId: "1:719971816104:web:bfd408c3efb27b959ee89d"
-  };
-  try {
-    firebase.initializeApp(firebaseConfig);
-    _db = firebase.firestore();
-    _docRef = _db.collection('app').doc('data');
-    console.log('✅ Firebase инициализирован');
-    return true;
-  } catch(e) {
-    console.warn('Firebase init error:', e);
-    return false;
-  }
+function initFirebase(){
+  var cfg={apiKey:"AIzaSyAhqqUSmiTsMOSXM0OlzT31wTMhzQ3t0Q8",authDomain:"volontermdk.firebaseapp.com",projectId:"volontermdk",storageBucket:"volontermdk.firebasestorage.app",messagingSenderId:"719971816104",appId:"1:719971816104:web:bfd408c3efb27b959ee89d"};
+  try{if(!firebase.apps.length)firebase.initializeApp(cfg);_db=firebase.firestore();_docRef=_db.collection('app').doc('data');console.log('✅ Firebase OK');return true;}catch(e){console.warn('Firebase error:',e);return false;}
 }
-
-function syncToServer() {
+function _saveAvatars(){try{var av={};DB.users.forEach(function(u){if(u.avatarData)av[u.id]=u.avatarData;});localStorage.setItem('vmdk_av',JSON.stringify(av));}catch(e){}}
+function _loadAvatars(){try{var av=JSON.parse(localStorage.getItem('vmdk_av')||'{}');DB.users.forEach(function(u){if(av[u.id])u.avatarData=av[u.id];});}catch(e){}}
+function syncToServer(){
   clearTimeout(_syncTimer);
-  _syncTimer = setTimeout(async () => {
-    if (!_docRef) return;
-    try {
-      const slim = JSON.parse(JSON.stringify(DB));
-      // Сохраняем аватары отдельно в localStorage (они большие)
-      try {
-        const avatars = {};
-        DB.users.forEach(u => { if(u.avatarData) avatars[u.id] = u.avatarData; });
-        localStorage.setItem('vmdk_avatars', JSON.stringify(avatars));
-      } catch(e){}
-      slim.users = slim.users.map(u => ({...u, avatarData: null}));
-      await _docRef.set(slim);
-    } catch(e) {
-      console.warn('Firestore save error:', e);
-    }
-  }, 500);
+  _syncTimer=setTimeout(function(){
+    _saveAvatars();
+    if(!_docRef){try{localStorage.setItem('vmdk_bk',JSON.stringify(DB));}catch(e){}return;}
+    var slim=JSON.parse(JSON.stringify(DB));
+    slim.users=slim.users.map(function(u){return Object.assign({},u,{avatarData:null});});
+    _docRef.set(slim).catch(function(e){console.warn('Save error:',e);try{localStorage.setItem('vmdk_bk',JSON.stringify(DB));}catch(ex){}});
+  },500);
 }
-
-function restoreAvatars() {
-  try {
-    const avatars = JSON.parse(localStorage.getItem('vmdk_avatars') || '{}');
-    DB.users.forEach(u => { if(avatars[u.id]) u.avatarData = avatars[u.id]; });
-  } catch(e){}
+function loadFromFirestore(cb){
+  if(!_docRef){cb(false);return;}
+  _docRef.get().then(function(snap){
+    if(snap.exists){var d=snap.data();Object.keys(d).forEach(function(k){if(DB[k]!==undefined)DB[k]=d[k];});_loadAvatars();cb(true);}
+    else cb(false);
+  }).catch(function(e){console.warn('Load error:',e);cb(false);});
 }
-
-async function loadDBFromFirestore() {
-  if (!_docRef) return false;
-  try {
-    const snap = await _docRef.get();
-    if (snap.exists) {
-      const data = snap.data();
-      Object.keys(data).forEach(k => { if(DB[k] !== undefined) DB[k] = data[k]; });
-      restoreAvatars();
-      return true;
-    }
-    return false;
-  } catch(e) {
-    console.warn('Firestore load error:', e);
-    return false;
-  }
+function subscribeFirestore(){
+  if(!_docRef)return;
+  if(_unsubscribe)_unsubscribe();
+  _unsubscribe=_docRef.onSnapshot(function(snap){
+    if(!snap.exists)return;
+    var d=snap.data();Object.keys(d).forEach(function(k){if(DB[k]!==undefined)DB[k]=d[k];});
+    _loadAvatars();
+    if(CU){CU=DB.users.find(function(u){return u.id===CU.id;})||CU;refreshAllUI();}
+  },function(e){console.warn('Snapshot error:',e);});
 }
-
-function subscribeFirestore() {
-  if (!_docRef) return;
-  if (_unsubscribe) _unsubscribe();
-  _unsubscribe = _docRef.onSnapshot(snap => {
-    if (!snap.exists) return;
-    const data = snap.data();
-    Object.keys(data).forEach(k => { if(DB[k] !== undefined) DB[k] = data[k]; });
-    restoreAvatars();
-    if (CU) {
-      CU = DB.users.find(u => u.id === CU.id) || CU;
-      refreshAllUI();
-    }
-  }, err => console.warn('Snapshot error:', err));
+function refreshAllUI(){
+  updBadges();updNotifBadge();
+  if(!CU)return;
+  updAdminMenu();updSidebar();
+  var ap=document.querySelector('.page.active');
+  if(!ap)return;
+  var pid=ap.id.replace('page-','');
+  var r={dashboard:renderDashboard,events:rEvents,tasks:rTasks,announcements:rAnn,profile:rProfile,progress:rProg,promotion:rPromotion,'pts-log':rPointsLog,leaderboard:rLb,documents:rDocs,'tg-settings':rTelegramSettings,'adm-vol':rAdmVol,'adm-ev':rAdmEv,'adm-tasks':rAdmTasks,'adm-promo':rAdmPromo,'adm-kpi':rKpiAdmin,'adm-tests':rTestConstructor,'adm-perms':rAdmPerms,'adm-rep':rAdmRep};
+  if(r[pid])r[pid]();
 }
-
-function connectWS() {}
-
-function refreshAllUI() {
-  updBadges();
-  updNotifBadge();
-  if (!CU) return;
-  updAdminMenu();
-  updSidebar();
-  const ap = document.querySelector('.page.active');
-  if (!ap) return;
-  const pageId = ap.id.replace('page-', '');
-  const renders = {
-    dashboard: renderDashboard, events: rEvents, tasks: rTasks,
-    announcements: rAnn, profile: rProfile, progress: rProg,
-    promotion: rPromotion, 'pts-log': rPointsLog, leaderboard: rLb,
-    documents: rDocs, 'adm-vol': rAdmVol, 'adm-ev': rAdmEv,
-    'adm-tasks': rAdmTasks, 'adm-promo': rAdmPromo, 'adm-kpi': rKpiAdmin,
-    'adm-tests': rTestConstructor, 'adm-perms': rAdmPerms, 'adm-rep': rAdmRep
-  };
-  renders[pageId]?.();
-}
-
 function updAdminMenu(){
   if(!CU)return;
-  if(canAdmin(CU)){
-    document.querySelectorAll('.adm-only').forEach(el=>el.style.display='');
-    const db=document.getElementById('doc-btn');if(db)db.style.display='inline-flex';
-  } else {
-    document.querySelectorAll('.adm-only').forEach(el=>el.style.display='none');
-    const db=document.getElementById('doc-btn');if(db)db.style.display='none';
+  var isAdm=canAdmin(CU);
+  document.querySelectorAll('.adm-only').forEach(function(el){el.style.display=isAdm?'':'none';});
+  var db=document.getElementById('doc-btn');if(db)db.style.display=isAdm?'inline-flex':'none';
+}
+
+// ── Auth ──────────────────────────────────────────────────────
+function doLogin(){
+  var id=v('li-id').trim(),pw=v('li-pw').trim();
+  var u=DB.users.find(function(x){return(x.email===id||x.phone===id)&&x.pw===pw;});
+  if(!u){toast('❌ Неверный логин или пароль');return;}
+  CU=u;localStorage.setItem(LS_SES,String(CU.id));launchApp();
+}
+function doRegister(){
+  var name=v('rg-name').trim(),email=v('rg-email').trim(),phone=v('rg-phone').trim(),pw=v('rg-pw').trim();
+  if(!name||!email||!phone||!pw){toast('⚠️ Заполните все поля');return;}
+  if(DB.users.find(function(x){return x.email===email;})){toast('❌ Email уже используется');return;}
+  var nu={id:Date.now(),email:email,phone:phone,pw:pw,name:name,age:'',district:'',school:'',work:'',points:0,events:0,tasks_done:0,joined:new Date().toISOString().split('T')[0],avatar:name[0].toUpperCase(),avatarData:null,bio:'',warnings:[],rank:'candidate',positionId:'cand_pos',dept:'volunteers',perms:null,kpiMonth:0,kpiGoal:50,kpiArchive:[],pointsLog:[],notifications:[],tgChatId:'',tgEnabled:false,promoConditions:{toVolunteer:{onboarding:false,staffAcademy:false,events3:false,active:false,leaderApproval:false},toActivist:{staffAcademyFull:false,events10:false,organized3:false,examPassed:false,leaderApproval:false}},organizedEvents:[],promoRequest:null,examResult:null,examRetry:{canRetry:true,lastAttempt:null,adminApproved:false}};
+  DB.users.push(nu);CU=nu;localStorage.setItem(LS_SES,String(CU.id));syncToServer();launchApp();
+}
+function doLogout(){
+  CU=null;localStorage.removeItem(LS_SES);
+  document.getElementById('app').style.display='none';
+  document.getElementById('auth-screen').style.display='flex';
+  toast('👋 До встречи!');
+}
+function showAuth(tab){
+  document.getElementById('auth-screen').style.display='flex';
+  authTab(tab||'login');
+}
+
+// ── Патчи syncToServer ────────────────────────────────────────
+var _origAdd=addPointsWithLog;
+addPointsWithLog=function(){_origAdd.apply(this,arguments);syncToServer();};
+var _oReg=doRegEv;window.doRegEv=function(id){var e=DB.events.find(function(x){return x.id===id;});if(!e)return;if(!e.registered.includes(CU.id)){e.registered.push(CU.id);CU.events++;checkAutoPromo();}addNotif(CU.id,'Вы записаны на «'+e.title+'»');toast('✅ Записались!');syncToServer();updBadges();rEvents();};
+var _oUnreg=unregEv;window.unregEv=function(id){var e=DB.events.find(function(x){return x.id===id;});if(!e)return;e.registered=e.registered.filter(function(x){return x!==CU.id;});e.confirmed=e.confirmed.filter(function(x){return x!==CU.id;});CU.events=Math.max(0,CU.events-1);toast('↩️ Запись отменена');syncToServer();updBadges();rEvents();};
+var _oPCmt=postCmt;window.postCmt=function(id){_oPCmt(id);syncToServer();};
+var _oConf=confOne;window.confOne=function(a,b){_oConf(a,b);syncToServer();};
+var _oConfAll=confirmAll;window.confirmAll=function(){_oConfAll();syncToServer();};
+var _oDoneTask=admDoneTask;window.admDoneTask=function(id){_oDoneTask(id);syncToServer();};
+var _oAddEv=addEv;window.addEv=function(){_oAddEv();syncToServer();};
+var _oAddTask=addTask;window.addTask=function(){_oAddTask();syncToServer();};
+var _oSavePerms=savePerms;window.savePerms=function(){_oSavePerms();syncToServer();};
+var _oSavePos=savePosition;window.savePosition=function(){_oSavePos();syncToServer();};
+var _oDelEv=delEv;window.delEv=function(id){_oDelEv(id);syncToServer();};
+var _oWarn=doWarn;window.doWarn=function(){_oWarn();syncToServer();};
+var _oRemWarn=removeWarn;window.removeWarn=function(a,b){_oRemWarn(a,b);syncToServer();};
+var _oAvUp=handleAvUpload;window.handleAvUpload=function(inp){_oAvUp(inp);syncToServer();};
+
+// ── Прямое изменение ранга ────────────────────────────────────
+function setRankDirect(uid,newRank){
+  var u=DB.users.find(function(x){return x.id===uid;});if(!u)return;
+  var rm={candidate:{rank:'candidate',positionId:'cand_pos'},volunteer:{rank:'volunteer',positionId:'vol_pos'},activist:{rank:'activist',positionId:'activist_pos'}};
+  var r=rm[newRank];if(!r)return;
+  u.rank=r.rank;u.positionId=r.positionId;u.promoRequest=null;
+  if(newRank==='volunteer'||newRank==='activist')u.promoConditions.toVolunteer={onboarding:true,staffAcademy:true,events3:true,active:true,leaderApproval:true};
+  if(newRank==='activist')u.promoConditions.toActivist={staffAcademyFull:true,events10:true,organized3:true,examPassed:true,leaderApproval:true};
+  syncToServer();addNotif(uid,'🎖️ Ваш ранг изменён на «'+getRank(u).name+'»');
+  toast('✅ '+u.name.split(' ')[0]+' → '+getRank(u).name);showVol(uid);rAdmVol();if(u.id===CU&&CU.id)updSidebar();
+}
+
+// ── Увольнение ────────────────────────────────────────────────
+function fireUser(uid){
+  var u=DB.users.find(function(x){return x.id===uid;});if(!u)return;
+  if(u.id===CU.id){toast('❌ Нельзя уволить себя');return;}
+  if(!confirm('Уволить '+u.name.split(' ').slice(0,2).join(' ')+'?'))return;
+  DB.users=DB.users.filter(function(x){return x.id!==uid;});
+  DB.events.forEach(function(e){e.registered=e.registered.filter(function(x){return x!==uid;});e.confirmed=e.confirmed.filter(function(x){return x!==uid;});});
+  DB.tasks=DB.tasks.filter(function(t){return t.assignee!==uid;});
+  syncToServer();cpm('m-vol');toast('✅ Уволен');rAdmVol();
+}
+
+// ── KPI сброс ─────────────────────────────────────────────────
+function resetKPI(){
+  if(!confirm('Сбросить KPI всем?'))return;
+  var now=new Date(),ms=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  DB.users.forEach(function(u){
+    if(!u.kpiArchive)u.kpiArchive=[];
+    var goal=u.kpiGoal||KPI_GOALS[u.rank]||100;
+    u.kpiArchive.unshift({month:ms,points:u.kpiMonth||0,goal:goal,pct:Math.round((u.kpiMonth||0)/goal*100)});
+    u.kpiMonth=0;addNotif(u.id,'📅 KPI за '+ms+' сброшен');
+  });
+  syncToServer();toast('✅ KPI обнулён');rKpiAdmin();renderDashboard();
+}
+
+// ── Сохранение профиля ────────────────────────────────────────
+function saveProfile(){
+  CU.age=v('pf-age');CU.phone=v('pf-phone');CU.email=v('pf-email');
+  CU.district=v('pf-dist');CU.school=v('pf-school');CU.work=v('pf-work');CU.bio=v('pf-bio');
+  syncToServer();updSidebar();toast('✅ Профиль сохранён');
+}
+
+// ── showVol с кнопкой уволить и ранг ─────────────────────────
+var _origShowVol=showVol;
+window.showVol=function(id){
+  _origShowVol(id);
+  var u=DB.users.find(function(x){return x.id===id;});if(!u)return;
+  var ma=document.querySelector('#m-vol .modal-actions');
+  if(ma){
+    var fb=document.getElementById('fire-btn');if(fb)fb.remove();
+    if(hasPerm(CU,'manageUsers')&&u.id!==CU.id){
+      var btn=document.createElement('button');btn.id='fire-btn';btn.className='btn btn-d';btn.style.marginLeft='auto';btn.textContent='🔥 Уволить';btn.onclick=function(){fireUser(u.id);};ma.appendChild(btn);
+    }
   }
-}
-
-function _doLogin() {
-  const id = v('li-id').trim(), pw = v('li-pw').trim();
-  const u = DB.users.find(x => (x.email === id || x.phone === id) && x.pw === pw);
-  if (!u) { toast('❌ Неверный логин или пароль'); return; }
-  CU = u;
-  localStorage.setItem(LS_SES, String(CU.id));
-  launchApp();
-}
-
-function _doRegister() {
-  const name = v('rg-name').trim(), email = v('rg-email').trim();
-  const phone = v('rg-phone').trim(), pw = v('rg-pw').trim();
-  if (!name||!email||!phone||!pw) { toast('⚠️ Заполните все поля'); return; }
-  if (DB.users.find(x => x.email === email)) { toast('❌ Email уже используется'); return; }
-  const nu = {
-    id: Date.now(), email, phone, pw, name,
-    age:'', district:'', school:'', work:'',
-    points:0, events:0, tasks_done:0,
-    joined: new Date().toISOString().split('T')[0],
-    avatar: name[0].toUpperCase(), avatarData:null, bio:'', warnings:[],
-    rank:'candidate', positionId:'cand_pos', dept:'volunteers', perms:null,
-    kpiMonth:0, kpiGoal:50, kpiArchive:[], pointsLog:[], notifications:[],
-    tgChatId:'', tgEnabled:false,
-    promoConditions:{
-      toVolunteer:{onboarding:false,staffAcademy:false,events3:false,active:false,leaderApproval:false},
-      toActivist:{staffAcademyFull:false,events10:false,organized3:false,examPassed:false,leaderApproval:false}
-    },
-    organizedEvents:[], promoRequest:null, examResult:null,
-    examRetry:{canRetry:true,lastAttempt:null,adminApproved:false}
-  };
-  DB.users.push(nu);
-  CU = nu;
-  localStorage.setItem(LS_SES, String(CU.id));
-  syncToServer();
-  launchApp();
-}
-
-
-// showAuth defined in head
-
-
-function rLandingAnns() {
-  const el = document.getElementById('landing-ann-list');
-  if (!el) return;
-  const anns = [...DB.announcements].sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)).slice(0,3);
-  if (!anns.length) { el.innerHTML = '<div style="font-size:12px;color:var(--text3);text-align:center;padding:16px">Объявлений пока нет</div>'; return; }
-  el.innerHTML = anns.map(a => `
-    <div class="landing-ann-item" onclick="showAuth('login')">
-      ${a.imageData ? `<img src="${a.imageData}" class="landing-ann-img" alt="">` : ''}
-      <div class="landing-ann-body">
-        ${a.pinned ? '<div class="landing-ann-pin">📌 Закреплено</div>' : ''}
-        <div class="landing-ann-title">${a.title}</div>
-        <div class="landing-ann-text">${a.text.slice(0,100)}${a.text.length>100?'...':''}</div>
-        <div class="landing-ann-date">${a.date}</div>
-      </div>
-    </div>`).join('');
-}
-
-
-
-// Патчим функции изменяющие данные
-const _origAddPoints = addPointsWithLog;
-addPointsWithLog = function(...args) { _origAddPoints.apply(this, args); syncToServer(); };
-window.doRegEv = function(id) {
-  const e = DB.events.find(x => x.id === id); if(!e) return;
-  if(!e.registered.includes(CU.id)){e.registered.push(CU.id);CU.events++;checkAutoPromo();}
-  addNotif(CU.id, `Вы записаны на «${e.title}» — ${fdate(e.date)}`);
-  toast(`✅ Записались на «${e.title}»`);
-  syncToServer(); updBadges(); rEvents();
+  // Блок смены ранга
+  var rb=document.getElementById('rank-block');
+  if(rb&&hasPerm(CU,'approvePromo')&&u.id!==CU.id){
+    rb.style.display='';
+    rb.innerHTML='<div style="padding:11px;background:var(--purple-dim);border:1px solid rgba(124,58,237,.25);border-radius:10px;margin-bottom:10px"><div style="font-size:11px;font-weight:700;color:#a78bfa;margin-bottom:8px">🎖️ Изменить ранг</div><div style="display:flex;gap:7px">'
+      +'<button class="btn '+(u.rank==='candidate'?'btn-a':'btn-o')+'" style="font-size:11px;padding:5px 10px" onclick="setRankDirect('+id+','candidate')">🌱 Кандидат</button>'
+      +'<button class="btn '+(u.rank==='volunteer'?'btn-a':'btn-o')+'" style="font-size:11px;padding:5px 10px" onclick="setRankDirect('+id+','volunteer')">⚡ Волонтёр</button>'
+      +'<button class="btn '+(u.rank==='activist'?'btn-a':'btn-o')+'" style="font-size:11px;padding:5px 10px" onclick="setRankDirect('+id+','activist')">🌟 Активист</button>'
+      +'</div></div>';
+  }else if(rb){rb.style.display='none';}
 };
-window.unregEv = function(id) {
-  const e = DB.events.find(x => x.id === id); if(!e) return;
-  e.registered = e.registered.filter(x => x !== CU.id);
-  e.confirmed  = e.confirmed.filter(x => x !== CU.id);
-  CU.events = Math.max(0, CU.events - 1);
-  toast('↩️ Запись отменена'); syncToServer(); updBadges(); rEvents();
-};
-const _origPostCmt = postCmt;
-window.postCmt = function(evId){ _origPostCmt(evId); syncToServer(); };
-const _origConfOne = confOne;
-window.confOne = function(evId,uid){ _origConfOne(evId,uid); syncToServer(); };
-const _origConfirmAll = confirmAll;
-window.confirmAll = function(){ _origConfirmAll(); syncToServer(); };
-const _origAdmDoneTask = admDoneTask;
-window.admDoneTask = function(id){ _origAdmDoneTask(id); syncToServer(); };
-const _origAddEv = addEv;
-window.addEv = function(){ _origAddEv(); syncToServer(); };
-const _origAddTask = addTask;
-window.addTask = function(){ _origAddTask(); syncToServer(); };
-const _origSavePerms = savePerms;
-window.savePerms = function(){ _origSavePerms(); syncToServer(); };
-const _origSavePosition = savePosition;
-window.savePosition = function(){ _origSavePosition(); syncToServer(); };
-const _origDelEv = delEv;
-window.delEv = function(id){ _origDelEv(id); syncToServer(); };
-const _origDoWarn = doWarn;
-window.doWarn = function(){ _origDoWarn(); syncToServer(); };
 
-// Старт
-// load event moved to separate script block
-// ── Window exports для onclick в HTML ──
-window.filterAch = filterAch;
-window.giveAch = giveAch;
-window.revokeAch = revokeAch;
-window.setRankDirect = setRankDirect;
-window.showAuth = showAuth;
-window.rLandingAnns = rLandingAnns;
-window.clearAnnImg = clearAnnImg;
-window.handleAnnImg = handleAnnImg;
-window.pinAnn = pinAnn;
-window.delAnn = delAnn;
-window.addAnn = addAnn;
-window.saveProfile = saveProfile;
-window._doLogin = _doLogin;
-window._doRegister = _doRegister;
-window.doLogin = _doLogin || doLogin;
-window.doRegister = _doRegister || doRegister;
-window.doLogout = doLogout;
-window.authTab = authTab;
-window.go = go;
-window.toggleSb = toggleSb;
-window.closeSb = closeSb;
-window.filterEvs = filterEvs;
-window.filterEvsSt = filterEvsSt;
-window.openEvDetail = openEvDetail;
-window.postCmt = window.postCmt || postCmt;
-window.handleAvUpload = handleAvUpload;
-window.handleEvCover = handleEvCover;
-window.handleEvDrop = handleEvDrop;
-window.clearEvCover = clearEvCover;
-window.startExam = startExam;
-window.selectOpt = selectOpt;
-window.submitExam = submitExam;
-window.toggleCond = toggleCond;
-window.sendPromoRequest = sendPromoRequest;
-window.doAddPts = doAddPts;
-window.showVol = showVol;
-window.openPosModal = openPosModal;
-window.openPermsModal = openPermsModal;
-window.approvePromo = approvePromo;
-window.rejectPromo = rejectPromo;
-window.approveExamRetry = approveExamRetry;
-window.openConf = openConf;
-window.editEvCover = editEvCover;
-window.xrep = xrep;
-window.addAnn = addAnn;
-window.openPromoAdmin = openPromoAdmin;
-window.toggleCondAdmin = toggleCondAdmin;
-window.fireUser = fireUser;
-window.filterVolRank = filterVolRank;
-window.filterPermSearch = filterPermSearch;
-window.addTest = addTest;
-window.toggleTest = toggleTest;
-window.delTest = delTest;
-window.addQuestion = addQuestion;
-window.saveTgSettings = saveTgSettings;
-window.testTG = testTG;
-window.toggleNotifs = toggleNotifs;
-window.opm = opm;
-window.cpm = cpm;
-window.removeWarn = removeWarn;
-window.admDoneTask = window.admDoneTask || admDoneTask;
-window.doWarn = window.doWarn || doWarn;
-window.exportKpiCsv = exportKpiCsv;
-window.resetKPI = resetKPI;
-window.rKpiAdmin = rKpiAdmin;
-window.uploadDoc = uploadDoc;
+// ── Условия повышения для админа ──────────────────────────────
+function openPromoAdmin(uid){
+  var u=DB.users.find(function(x){return x.id===uid;});if(!u||u.rank==='activist')return;
+  var isV=u.rank==='candidate',stage=isV?'toVolunteer':'toActivist';
+  var p=isV?promoToVol(u):promoToAct(u),c=p.conds;
+  var rows=isV?[{key:'onboarding',t:'Онбординг'},{key:'staffAcademy',t:'Staff Academy'},{key:'events3',t:'3+ мероп.',auto:true},{key:'active',t:'Активность'},{key:'leaderApproval',t:'Допуск'}]:[{key:'staffAcademyFull',t:'Staff Academy полностью'},{key:'events10',t:'10+ мероп.',auto:true},{key:'organized3',t:'3+ организовано'},{key:'examPassed',t:'Экзамен',auto:true},{key:'leaderApproval',t:'Одобрение'}];
+  document.getElementById('m-promo-admin-title').textContent='Условия: '+u.name.split(' ').slice(0,2).join(' ');
+  h('m-promo-admin-body','<div style="font-size:11px;color:var(--text2);margin-bottom:10px">'+p.pct+'% · '+(isV?'→ Волонтёр':'→ Активист')+'</div>'+rows.map(function(r){var done=c[r.key];return'<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--surface2);border-radius:8px;margin-bottom:5px;border:1px solid '+(done?'rgba(0,212,170,.3)':'var(--border)')+'"><span style="font-size:12px">'+(done?'✅':'⭕')+' '+r.t+(r.auto?' <small style="color:var(--accent)">авто</small>':'')+'</span>'+(!done&&!r.auto?'<button class="btn btn-a" style="font-size:11px;padding:3px 9px" onclick="toggleCondAdmin('+uid+',''+stage+'',''+r.key+'')">✓</button>':(done&&!r.auto?'<button class="btn btn-o" style="font-size:11px;padding:3px 9px" onclick="toggleCondAdmin('+uid+',''+stage+'',''+r.key+'')">↩</button>':''))+'</div>';}).join(''));
+  opm('m-promo-admin');
+}
+function toggleCondAdmin(uid,stage,key){var u=DB.users.find(function(x){return x.id===uid;});if(!u)return;u.promoConditions[stage][key]=!u.promoConditions[stage][key];syncToServer();toast('✅ Обновлено');openPromoAdmin(uid);rAdmPromo();updBadges();}
 
-
-// ── Обработчик для ачивок ──
-document.addEventListener('click', function(e) {
-  var achf = e.target.getAttribute('data-achf');
-  if (achf !== null) filterAch(achf, e.target);
+// ── Запуск ────────────────────────────────────────────────────
+window.addEventListener('load',function(){
+  var ok=typeof firebase!=='undefined'&&initFirebase();
+  function start(){
+    subscribeFirestore();
+    var uid=localStorage.getItem(LS_SES);
+    if(uid){var u=DB.users.find(function(x){return String(x.id)===uid;});if(u){CU=u;launchApp();}}
+  }
+  if(ok){
+    loadFromFirestore(function(loaded){
+      if(!loaded)syncToServer();
+      start();
+    });
+  }else{
+    try{var bk=localStorage.getItem('vmdk_bk');if(bk){var d=JSON.parse(bk);Object.keys(d).forEach(function(k){if(DB[k]!==undefined)DB[k]=d[k];});_loadAvatars();}}catch(e){}
+    start();
+  }
 });
+
 </script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<script>
-// Запускаем после загрузки Firebase SDK
-// ── Навешиваем события через JS (не через onclick в HTML) ──
-document.addEventListener('click', function(e) {
-  const achf = e.target.getAttribute('data-achf');
-  if (achf !== null) { filterAch(achf, e.target); }
-});
-
-
-
-window.addEventListener('load', function() {
-  if(typeof firebase !== 'undefined') {
-    var ok = initFirebase();
-    if(ok) {
-      loadDBFromFirestore().then(function(loaded) {
-        if(!loaded) syncToServer();
-        subscribeFirestore();
-        rLandingAnns();
-        var uid = localStorage.getItem('vmdk_uid');
-        if(uid) {
-          var u = DB.users.find(function(x){ return String(x.id)===uid; });
-          if(u) { CU=u; document.getElementById('landing-screen').style.display='none'; launchApp(); }
-          else localStorage.removeItem('vmdk_uid');
-        }
-      });
-    }
-  } else {
-    console.warn('Firebase SDK не загружен');
-    rLandingAnns();
-    var uid = localStorage.getItem('vmdk_uid');
-    if(uid) {
-      var u = DB.users.find(function(x){ return String(x.id)===uid; });
-      if(u) { CU=u; document.getElementById('landing-screen').style.display='none'; launchApp(); }
-    }
-  }
-});
-</script>
 </body>
 </html>
