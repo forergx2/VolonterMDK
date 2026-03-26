@@ -953,6 +953,145 @@ select option{background:var(--surface2);color:var(--text)}
 
 <div id="toast"><span id="t-txt"></span></div>
 <script>
+
+// ════════════════════════════════════════════════════════════
+//  СИСТЕМА АЧИВОК
+// ════════════════════════════════════════════════════════════
+const ACHIEVEMENTS = [
+  {id:'ACT-01', name:'Новичок',           ico:'🐣', xp:100,  type:'auto',   cond:'Участие в 1 мероприятии',               check:function(u){return u.events>=1}},
+  {id:'ACT-02', name:'Постоянный гость',  ico:'🏃', xp:500,  type:'auto',   cond:'Участие в 10 мероприятиях',             check:function(u){return u.events>=10}},
+  {id:'ACT-03', name:'Профи-волонтёр',    ico:'🏅', xp:1500, type:'auto',   cond:'Участие в 25 мероприятиях',             check:function(u){return u.events>=25}},
+  {id:'ACT-04', name:'Легенда движения',  ico:'💎', xp:5000, type:'auto',   cond:'Участие в 50 мероприятиях',             check:function(u){return u.events>=50}},
+  {id:'TIME-01',name:'Испытательный срок',ico:'🗓️',xp:200,  type:'auto',   cond:'1 месяц в организации',                 check:function(u){return u.joined&&(Date.now()-new Date(u.joined))>=30*24*3600*1000}},
+  {id:'TIME-02',name:'Старожил',          ico:'⏳', xp:1000, type:'auto',   cond:'1 год в организации',                   check:function(u){return u.joined&&(Date.now()-new Date(u.joined))>=365*24*3600*1000}},
+  {id:'IT-01',  name:'Хакер-помощник',    ico:'💻', xp:600,  type:'auto',   cond:'Участие в 5+ мероприятиях',             check:function(u){return u.events>=5}},
+  {id:'EDU-01', name:'Студент',           ico:'📚', xp:300,  type:'auto',   cond:'Посещение 5 образовательных событий',   check:function(u){return u.events>=5}},
+  {id:'LDR-01', name:'Лидер группы',      ico:'📢', xp:500,  type:'manual', cond:'Назначение ответственным за сектор',    check:null},
+  {id:'LDR-02', name:'Организатор',       ico:'🛠️',xp:700,  type:'manual', cond:'Самостоятельная подготовка этапа',      check:null},
+  {id:'SPEC-01',name:'Герой дня',         ico:'🦸', xp:1000, type:'manual', cond:'За особый вклад в критической ситуации',check:null},
+  {id:'SPEC-02',name:'Креативщик',        ico:'💡', xp:400,  type:'manual', cond:'За предложенную и внедренную идею',     check:null},
+  {id:'SOC-01', name:'Медиа-лицо',        ico:'📱', xp:300,  type:'manual', cond:'10 упоминаний организации в соцсетях',  check:null},
+  {id:'NIGHT-01',name:'Ночная смена',     ico:'🌙', xp:450,  type:'manual', cond:'Участие в ночных дежурствах',           check:null},
+  {id:'TEAM-01',name:'Душа компании',     ico:'✨', xp:300,  type:'manual', cond:'За помощь в сплочении команды',         check:null},
+];
+
+let _achFilter = 'all';
+
+function getUserAchs(u){ return u.achievements||[]; }
+function hasAch(u,id){ return getUserAchs(u).some(function(a){return a.id===id;}); }
+
+function checkAutoAchs(u){
+  if(!u)return;
+  var changed=false;
+  ACHIEVEMENTS.filter(function(a){return a.type==='auto'&&a.check;}).forEach(function(a){
+    if(!hasAch(u,a.id)&&a.check(u)){
+      if(!u.achievements)u.achievements=[];
+      u.achievements.push({id:a.id,earnedAt:new Date().toLocaleDateString('ru')});
+      u.points=(u.points||0)+a.xp;
+      addNotif(u.id,'🏆 Новая ачивка: '+a.ico+' '+a.name+' (+'+a.xp+' XP)!');
+      changed=true;
+    }
+  });
+  if(changed)syncToServer();
+}
+
+function giveAch(uid,achId){
+  var u=DB.users.find(function(x){return x.id===uid;});
+  var a=ACHIEVEMENTS.find(function(x){return x.id===achId;});
+  if(!u||!a)return;
+  if(hasAch(u,achId)){toast('⚠️ Ачивка уже выдана');return;}
+  if(!u.achievements)u.achievements=[];
+  u.achievements.push({id:achId,earnedAt:new Date().toLocaleDateString('ru'),by:CU&&CU.name.split(' ')[0]});
+  u.points=(u.points||0)+a.xp;
+  addNotif(u.id,'🏆 Новая ачивка: '+a.ico+' '+a.name+' (+'+a.xp+' XP)! Выдал: '+(CU&&CU.name.split(' ')[0]));
+  syncToServer();
+  toast('✅ '+a.ico+' '+a.name+' выдана — '+u.name.split(' ')[0]);
+  showVol(uid);
+}
+
+function revokeAch(uid,achId){
+  var u=DB.users.find(function(x){return x.id===uid;});
+  var a=ACHIEVEMENTS.find(function(x){return x.id===achId;});
+  if(!u||!a)return;
+  u.achievements=(u.achievements||[]).filter(function(x){return x.id!==achId;});
+  u.points=Math.max(0,(u.points||0)-a.xp);
+  syncToServer();
+  toast('↩️ Ачивка '+a.name+' отозвана');
+  showVol(uid);
+}
+
+function filterAch(f,btn){
+  _achFilter=f;
+  document.querySelectorAll('.ach-nav button').forEach(function(b){b.classList.remove('btn-a');b.classList.add('btn-o');});
+  if(btn){btn.classList.add('btn-a');btn.classList.remove('btn-o');}
+  rAchievements();
+}
+
+function getAllAchs(){
+  var all=ACHIEVEMENTS.slice();
+  (DB.events||[]).forEach(function(e){
+    if(e.achievement)all.push({id:'EVT-'+e.id,name:e.achievement.name,ico:e.achievement.ico,xp:e.achievement.xp,type:'auto',cond:'За участие в «'+e.title+'»',check:null});
+  });
+  return all;
+}
+
+function rAchievements(){
+  var u=CU;if(!u)return;
+  var earned=getUserAchs(u);
+  var allAchs=getAllAchs();
+  var filtered=allAchs;
+  if(_achFilter==='earned')filtered=allAchs.filter(function(a){return earned.some(function(e){return e.id===a.id;});});
+  else if(_achFilter==='locked')filtered=allAchs.filter(function(a){return!earned.some(function(e){return e.id===a.id;});});
+  else if(_achFilter==='auto')filtered=allAchs.filter(function(a){return a.type==='auto';});
+  else if(_achFilter==='manual')filtered=allAchs.filter(function(a){return a.type==='manual';});
+
+  var totalXP=earned.reduce(function(sum,e){
+    var a=allAchs.find(function(x){return x.id===e.id;});
+    return sum+(a?a.xp:0);
+  },0);
+
+  var el=document.getElementById('ach-grid');if(!el)return;
+  el.innerHTML='<div style="grid-column:1/-1;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:12px;display:flex;gap:20px;flex-wrap:wrap;margin-bottom:4px">'
+    +'<div><div style="font-size:10px;color:var(--text3);margin-bottom:2px">ПОЛУЧЕНО</div><div style="font-family:'Unbounded',sans-serif;font-size:18px;font-weight:700;color:var(--accent)">'+earned.length+'<span style="font-size:12px;color:var(--text2)">/'+allAchs.length+'</span></div></div>'
+    +'<div><div style="font-size:10px;color:var(--text3);margin-bottom:2px">TOTAL XP</div><div style="font-family:'Unbounded',sans-serif;font-size:18px;font-weight:700;color:var(--amber)">'+totalXP.toLocaleString()+'</div></div>'
+    +'</div>'
+    +filtered.map(function(a){
+      var e=earned.find(function(x){return x.id===a.id;});
+      return '<div class="ach-card '+(e?'earned':'locked')+'">'
+        +'<span class="ach-type-badge '+(a.type==='auto'?'ach-auto':'ach-manual')+'">'+(a.type==='auto'?'⚡авто':'🎖️ручн.')+'</span>'
+        +'<span class="ach-ico">'+a.ico+'</span>'
+        +'<div class="ach-name">'+a.name+'</div>'
+        +'<div class="ach-cond">'+a.cond+'</div>'
+        +'<div class="ach-xp">+'+a.xp+' XP</div>'
+        +(e?'<div class="ach-earned-stamp">✅ '+e.earnedAt+'</div>':'')
+        +'</div>';
+    }).join('');
+}
+
+function renderVolAchs(uid){
+  var u=DB.users.find(function(x){return x.id===uid;});
+  if(!u)return'';
+  var earned=getUserAchs(u);
+  var allAchs=getAllAchs();
+  var canGive=hasPerm(CU,'approvePromo')||hasPerm(CU,'fullAdmin');
+  var manualAchs=allAchs.filter(function(a){return a.type==='manual';});
+  return '<div style="margin-bottom:10px">'
+    +'<div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">🏆 Ачивки ('+earned.length+')</div>'
+    +(earned.length?'<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">'+earned.map(function(e){
+      var a=allAchs.find(function(x){return x.id===e.id;});if(!a)return'';
+      return '<div title="'+a.name+': '+a.cond+'" style="background:var(--surface2);border:1px solid rgba(0,212,170,.2);border-radius:8px;padding:4px 8px;font-size:12px;display:inline-flex;align-items:center;gap:4px">'
+        +a.ico+' <span style="font-size:11px;color:var(--accent)">'+a.name+'</span>'
+        +(canGive?'<button onclick="revokeAch('+uid+',''+a.id+'')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:10px;padding:0 2px" title="Отозвать">✕</button>':'')
+        +'</div>';
+    }).join('')+'</div>':'<div style="font-size:11px;color:var(--text3);margin-bottom:8px">Нет ачивок</div>')
+    +(canGive?'<div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Выдать вручную:</div>'
+      +'<div style="display:flex;flex-wrap:wrap;gap:5px">'+manualAchs.map(function(a){
+        var already=earned.some(function(e){return e.id===a.id;});
+        return '<button class="btn '+(already?'btn-g':'btn-o')+'" style="font-size:10px;padding:3px 8px;opacity:'+(already?'.4':'1')+'" '+(already?'disabled':'')+' onclick="giveAch('+uid+',''+a.id+'')" title="'+a.cond+'">'+a.ico+' '+a.name+'</button>';
+      }).join('')+'</div>':'')
+    +'</div>';
+}
+
 // ── Форварды для onclick (будут переназначены после определения функций) ──
 // Используем proxy чтобы onclick работал до полной загрузки скрипта
 // Будут назначены после определения:
