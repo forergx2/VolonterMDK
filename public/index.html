@@ -477,13 +477,13 @@ select option{background:var(--surface2);color:var(--text)}
   <div class="auth-card">
     <div class="auth-logo">Волонтёр<span>МДК</span><small>МДК &quot;Мугунгхва&quot;</small></div>
     <div class="auth-tabs">
-      <div class="auth-tab active" data-action="authTab-login">Войти</div>
-      <div class="auth-tab" data-action="authTab-reg">Регистрация</div>
+      <div class="auth-tab active" onclick="authTab('login')">Войти</div>
+      <div class="auth-tab" onclick="authTab('reg')">Регистрация</div>
     </div>
     <div id="login-form">
       <div class="fg"><label>Email или телефон</label><input id="li-id" placeholder="+7 777 000 00 00"></div>
       <div class="fg"><label>Пароль</label><input id="li-pw" type="password" placeholder="••••••••"></div>
-      <button class="btn-primary" id="btn-login" data-action="doLogin">Войти</button>
+      <button class="btn-primary" onclick="doLogin()">Войти</button>
 
     </div>
     <div id="reg-form">
@@ -491,7 +491,7 @@ select option{background:var(--surface2);color:var(--text)}
       <div class="fg"><label>Email</label><input id="rg-email" type="email" placeholder="email@mail.ru"></div>
       <div class="fg"><label>Телефон</label><input id="rg-phone" type="tel" placeholder="+7 777 000 00 00"></div>
       <div class="fg"><label>Пароль</label><input id="rg-pw" type="password" placeholder="Минимум 6 символов"></div>
-      <button class="btn-primary" id="btn-register" data-action="doRegister">Зарегистрироваться</button>
+      <button class="btn-primary" onclick="doRegister()">Зарегистрироваться</button>
     </div>
   </div>
 </div>
@@ -2316,30 +2316,6 @@ window.doWarn = function(){ _origDoWarn(); syncToServer(); };
 
 // Старт
 // load event moved to separate script block
-</script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<script>
-// Запускаем после загрузки Firebase SDK
-// ── Навешиваем события через JS (не через onclick в HTML) ──
-document.addEventListener('click', function(e) {
-  const achf = e.target.getAttribute('data-achf');
-  if (achf !== null) { filterAch(achf, e.target); }
-});
-
-// ── Обработчик кликов для auth кнопок ──
-document.addEventListener('click', function(e) {
-  var el = e.target.closest('[data-action]');
-  if (!el) return;
-  var action = el.getAttribute('data-action');
-  if (action === 'showAuth-login') { showAuth('login'); }
-  else if (action === 'showAuth-reg') { showAuth('reg'); }
-  else if (action === 'authTab-login') { authTab('login'); }
-  else if (action === 'authTab-reg') { authTab('reg'); }
-  else if (action === 'doLogin') { doLogin(); }
-  else if (action === 'doRegister') { doRegister(); }
-});
-
 // ── Window exports для onclick в HTML ──
 window.filterAch = filterAch;
 window.giveAch = giveAch;
@@ -2405,6 +2381,35 @@ window.exportKpiCsv = exportKpiCsv;
 window.resetKPI = resetKPI;
 window.rKpiAdmin = rKpiAdmin;
 window.uploadDoc = uploadDoc;
+
+
+// ── Обработчик для landing кнопок (data-action) ──
+document.addEventListener('click', function(e) {
+  var el = e.target.closest('[data-action]');
+  if (!el) return;
+  var action = el.getAttribute('data-action');
+  if (action === 'showAuth-login') showAuth('login');
+  else if (action === 'showAuth-reg') showAuth('reg');
+  else if (action === 'authTab-login') authTab('login');
+  else if (action === 'authTab-reg') authTab('reg');
+  else if (action === 'data-achf') filterAch(el.getAttribute('data-achf'), el);
+});
+document.addEventListener('click', function(e) {
+  var achf = e.target.getAttribute('data-achf');
+  if (achf !== null) filterAch(achf, e.target);
+});
+</script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+// Запускаем после загрузки Firebase SDK
+// ── Навешиваем события через JS (не через onclick в HTML) ──
+document.addEventListener('click', function(e) {
+  const achf = e.target.getAttribute('data-achf');
+  if (achf !== null) { filterAch(achf, e.target); }
+});
+
+
 
 window.addEventListener('load', function() {
   if(typeof firebase !== 'undefined') {
