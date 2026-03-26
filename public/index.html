@@ -804,6 +804,7 @@ select option{background:var(--surface2);color:var(--text)}
     <button class="modal-close" onclick="cpm('m-vol')">✕</button>
     <div class="modal-title" id="m-vol-nm">Профиль</div>
     <div id="m-vol-body"></div>
+    <div id="rank-change-block" style="display:none"></div>
     <div class="pts-box">
       <div class="pts-box-title">⭐ Управление баллами</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px">
@@ -1616,6 +1617,23 @@ function showVol(id){
   h('m-vol-body',`<div style="display:flex;align-items:center;gap:11px;margin-bottom:13px"><div style="width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--purple));display:flex;align-items:center;justify-content:center;font-family:'Unbounded',sans-serif;font-size:18px;font-weight:700;color:#fff;flex-shrink:0;position:relative;overflow:hidden">${avImg(u)}${u.avatarData?'':u.avatar}</div><div><div style="font-weight:700;font-size:14px">${u.name}</div><div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:4px"><span class="rank-badge ${rank.cls}" style="font-size:9px;padding:2px 7px">${rank.emoji} ${rank.name}</span><span class="pos-badge" style="font-size:9px">${pos.name}</span></div></div></div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px"><div style="background:var(--surface2);border-radius:9px;padding:11px"><div style="font-size:9px;color:var(--text3);margin-bottom:3px">БАЛЛЫ</div><div style="font-family:'Unbounded',sans-serif;font-size:20px;font-weight:700;color:var(--accent)">${u.points}</div></div><div style="background:var(--surface2);border-radius:9px;padding:11px"><div style="font-size:9px;color:var(--text3);margin-bottom:3px">KPI МЕСЯЦА</div><div style="font-size:18px;font-weight:700;color:${pct>=100?'var(--accent)':'var(--text)'}">${pct}%<span style="font-size:11px;color:var(--text3);font-weight:400;margin-left:4px">${kpi}/${goal}</span></div></div><div style="background:var(--surface2);border-radius:9px;padding:11px"><div style="font-size:9px;color:var(--text3);margin-bottom:3px">МЕРОПРИЯТИЙ</div><div style="font-size:17px;font-weight:700">${u.events}</div></div><div style="background:var(--surface2);border-radius:9px;padding:11px"><div style="font-size:9px;color:var(--text3);margin-bottom:3px">ЗАДАЧ</div><div style="font-size:17px;font-weight:700">${u.tasks_done}</div></div></div>
   <div style="font-size:12px;color:var(--text2);line-height:1.85"><div>📧 ${u.email}</div><div>📱 ${u.phone||'—'}</div><div>📍 ${u.district||'—'}</div><div>🎓 ${u.school||'—'}</div>${u.work?`<div>💼 ${u.work}</div>`:''}<div>🎂 ${u.age||'—'} лет · 📅 с ${fdate(u.joined)}</div>${u.examResult?`<div>📝 Экзамен: ${u.examResult.passed?`✅ Сдан (${u.examResult.score}/${u.examResult.total})`:`❌ Не сдан (${u.examResult.score}/${u.examResult.total}) ${!u.examRetry?.canRetry?'— <button class="btn btn-am" style="font-size:10px;padding:3px 8px" onclick="approveExamRetry('+u.id+')">Одобрить пересдачу</button>':''}`}</div>`:''}</div>`);
+  // Блок прямой смены ранга (только для тех у кого есть approvePromo)
+  const rankBlock = document.getElementById('rank-change-block');
+  if(rankBlock && hasPerm(CU,'approvePromo') && u.id !== CU.id){
+    rankBlock.style.display = '';
+    rankBlock.innerHTML = `
+      <div style="padding:11px 13px;background:var(--purple-dim);border:1px solid rgba(124,58,237,.25);border-radius:10px;margin-bottom:10px">
+        <div style="font-size:11px;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">🎖️ Изменить ранг напрямую</div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap">
+          <button class="btn ${u.rank==='candidate'?'btn-a':'btn-o'}" style="font-size:11px;padding:5px 12px" onclick="setRankDirect(${u.id},'candidate')">🌱 Кандидат</button>
+          <button class="btn ${u.rank==='volunteer'?'btn-a':'btn-o'}" style="font-size:11px;padding:5px 12px" onclick="setRankDirect(${u.id},'volunteer')">⚡ Волонтёр</button>
+          <button class="btn ${u.rank==='activist'?'btn-a':'btn-o'}" style="font-size:11px;padding:5px 12px" onclick="setRankDirect(${u.id},'activist')">🌟 Активист</button>
+        </div>
+      </div>`;
+  } else if(rankBlock) {
+    rankBlock.style.display = 'none';
+  }
+
   const pi=document.getElementById('pts-inp'),pr=document.getElementById('pts-reason'),wr=document.getElementById('warn-reason');
   if(pi)pi.value='';if(pr)pr.value='';if(wr)wr.value='';
   const wl=document.getElementById('warn-list-modal');
@@ -1651,6 +1669,35 @@ function fireUser(uid){
   toast(`✅ ${u.name.split(' ')[0]} уволен`);
   rAdmVol();
 }
+function setRankDirect(uid, newRank){
+  const u = DB.users.find(x => x.id === uid);
+  if(!u) return;
+  const rankMap = {
+    candidate: {rank:'candidate', positionId:'cand_pos'},
+    volunteer: {rank:'volunteer', positionId:'vol_pos'},
+    activist:  {rank:'activist',  positionId:'activist_pos'}
+  };
+  const rm = rankMap[newRank];
+  if(!rm) return;
+  const oldRankName = getRank(u).name;
+  u.rank = rm.rank;
+  u.positionId = rm.positionId;
+  u.promoRequest = null;
+  // Ставим все условия выполненными
+  if(newRank === 'volunteer' || newRank === 'activist'){
+    u.promoConditions.toVolunteer = {onboarding:true,staffAcademy:true,events3:true,active:true,leaderApproval:true};
+  }
+  if(newRank === 'activist'){
+    u.promoConditions.toActivist = {staffAcademyFull:true,events10:true,organized3:true,examPassed:true,leaderApproval:true};
+  }
+  syncToServer();
+  addNotif(uid, `🎖️ Ваш ранг изменён на «${getRank(u).name}» администратором`);
+  toast(`✅ ${u.name.split(' ')[0]} → ${getRank(u).name}`);
+  showVol(uid);
+  rAdmVol();
+  if(u.id === CU?.id) updSidebar();
+}
+
 function doAddPts(dir){
   const p=parseInt(document.getElementById('pts-inp')?.value);if(!p||isNaN(p)||p<1){toast('⚠️ Введите количество');return;}
   const reason=document.getElementById('pts-reason')?.value||'Ручное начисление';
@@ -2097,6 +2144,7 @@ window.addEventListener('load', async () => {
   }
 });
 
+window.setRankDirect = setRankDirect;
 window.showAuth = showAuth;
 window.rLandingAnns = rLandingAnns;
 window.clearAnnImg = clearAnnImg;
