@@ -884,7 +884,7 @@ function toggleNotifs(){
   _notifOpen=!_notifOpen;
   const p=document.getElementById('notif-panel');if(!p)return;
   p.style.display=_notifOpen?'block':'none';
-  if(_notifOpen){if(CU)(CU.notifications||[]).forEach(n=>n.read=true);updNotifBadge();renderNotifPanel();}
+  if(_notifOpen){if(CU){(CU.notifications||[]).forEach(n=>n.read=true);syncToServer();}updNotifBadge();renderNotifPanel();}
 }
 function renderNotifPanel(){
   const n=(CU?.notifications||[]).slice(0,15);
@@ -1571,9 +1571,22 @@ function subscribeFirestore(){
   if(_unsubscribe)_unsubscribe();
   _unsubscribe=_docRef.onSnapshot(function(snap){
     if(!snap.exists)return;
-    var d=snap.data();Object.keys(d).forEach(function(k){if(DB[k]!==undefined)DB[k]=d[k];});
+    var d=snap.data();
+    // Сохраняем read-статус уведомлений текущего юзера перед мержем
+    var savedReadIds={};
+    if(CU){
+      (CU.notifications||[]).forEach(function(n){if(n.read)savedReadIds[n.id]=true;});
+    }
+    Object.keys(d).forEach(function(k){if(DB[k]!==undefined)DB[k]=d[k];});
     _loadAvatars();
-    if(CU){CU=DB.users.find(function(u){return u.id===CU.id;})||CU;refreshAllUI();}
+    if(CU){
+      CU=DB.users.find(function(u){return u.id===CU.id;})||CU;
+      // Восстанавливаем read-статус
+      if(CU.notifications){
+        CU.notifications.forEach(function(n){if(savedReadIds[n.id])n.read=true;});
+      }
+      refreshAllUI();
+    }
   },function(e){console.warn('Snapshot error:',e);});
 }
 function refreshAllUI(){
