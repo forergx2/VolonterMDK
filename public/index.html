@@ -384,6 +384,64 @@ select option{background:var(--surface2);color:var(--text)}
   .landing-cards{grid-template-columns:1fr 1fr}
   .landing-btns .btn-primary{padding:11px 24px}
 }
+
+/* ══ МОБИЛЬНАЯ АДАПТАЦИЯ ══ */
+@media(max-width:768px){
+  /* Сайдбар скрыт по умолчанию */
+  .sidebar{
+    position:fixed;top:0;left:0;bottom:0;
+    transform:translateX(-100%);
+    transition:transform .3s;
+    z-index:200;
+    width:260px!important;
+  }
+  .sidebar.open{transform:translateX(0)}
+  
+  /* Основной контент на весь экран */
+  .main{margin-left:0!important;width:100%!important}
+  
+  /* Оверлей при открытом меню */
+  .ovr-bg.show{display:block!important}
+  
+  /* Контент */
+  .content{padding:12px!important}
+  
+  /* Топбар */
+  .topbar{padding:10px 14px}
+  .topbar-uname{display:none}
+  .topbar-urank{display:none}
+  
+  /* Грид */
+  .dash-grid{grid-template-columns:1fr!important}
+  .stats-row{grid-template-columns:1fr 1fr!important}
+  .g2{grid-template-columns:1fr!important}
+  .events-grid{grid-template-columns:1fr!important}
+  .market-grid{grid-template-columns:1fr!important}
+  .ach-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))!important}
+  
+  /* Вкладки — скролл */
+  .inner-tabs{overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .inner-tabs::-webkit-scrollbar{display:none}
+  .inner-tab{flex-shrink:0}
+  
+  /* Модалы */
+  .modal{max-width:100%!important;margin:0 10px}
+  .modal-overlay{padding:10px}
+
+  /* Hamburger виден */
+  .hamburger{display:flex!important}
+  
+  /* Таблицы */
+  .table-wrap{overflow-x:auto}
+}
+
+@media(max-width:480px){
+  .stats-row{grid-template-columns:1fr 1fr!important;gap:8px}
+  .topbar-av{width:30px;height:30px}
+  .inner-tab{padding:6px 10px;font-size:11px}
+  .content{padding:10px!important}
+  .card{padding:12px}
+}
 </style>
 <script>
 function showLoginScreen(){
