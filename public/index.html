@@ -62,7 +62,7 @@ body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--text);
 .hamburger{display:none;padding:6px;background:transparent;border:none;color:var(--text);cursor:pointer;font-size:20px}
 .ovr-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99}
 .ovr-bg.show{display:block}
-.content{padding:22px;flex:1}
+
 .page{width:100%;display:none}
 .page.active{display:block;animation:fadeIn .2s ease}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
@@ -111,7 +111,7 @@ body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--text);
 .ev-emoji{position:relative;z-index:1;font-size:36px;text-shadow:0 2px 8px rgba(0,0,0,.4)}
 .ev-hint{position:absolute;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;font-weight:600;opacity:0;transition:opacity .2s;z-index:2}
 .ev-banner:hover .ev-hint{opacity:1}
-.ev-body{padding:13px;flex:1}
+.ev-.market-header-inner{padding:13px;flex:1}
 .ev-date{font-size:10px;color:var(--accent);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
 .ev-title{font-weight:700;font-size:13px;margin-bottom:5px;line-height:1.4}
 .ev-meta{display:flex;gap:9px;font-size:11px;color:var(--text2);margin-bottom:8px;flex-wrap:wrap}
@@ -282,13 +282,13 @@ tbody td{padding:10px 11px;font-size:12.5px}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
 .ld{width:6px;height:6px;background:var(--accent);border-radius:50%;display:inline-block;animation:pulse 1.5s infinite;margin-right:4px}
 /* RESPONSIVE */
-@media(max-width:900px){.stats-row{grid-template-columns:repeat(2,1fr)}.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.content{padding:14px}.pf-form{grid-template-columns:1fr}.hamburger{display:flex}}
+@media(max-width:900px){.stats-row{grid-template-columns:repeat(2,1fr)}.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.pf-form{grid-template-columns:1fr}.hamburger{display:flex}}
 @media(max-width:580px){.stats-row{grid-template-columns:1fr 1fr}.events-grid{grid-template-columns:1fr}}
 select option{background:var(--surface2);color:var(--text)}
 
 /* ── Новый layout ── */
 .sb-user{display:none!important}
-.content{padding:20px 24px;width:100%;box-sizing:border-box}
+
 .main{margin-left:256px;flex:1;min-height:100vh;display:flex;flex-direction:column;min-width:0;overflow-x:hidden}
 
 /* Topbar user */
@@ -354,7 +354,7 @@ select option{background:var(--surface2);color:var(--text)}
 .market-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:all .2s;display:flex;flex-direction:column}
 .market-card:hover{border-color:var(--accent);transform:translateY(-2px)}
 .market-header{padding:14px 16px 0}
-.market-body{padding:0 16px 14px;flex:1;display:flex;flex-direction:column;justify-content:flex-end}
+.market-.market-body-inner{padding:0 16px 14px;flex:1;display:flex;flex-direction:column;justify-content:flex-end}
 .market-reward{display:flex;align-items:center;gap:6px;padding:8px 12px;background:var(--amber-dim);border:1px solid rgba(245,158,11,.25);border-radius:9px;margin-bottom:10px}
 .market-reward-pts{font-family:Unbounded,sans-serif;font-size:18px;font-weight:700;color:var(--amber)}
 .market-filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
