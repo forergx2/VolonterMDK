@@ -564,141 +564,34 @@ function closeSb(){var s=document.getElementById('sidebar');var o=document.getEl
         </div>
 
         <!-- TASKS -->
-        <div class="page" id="page-tasks">
-          <div class="g2">
-            <div><div class="card"><div class="card-hdr"><div class="card-title">Активные задачи</div><span id="tcnt" style="font-size:12px;color:var(--text2)"></span></div><div class="task-list" id="tasks-act"></div></div></div>
-            <div><div class="card"><div class="card-hdr"><div class="card-title">Выполненные</div></div><div class="task-list" id="tasks-done"></div></div></div>
-          </div>
-        </div>
+        
 
         <!-- ANNOUNCEMENTS -->
         <div class="page" id="page-announcements"><div id="ann-list"></div></div>
 
         <!-- PROFILE -->
-        <div class="page" id="page-profile">
-          <div class="ph">
-            <div class="p-av" id="prof-av" onclick="document.getElementById('av-inp').click()">
-              <span id="prof-av-txt">А</span>
-              <div class="av-ov"><span>📷</span><small>Изменить</small></div>
-            </div>
-            <div>
-              <h2 id="prof-nm" style="font-family:'Unbounded',sans-serif;font-size:17px;font-weight:700;margin-bottom:6px">—</h2>
-              <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:7px" id="prof-badges"></div>
-              <div id="prof-meta" style="display:flex;gap:12px;font-size:12px;color:var(--text2);flex-wrap:wrap"></div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-hdr"><div class="card-title">Редактировать профиль</div><button class="btn btn-a" onclick="saveProfile()">Сохранить</button></div>
-            <div class="pf-form" id="pf-fields"></div>
-          </div>
-        </div>
+        
 
         <!-- PROGRESS -->
-        <div class="page" id="page-progress"><div id="prog-content"></div></div>
+        
 
         <!-- PROMOTION -->
-        <div class="page" id="page-promotion"><div id="promo-content"></div></div>
+        
 
         <!-- POINTS LOG -->
-        <div class="page" id="page-pts-log">
-          <div class="card"><div class="card-hdr"><div class="card-title">📋 История баллов</div></div><div id="pts-log-body"></div></div>
-        </div>
+        
 
         <!-- LEADERBOARD -->
-        <div class="page" id="page-leaderboard">
-          <div class="card"><div class="card-title" style="margin-bottom:14px">🏆 Рейтинг МДК</div><div id="lb-list"></div></div>
-        </div>
+        
 
         <!-- DOCUMENTS -->
-        <div class="page" id="page-documents">
-          <div class="card">
-            <div class="card-hdr"><div class="card-title">📁 Документы</div><button class="btn btn-a" id="doc-btn" style="display:none" onclick="opm('m-doc')">+ Загрузить</button></div>
-            <div class="docs-grid" id="docs-grid"></div>
-          </div>
-        </div>
+        
 
         <!-- TELEGRAM -->
-        <div class="page" id="page-tg-settings">
-          <div class="card"><div class="card-hdr"><div class="card-title">📱 Telegram-уведомления</div></div><div id="tg-settings-body"></div></div>
-        </div>
+        
 
         <!-- ADM: VOLUNTEERS -->
-        <div class="page" id="page-adm-vol">
-          <div class="search-bar">
-            <input class="si" placeholder="🔍 Поиск..." oninput="filterVolSearch(this.value)">
-            <select class="fsel" onchange="filterVolRank(this.value)"><option value="all">Все ранги</option><option value="candidate">Кандидат</option><option value="volunteer">Волонтёр</option><option value="activist">Активист</option></select>
-          </div>
-          <div class="card">
-            <div class="card-hdr"><div class="card-title">Сотрудники <span id="vol-cnt" style="font-size:12px;color:var(--text2);font-family:'Golos Text',sans-serif;font-weight:400"></span></div></div>
-            <div class="table-wrap"><table><thead><tr><th>Сотрудник</th><th>Ранг</th><th>Должность</th><th>Баллы</th><th>KPI</th><th>Мер.</th><th>Действия</th></tr></thead><tbody id="vol-tbl"></tbody></table></div>
-          </div>
-        </div>
-
-        <!-- ADM: EVENTS -->
-        <div class="page" id="page-adm-ev">
-          <div style="margin-bottom:14px"><button class="btn btn-a" onclick="opm('m-add-ev')">+ Создать мероприятие</button></div>
-          <div class="events-grid" id="adm-ev-grid"></div>
-        </div>
-
-        <!-- ADM: TASKS -->
-        <div class="page" id="page-adm-tasks">
-          <div class="card">
-            <div class="card-hdr"><div class="card-title">Задачи</div><button class="btn btn-a" onclick="opm('m-add-task')">+ Назначить</button></div>
-            <div class="table-wrap"><table><thead><tr><th>Задача</th><th>Назначен</th><th>Баллы</th><th>Срок</th><th>Статус</th><th></th></tr></thead><tbody id="adm-tasks-tbl"></tbody></table></div>
-          </div>
-        </div>
-
-        <!-- ADM: PROMOTIONS -->
-        <div class="page" id="page-adm-promo">
-          <div class="card"><div class="card-hdr"><div class="card-title">⬆️ Запросы на повышение</div></div><div id="promo-requests"></div></div>
-          <div class="card"><div class="card-hdr"><div class="card-title">Прогресс повышения — все</div></div><div id="promo-all-list"></div></div>
-        </div>
-
-        <!-- ADM: KPI -->
-        <div class="page" id="page-adm-kpi">
-          <div class="card"><div class="card-hdr"><div class="card-title">📊 KPI управление</div></div><div id="kpi-admin-body"></div></div>
-        </div>
-
-        <!-- ADM: TESTS -->
-        <div class="page" id="page-adm-tests">
-          <div id="test-constructor-body"></div>
-        </div>
-
-        <!-- ADM: PERMISSIONS -->
-        <div class="page" id="page-adm-perms">
-          <div class="card">
-            <div class="card-hdr"><div class="card-title">🔐 Права доступа</div></div>
-            <div class="search-bar"><input class="si" placeholder="🔍 Найти..." oninput="filterPermSearch(this.value)"></div>
-            <div id="perms-list"></div>
-          </div>
-        </div>
-
-        <!-- ADM: REPORTS -->
-        <div class="page" id="page-adm-rep">
-          <div class="stats-row" id="adm-stats"></div>
-          <div class="g2">
-            <div class="card"><div class="card-title" style="margin-bottom:8px">Активность</div><div class="mini-chart" id="rep-ch" style="height:64px"></div></div>
-            <div class="card"><div class="card-title" style="margin-bottom:12px">Распределение по рангам</div><div id="rep-ranks"></div></div>
-          </div>
-          <div class="card"><div class="card-hdr"><div class="card-title">Экспорт</div></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-a" onclick="xrep('Сотрудники')">📥 Excel</button><button class="btn btn-o" onclick="xrep('Мероприятия')">📥 Мероприятия</button><button class="btn btn-o" onclick="xrep('KPI')">📥 KPI</button></div></div>
-        </div>
-
-      </div><!-- /content -->
-    </div><!-- /main -->
-  </div><!-- /layout -->
-</div><!-- /app -->
-
-<!-- NOTIFICATION PANEL -->
-<div id="notif-panel">
-  <div class="notif-hdr">
-    <div style="font-family:'Unbounded',sans-serif;font-size:12px;font-weight:700">Уведомления</div>
-    <button onclick="toggleNotifs()" style="background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:16px">✕</button>
-  </div>
-  <div id="notif-panel-body"></div>
-</div>
-
-        <!-- WORK: биржа + мои задачи -->
-        <div class="page" id="page-work">
+                        <div class="page" id="page-work">
           <div class="inner-tabs">
             <div class="inner-tab active" id="wtab-market" onclick="switchWork('market')">💼 Биржа задач<span id="nb-work-market" style="display:none;margin-left:5px;background:var(--accent);color:#000;border-radius:8px;padding:0 5px;font-size:10px">0</span></div>
             <div class="inner-tab" id="wtab-tasks" onclick="switchWork('tasks')">✅ Мои задачи</div>
