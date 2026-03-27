@@ -760,6 +760,7 @@ function closeSb(){var s=document.getElementById('sidebar');var o=document.getEl
     <button class="modal-close" onclick="cpm('m-vol')">✕</button>
     <div class="modal-title" id="m-vol-nm">Профиль</div>
     <div id="m-vol-body"></div>
+    <div id="m-vol-achs"></div>
     <div class="pts-box">
       <div class="pts-box-title">⭐ Управление баллами</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px">
@@ -1361,6 +1362,9 @@ function showVol(id){
   if(pi)pi.value='';if(pr)pr.value='';if(wr)wr.value='';
   const wl=document.getElementById('warn-list-modal');
   if(wl){const warns=u.warnings||[];wl.innerHTML=warns.length?warns.map(w=>`<div class="warn-row"><span style="font-size:13px">⚠️</span><div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--amber)">${w.reason}</div><div style="font-size:10px;color:var(--text3)">${w.date}</div></div><button onclick="removeWarn(${u.id},${w.id})" style="background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:0 3px">✕</button></div>`).join(''):'<div style="font-size:11.5px;color:var(--text3)">Предупреждений нет</div>';}
+  // Ачивки
+  var achEl=document.getElementById('m-vol-achs');
+  if(achEl&&typeof renderVolAchs==='function')achEl.innerHTML=renderVolAchs(id);
   opm('m-vol');
 }
 function doAddPts(dir){
