@@ -1561,6 +1561,11 @@ function showVol(id){
   // Ачивки
   var achEl=document.getElementById('m-vol-achs');
   if(achEl&&typeof renderVolAchs==='function')achEl.innerHTML=renderVolAchs(id);
+  // Показываем блоки по правам
+  var ptsBox=document.getElementById('m-vol-pts-box');
+  var warnBox=document.getElementById('m-vol-warn-box');
+  if(ptsBox)ptsBox.style.display=(hasPerm(CU,'editPoints')||hasPerm(CU,'fullAdmin'))?'block':'none';
+  if(warnBox)warnBox.style.display=(hasPerm(CU,'giveWarn')||hasPerm(CU,'fullAdmin'))?'block':'none';
   opm('m-vol');
 }
 function doAddPts(dir){
