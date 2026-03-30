@@ -459,51 +459,57 @@ function showRegScreen(){
   if(typeof authTab==='function')authTab('reg');
 }
 function doLogin(){
-  var id=document.getElementById('li-id').value.trim();
-  var pw=document.getElementById('li-pw').value.trim();
-  if(!id||!pw){toast('⚠️ Введите логин и пароль');return;}
-  var u=DB.users.find(function(x){return(x.email===id||x.phone===id)&&x.pw===pw;});
-  if(!u){toast('❌ Неверный логин или пароль');return;}
+  var idEl=document.getElementById('li-id');
+  var pwEl=document.getElementById('li-pw');
+  var id=idEl?idEl.value.trim():'';
+  var pw=pwEl?pwEl.value.trim():'';
+  if(!id||!pw){
+    alert('Введите логин и пароль');
+    return;
+  }
+  if(typeof DB==='undefined'||!DB||!DB.users){
+    alert('Данные ещё загружаются, подождите секунду');
+    return;
+  }
+  var u=DB.users.find(function(x){
+    return (x.email===id||x.phone===id)&&x.pw===pw;
+  });
+  if(!u){
+    alert('Неверный логин или пароль');
+    return;
+  }
   CU=u;
-  localStorage.setItem('vmdk_uid',String(CU.id));
-  document.getElementById('landing-screen').style.display='none';
-  document.getElementById('auth-screen').style.display='none';
-  launchApp();
+  if(typeof LS_SES!=='undefined')localStorage.setItem(LS_SES,String(u.id));
+  else localStorage.setItem('vmdk_uid',String(u.id));
+  var ls=document.getElementById('landing-screen');if(ls)ls.style.display='none';
+  var as=document.getElementById('auth-screen');if(as)as.style.display='none';
+  var app=document.getElementById('app');if(app)app.style.display='flex';
+  if(typeof launchApp==='function')launchApp();
 }
-
 function doRegister(){
   var name=(document.getElementById('rg-name')||{value:''}).value.trim();
   var email=(document.getElementById('rg-email')||{value:''}).value.trim();
   var phone=(document.getElementById('rg-phone')||{value:''}).value.trim();
   var pw=(document.getElementById('rg-pw')||{value:''}).value.trim();
-  if(!name||!email||!phone||!pw){
-    if(typeof toast==='function')toast('⚠️ Заполните все поля');
-    else alert('Заполните все поля');
-    return;
-  }
-  function tryReg(){
-    if(typeof DB==='undefined'||!DB.users)return false;
-    if(DB.users.find(function(x){return x.email===email;})){
-      if(typeof toast==='function')toast('❌ Email уже используется');
-      else alert('Email уже используется');
-      return true;
-    }
-    var nu={id:Date.now(),email:email,phone:phone,pw:pw,name:name,age:'',district:'',school:'',work:'',points:0,events:0,tasks_done:0,joined:new Date().toISOString().split('T')[0],avatar:name[0].toUpperCase(),avatarData:null,bio:'',warnings:[],rank:'candidate',positionId:'cand_pos',dept:'volunteers',perms:null,kpiMonth:0,kpiGoal:50,kpiArchive:[],pointsLog:[],notifications:[],tgChatId:'',tgEnabled:false,promoConditions:{toVolunteer:{onboarding:false,staffAcademy:false,events3:false,active:false,leaderApproval:false},toActivist:{staffAcademyFull:false,events10:false,organized3:false,examPassed:false,leaderApproval:false}},organizedEvents:[],promoRequest:null,examResult:null,examRetry:{canRetry:true,lastAttempt:null,adminApproved:false}};
-    DB.users.push(nu);CU=nu;
-    localStorage.setItem('vmdk_uid',String(CU.id));
-    if(typeof syncToServer==='function')syncToServer();
-    var ls=document.getElementById('landing-screen');if(ls)ls.style.display='none';
-    var as=document.getElementById('auth-screen');if(as)as.style.display='none';
-    launchApp();
-    return true;
-  }
-  if(tryReg())return;
-  var attempts=0;
-  var timer=setInterval(function(){
-    attempts++;
-    if(tryReg()){clearInterval(timer);return;}
-    if(attempts>16){clearInterval(timer);if(typeof toast==='function')toast('❌ Ошибка загрузки');}
-  },300);
+  if(!name||!email||!phone||!pw){alert('Заполните все поля');return;}
+  if(typeof DB==='undefined'||!DB||!DB.users){alert('Данные ещё загружаются');return;}
+  if(DB.users.find(function(x){return x.email===email;})){alert('Email уже используется');return;}
+  var nu={id:Date.now(),email:email,phone:phone,pw:pw,name:name,age:'',district:'',school:'',work:'',
+    points:0,events:0,tasks_done:0,joined:new Date().toISOString().split('T')[0],
+    avatar:name[0].toUpperCase(),avatarData:null,bio:'',warnings:[],rank:'candidate',
+    positionId:'cand_pos',dept:'volunteers',perms:null,kpiMonth:0,kpiGoal:50,
+    kpiArchive:[],pointsLog:[],notifications:[],tgChatId:'',tgEnabled:false,
+    promoConditions:{toVolunteer:{onboarding:false,staffAcademy:false,events3:false,active:false,leaderApproval:false},
+    toActivist:{staffAcademyFull:false,events10:false,organized3:false,examPassed:false,leaderApproval:false}},
+    organizedEvents:[],promoRequest:null,examResult:null,examRetry:{canRetry:true,lastAttempt:null,adminApproved:false}};
+  DB.users.push(nu);CU=nu;
+  var key=typeof LS_SES!=='undefined'?LS_SES:'vmdk_uid';
+  localStorage.setItem(key,String(nu.id));
+  if(typeof syncToServer==='function')syncToServer();
+  var ls=document.getElementById('landing-screen');if(ls)ls.style.display='none';
+  var as=document.getElementById('auth-screen');if(as)as.style.display='none';
+  var app=document.getElementById('app');if(app)app.style.display='flex';
+  if(typeof launchApp==='function')launchApp();
 }
 function authTab(t){
   var lf=document.getElementById('login-form');var rf=document.getElementById('reg-form');
@@ -574,7 +580,7 @@ function closeSb(){var s=document.getElementById('sidebar');var o=document.getEl
     <div id="login-form">
       <div class="fg"><label>Email или телефон</label><input id="li-id" placeholder="+7 777 000 00 00"></div>
       <div class="fg"><label>Пароль</label><input id="li-pw" type="password" placeholder="••••••••"></div>
-      <button class="btn-primary" id="btn-do-login">Войти</button>
+      <button class="btn-primary" onclick="doLogin()">Войти</button>
 
     </div>
     <div id="reg-form">
@@ -582,7 +588,7 @@ function closeSb(){var s=document.getElementById('sidebar');var o=document.getEl
       <div class="fg"><label>Email</label><input id="rg-email" type="email" placeholder="email@mail.ru"></div>
       <div class="fg"><label>Телефон</label><input id="rg-phone" type="tel" placeholder="+7 777 000 00 00"></div>
       <div class="fg"><label>Пароль</label><input id="rg-pw" type="password" placeholder="Минимум 6 символов"></div>
-      <button class="btn-primary" id="btn-do-register">Зарегистрироваться</button>
+      <button class="btn-primary" onclick="doRegister()">Зарегистрироваться</button>
     </div>
   </div>
 </div>
@@ -2220,20 +2226,6 @@ window.addEventListener('load',function(){
   }
 });
 
-// Вешаем обработчики на кнопки входа после загрузки скрипта
-(function(){
-  function attachBtn(id, fn){
-    var btn = document.getElementById(id);
-    if(btn){ btn.onclick = fn; }
-  }
-  attachBtn('btn-do-login', doLogin);
-  attachBtn('btn-do-register', doRegister);
-  // Также на случай если DOM ещё не готов
-  document.addEventListener('DOMContentLoaded', function(){
-    attachBtn('btn-do-login', doLogin);
-    attachBtn('btn-do-register', doRegister);
-  });
-})();
 </script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
