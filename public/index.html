@@ -574,7 +574,7 @@ function closeSb(){var s=document.getElementById('sidebar');var o=document.getEl
     <div id="login-form">
       <div class="fg"><label>Email или телефон</label><input id="li-id" placeholder="+7 777 000 00 00"></div>
       <div class="fg"><label>Пароль</label><input id="li-pw" type="password" placeholder="••••••••"></div>
-      <button class="btn-primary" onclick="doLogin()">Войти</button>
+      <button class="btn-primary" id="btn-do-login">Войти</button>
 
     </div>
     <div id="reg-form">
@@ -582,7 +582,7 @@ function closeSb(){var s=document.getElementById('sidebar');var o=document.getEl
       <div class="fg"><label>Email</label><input id="rg-email" type="email" placeholder="email@mail.ru"></div>
       <div class="fg"><label>Телефон</label><input id="rg-phone" type="tel" placeholder="+7 777 000 00 00"></div>
       <div class="fg"><label>Пароль</label><input id="rg-pw" type="password" placeholder="Минимум 6 символов"></div>
-      <button class="btn-primary" onclick="doRegister()">Зарегистрироваться</button>
+      <button class="btn-primary" id="btn-do-register">Зарегистрироваться</button>
     </div>
   </div>
 </div>
@@ -2220,6 +2220,20 @@ window.addEventListener('load',function(){
   }
 });
 
+// Вешаем обработчики на кнопки входа после загрузки скрипта
+(function(){
+  function attachBtn(id, fn){
+    var btn = document.getElementById(id);
+    if(btn){ btn.onclick = fn; }
+  }
+  attachBtn('btn-do-login', doLogin);
+  attachBtn('btn-do-register', doRegister);
+  // Также на случай если DOM ещё не готов
+  document.addEventListener('DOMContentLoaded', function(){
+    attachBtn('btn-do-login', doLogin);
+    attachBtn('btn-do-register', doRegister);
+  });
+})();
 </script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
