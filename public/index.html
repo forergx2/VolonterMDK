@@ -459,44 +459,18 @@ function showRegScreen(){
   if(typeof authTab==='function')authTab('reg');
 }
 function doLogin(){
-  var idEl=document.getElementById('li-id');
-  var pwEl=document.getElementById('li-pw');
-  if(!idEl||!pwEl)return;
-  var id=idEl.value.trim();
-  var pw=pwEl.value.trim();
-  if(!id||!pw){
-    if(typeof toast==='function')toast('⚠️ Введите логин и пароль');
-    else alert('Введите логин и пароль');
-    return;
-  }
-  function tryLogin(){
-    if(typeof DB==='undefined'||!DB.users)return false;
-    var u=DB.users.find(function(x){return(x.email===id||x.phone===id)&&x.pw===pw;});
-    if(!u)return false;
-    CU=u;
-    localStorage.setItem('vmdk_uid',String(CU.id));
-    var ls=document.getElementById('landing-screen');
-    if(ls)ls.style.display='none';
-    var as=document.getElementById('auth-screen');
-    if(as)as.style.display='none';
-    launchApp();
-    return true;
-  }
-  if(tryLogin())return;
-  // DB не готова — пробуем каждые 300мс до 5 секунд
-  var attempts=0;
-  pwEl.placeholder='Загрузка...';
-  var timer=setInterval(function(){
-    attempts++;
-    if(tryLogin()){clearInterval(timer);pwEl.placeholder='••••••••';return;}
-    if(attempts>16){
-      clearInterval(timer);
-      pwEl.placeholder='••••••••';
-      if(typeof toast==='function')toast('❌ Неверный логин или пароль');
-      else alert('Неверный логин или пароль');
-    }
-  },300);
+  var id=document.getElementById('li-id').value.trim();
+  var pw=document.getElementById('li-pw').value.trim();
+  if(!id||!pw){toast('⚠️ Введите логин и пароль');return;}
+  var u=DB.users.find(function(x){return(x.email===id||x.phone===id)&&x.pw===pw;});
+  if(!u){toast('❌ Неверный логин или пароль');return;}
+  CU=u;
+  localStorage.setItem('vmdk_uid',String(CU.id));
+  document.getElementById('landing-screen').style.display='none';
+  document.getElementById('auth-screen').style.display='none';
+  launchApp();
 }
+
 function doRegister(){
   var name=(document.getElementById('rg-name')||{value:''}).value.trim();
   var email=(document.getElementById('rg-email')||{value:''}).value.trim();
