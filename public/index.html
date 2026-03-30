@@ -474,20 +474,29 @@ function doLogin(){
   var pw=pwEl?pwEl.value.trim():'';
   if(!id||!pw){toast('⚠️ Введите логин и пароль');return;}
   if(typeof DB==='undefined'||!DB||!DB.users||DB.users.length===0){
-    // Firebase ещё не загрузился — ждём
-    var ldBtn=document.getElementById('li-pw');if(ldBtn)ldBtn.placeholder='Загрузка...';
+    var ldBtn=document.getElementById('li-pw');
+    if(ldBtn)ldBtn.placeholder='Загрузка...';
     setTimeout(function(){if(ldBtn)ldBtn.placeholder='••••••••';doLogin();},1500);
     return;
   }
-  // Ищем пользователя — сравниваем строки в нижнем регистре для email
+  // Локальные пароли демо-аккаунтов (на случай если Firebase их потерял)
+  var localPws={'admin@demo.kz':'admin123','volunteer@demo.kz':'vol123',
+    'asel@demo.kz':'asel','berik@demo.kz':'berik','alina@demo.kz':'alina'};
   var u=DB.users.find(function(x){
     var emailMatch=x.email&&x.email.toLowerCase()===id.toLowerCase();
     var phoneMatch=x.phone&&x.phone===id;
-    var pwMatch=x.pw&&x.pw===pw;
+    // Сначала проверяем pw из DB, потом из localPws
+    var dbPw=x.pw||localPws[x.email]||'';
+    var pwMatch=dbPw===pw;
+    // Если pw нет в DB но есть в localPws — восстанавливаем
+    if(!x.pw&&localPws[x.email])x.pw=localPws[x.email];
     return (emailMatch||phoneMatch)&&pwMatch;
   });
   console.log('Login attempt:', id, '| Found:', !!u, '| DB users:', DB.users.length);
-  if(!u){
+  if(u){
+    // Сохраняем восстановленные пароли в Firebase
+    if(typeof syncToServer==='function')setTimeout(syncToServer,500);
+  } else {
     toast('❌ Неверный логин или пароль');
     return;
   }
@@ -1740,12 +1749,12 @@ function renderVolAchs(uid){
     +(earned.length?'<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px">'+earned.map(function(e){
       var a=all.find(function(x){return x.id===e.id;});if(!a)return'';
       return '<span style="background:var(--surface2);border:1px solid rgba(0,212,170,.2);border-radius:7px;padding:3px 8px;font-size:12px;display:inline-flex;align-items:center;gap:3px">'+a.ico+' <span style="font-size:11px;color:var(--accent)">'+a.name+'</span>'
-        +(canGive?'<button onclick="revokeAch('+uid+','+JSON.stringify(a.id)+')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:10px;padding:0 1px;margin-left:2px">✕</button>':'')+'</span>';
+        +(canGive?'<button onclick="revokeAch('+uid+',\''+a.id+'\')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:10px;padding:0 1px;margin-left:2px">✕</button>':'')+'</span>';
     }).join('')+'</div>':'<div style="font-size:11px;color:var(--text3);margin-bottom:8px">Нет ачивок</div>')
     +(canGive?'<div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;margin-bottom:5px">Выдать:</div>'
       +'<div style="display:flex;flex-wrap:wrap;gap:4px">'+manual.map(function(a){
         var has=earned.some(function(e){return e.id===a.id;});
-        return '<button class="btn '+(has?'btn-g':'btn-o')+'" style="font-size:10px;padding:3px 7px;'+(has?'opacity:.4':'')+';" '+(has?'disabled':'')+' onclick="giveAch('+uid+','+JSON.stringify(a.id)+')" title="'+a.cond+'">'+a.ico+' '+a.name+'</button>';
+        return '<button class="btn '+(has?'btn-g':'btn-o')+'" style="font-size:10px;padding:3px 7px;'+(has?'opacity:.4':'')+';" '+(has?'disabled':'')+' onclick="giveAch('+uid+',\''+a.id+'\')" title="'+a.cond+'">'+a.ico+' '+a.name+'</button>';
       }).join('')+'</div>':'')
     +'</div>';
 }
