@@ -549,10 +549,7 @@ function doLogin(){
     return (emailMatch||phoneMatch)&&pwMatch;
   });
   console.log('Login attempt:', id, '| Found:', !!u, '| DB users:', DB.users.length);
-  if(u){
-    // Сохраняем восстановленные пароли в Firebase
-    if(typeof syncToServer==='function')setTimeout(syncToServer,500);
-  } else {
+  if(!u){
     toast('❌ Неверный логин или пароль');
     return;
   }
@@ -2529,13 +2526,11 @@ window.resetFirebaseData=resetFirebaseData;
 window.addEventListener('load',function(){
   var ok=typeof firebase!=='undefined'&&initFirebase();
   function start(){
-    // Восстанавливаем пароли демо-аккаунтов если они пустые
+    // Восстанавливаем пароли только локально — не сохраняем в Firebase
     var demoPws={'admin@demo.kz':'admin123','volunteer@demo.kz':'vol123','asel@demo.kz':'asel','berik@demo.kz':'berik','alina@demo.kz':'alina'};
-    var needSave=false;
     DB.users.forEach(function(u){
-      if(!u.pw&&demoPws[u.email]){u.pw=demoPws[u.email];needSave=true;}
+      if(!u.pw&&demoPws[u.email])u.pw=demoPws[u.email];
     });
-    if(needSave){console.log('Restored demo passwords, saving...');syncToServer();}
     subscribeFirestore();
     if(typeof renderLandingAnns==='function')renderLandingAnns();
     var uid=localStorage.getItem(LS_SES);
@@ -2543,7 +2538,8 @@ window.addEventListener('load',function(){
   }
   if(ok){
     loadFromFirestore(function(loaded){
-      if(!loaded)syncToServer();
+      // Не перезаписываем Firebase демо-данными если он уже заполнен
+      if(!loaded){console.log("Firebase empty - keeping local data only");}
       start();
     });
   }else{
