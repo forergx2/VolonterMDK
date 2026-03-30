@@ -1116,19 +1116,8 @@ function authTab(t){
   document.getElementById('login-form').style.display=t==='login'?'block':'none';
   document.getElementById('reg-form').style.display=t==='reg'?'block':'none';
 }
-function doLogin(){
-  const id=v('li-id').trim(),pw=v('li-pw').trim();
-  const u=DB.users.find(x=>(x.email===id||x.phone===id)&&x.pw===pw);
-  if(!u){toast('❌ Неверный логин или пароль');return;}
-  CU=u;launchApp();
-}
-function doRegister(){
-  const name=v('rg-name').trim(),email=v('rg-email').trim(),phone=v('rg-phone').trim(),pw=v('rg-pw').trim();
-  if(!name||!email||!phone||!pw){toast('⚠️ Заполните все поля');return;}
-  if(DB.users.find(x=>x.email===email)){toast('❌ Email уже используется');return;}
-  const nu={id:DB.users.length+1,email,phone,pw,name,age:'',district:'',school:'',work:'',points:0,events:0,tasks_done:0,joined:new Date().toISOString().split('T')[0],avatar:name[0].toUpperCase(),avatarData:null,bio:'',warnings:[],rank:'candidate',positionId:'cand_pos',dept:'volunteers',perms:null,kpiMonth:0,kpiGoal:50,kpiArchive:[],pointsLog:[],notifications:[],tgChatId:'',tgEnabled:false,promoConditions:{toVolunteer:{onboarding:false,staffAcademy:false,events3:false,active:false,leaderApproval:false},toActivist:{staffAcademyFull:false,events10:false,organized3:false,examPassed:false,leaderApproval:false}},organizedEvents:[],promoRequest:null,examResult:null,examRetry:{canRetry:true,lastAttempt:null,adminApproved:false}};
-  DB.users.push(nu);CU=nu;launchApp();
-}
+
+
 function doLogout(){CU=null;localStorage.removeItem('vmdk_uid');document.getElementById('app').style.display='none';document.getElementById('auth-screen').style.display='none';document.getElementById('landing-screen').style.display='flex';renderLandingAnns();toast('👋 До встречи!')}
 function launchApp(){
   document.getElementById('auth-screen').style.display='none';
@@ -2071,19 +2060,8 @@ function updAdminMenu(){
 }
 
 // ── Auth ──────────────────────────────────────────────────────
-function doLogin(){
-  var id=v('li-id').trim(),pw=v('li-pw').trim();
-  var u=DB.users.find(function(x){return(x.email===id||x.phone===id)&&x.pw===pw;});
-  if(!u){toast('❌ Неверный логин или пароль');return;}
-  CU=u;localStorage.setItem(LS_SES,String(CU.id));launchApp();
-}
-function doRegister(){
-  var name=v('rg-name').trim(),email=v('rg-email').trim(),phone=v('rg-phone').trim(),pw=v('rg-pw').trim();
-  if(!name||!email||!phone||!pw){toast('⚠️ Заполните все поля');return;}
-  if(DB.users.find(function(x){return x.email===email;})){toast('❌ Email уже используется');return;}
-  var nu={id:Date.now(),email:email,phone:phone,pw:pw,name:name,age:'',district:'',school:'',work:'',points:0,events:0,tasks_done:0,joined:new Date().toISOString().split('T')[0],avatar:name[0].toUpperCase(),avatarData:null,bio:'',warnings:[],rank:'candidate',positionId:'cand_pos',dept:'volunteers',perms:null,kpiMonth:0,kpiGoal:50,kpiArchive:[],pointsLog:[],notifications:[],tgChatId:'',tgEnabled:false,promoConditions:{toVolunteer:{onboarding:false,staffAcademy:false,events3:false,active:false,leaderApproval:false},toActivist:{staffAcademyFull:false,events10:false,organized3:false,examPassed:false,leaderApproval:false}},organizedEvents:[],promoRequest:null,examResult:null,examRetry:{canRetry:true,lastAttempt:null,adminApproved:false}};
-  DB.users.push(nu);CU=nu;localStorage.setItem(LS_SES,String(CU.id));syncToServer();launchApp();
-}
+
+
 function doLogout(){
   CU=null;localStorage.removeItem(LS_SES);
   document.getElementById('app').style.display='none';
