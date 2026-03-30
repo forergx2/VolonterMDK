@@ -1560,6 +1560,7 @@ function showVol(id){
   opm('m-vol');
 }
 function doAddPts(dir){
+  if(!hasPerm(CU,'editPoints')&&!hasPerm(CU,'fullAdmin')){toast('❌ Нет прав для начисления баллов');return;}
   const p=parseInt(document.getElementById('pts-inp')?.value);if(!p||isNaN(p)||p<1){toast('⚠️ Введите количество');return;}
   const reason=document.getElementById('pts-reason')?.value||'Ручное начисление';
   const u=DB.users.find(x=>x.id===_detVolId);if(!u)return;
@@ -1568,8 +1569,8 @@ function doAddPts(dir){
   showVol(_detVolId);rAdmVol();
   toast(dir>0?`➕ Начислено ${p} баллов`:`➖ Снято ${p} баллов`);
 }
-function doWarn(){const reason=document.getElementById('warn-reason')?.value.trim();if(!reason){toast('⚠️ Укажите причину');return;}const u=DB.users.find(x=>x.id===_detVolId);if(!u)return;if(!u.warnings)u.warnings=[];const now=new Date();u.warnings.push({id:Date.now(),reason,date:`${now.getDate()}.${String(now.getMonth()+1).padStart(2,'0')}.${now.getFullYear()}`});document.getElementById('warn-reason').value='';showVol(_detVolId);toast(`⚠️ Варн выдан — ${u.name.split(' ')[0]}`);rAdmVol();}
-function removeWarn(uid,wid){const u=DB.users.find(x=>x.id===uid);if(!u)return;u.warnings=u.warnings.filter(w=>w.id!==wid);showVol(uid);toast('✅ Предупреждение снято');rAdmVol();}
+function doWarn(){if(!hasPerm(CU,'giveWarn')&&!hasPerm(CU,'fullAdmin')){toast('❌ Нет прав для выдачи варнов');return;}const reason=document.getElementById('warn-reason')?.value.trim();if(!reason){toast('⚠️ Укажите причину');return;}const u=DB.users.find(x=>x.id===_detVolId);if(!u)return;if(!u.warnings)u.warnings=[];const now=new Date();u.warnings.push({id:Date.now(),reason,date:`${now.getDate()}.${String(now.getMonth()+1).padStart(2,'0')}.${now.getFullYear()}`});document.getElementById('warn-reason').value='';showVol(_detVolId);toast(`⚠️ Варн выдан — ${u.name.split(' ')[0]}`);rAdmVol();}
+function removeWarn(uid,wid){if(!hasPerm(CU,'giveWarn')&&!hasPerm(CU,'fullAdmin')){toast('❌ Нет прав');return;}const u=DB.users.find(x=>x.id===uid);if(!u)return;u.warnings=u.warnings.filter(w=>w.id!==wid);showVol(uid);toast('✅ Предупреждение снято');rAdmVol();}
 
 function rAdmPromo(){
   const pending=DB.users.filter(u=>u.promoRequest?.status==='pending');
