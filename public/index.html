@@ -458,8 +458,39 @@ function showRegScreen(){
   if(a)a.style.display='flex';
   if(typeof authTab==='function')authTab('reg');
 }
-function doLogin(){if(typeof _realDoLogin==='function'){_realDoLogin();return;}window._pendingLogin=true;}
-function doRegister(){if(typeof _realDoRegister==='function'){_realDoRegister();return;}window._pendingRegister=true;}
+function doLogin(){
+  var id=(document.getElementById('li-id')||{value:''}).value.trim();
+  var pw=(document.getElementById('li-pw')||{value:''}).value.trim();
+  if(!id||!pw){alert('Введите логин и пароль');return;}
+  var u=typeof DB!=='undefined'?DB.users.find(function(x){return(x.email===id||x.phone===id)&&x.pw===pw;}):null;
+  if(!u){
+    // DB ещё не загружена — ждём
+    window._pendingLogin={id:id,pw:pw};
+    document.getElementById('li-pw').placeholder='Подождите...';
+    setTimeout(function(){
+      if(window._pendingLogin){
+        var u2=DB.users.find(function(x){return(x.email===window._pendingLogin.id||x.phone===window._pendingLogin.id)&&x.pw===window._pendingLogin.pw;});
+        if(u2){CU=u2;localStorage.setItem('vmdk_uid',String(CU.id));window._pendingLogin=null;launchApp();}
+        else{document.getElementById('li-pw').placeholder='••••••••';alert('Неверный логин или пароль');}
+      }
+    },1500);
+    return;
+  }
+  CU=u;localStorage.setItem('vmdk_uid',String(CU.id));launchApp();
+}
+function doRegister(){
+  var name=(document.getElementById('rg-name')||{value:''}).value.trim();
+  var email=(document.getElementById('rg-email')||{value:''}).value.trim();
+  var phone=(document.getElementById('rg-phone')||{value:''}).value.trim();
+  var pw=(document.getElementById('rg-pw')||{value:''}).value.trim();
+  if(!name||!email||!phone||!pw){alert('Заполните все поля');return;}
+  if(typeof DB==='undefined'){alert('Подождите загрузки...');return;}
+  if(DB.users.find(function(x){return x.email===email;})){alert('Email уже используется');return;}
+  var nu={id:Date.now(),email:email,phone:phone,pw:pw,name:name,age:'',district:'',school:'',work:'',points:0,events:0,tasks_done:0,joined:new Date().toISOString().split('T')[0],avatar:name[0].toUpperCase(),avatarData:null,bio:'',warnings:[],rank:'candidate',positionId:'cand_pos',dept:'volunteers',perms:null,kpiMonth:0,kpiGoal:50,kpiArchive:[],pointsLog:[],notifications:[],tgChatId:'',tgEnabled:false,promoConditions:{toVolunteer:{onboarding:false,staffAcademy:false,events3:false,active:false,leaderApproval:false},toActivist:{staffAcademyFull:false,events10:false,organized3:false,examPassed:false,leaderApproval:false}},organizedEvents:[],promoRequest:null,examResult:null,examRetry:{canRetry:true,lastAttempt:null,adminApproved:false}};
+  DB.users.push(nu);CU=nu;localStorage.setItem('vmdk_uid',String(CU.id));
+  if(typeof syncToServer==='function')syncToServer();
+  launchApp();
+}
 function authTab(t){
   var lf=document.getElementById('login-form');var rf=document.getElementById('reg-form');
   var tabs=document.querySelectorAll('.auth-tab');
