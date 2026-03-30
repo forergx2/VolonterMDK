@@ -1028,6 +1028,32 @@ function closeSb(){var s=document.getElementById('sidebar');var o=document.getEl
   </div>
 </div>
 
+
+<div class="modal-overlay" id="m-add-ann">
+  <div class="modal" style="max-width:540px">
+    <button class="modal-close" onclick="cpm('m-add-ann')">✕</button>
+    <div class="modal-title">📢 Новое объявление</div>
+    <div class="fg"><label>Заголовок</label><input id="ann-title" placeholder="Название объявления"></div>
+    <div class="fg"><label>Текст</label><textarea id="ann-text" rows="4" placeholder="Текст объявления..."></textarea></div>
+    <div class="fg">
+      <label>Фото (необязательно)</label>
+      <div id="ann-img-zone" style="border:2px dashed var(--border);border-radius:10px;padding:16px;text-align:center;cursor:pointer;color:var(--text2);font-size:13px" onclick="document.getElementById('ann-img-inp').click()">
+        🖼️ Нажмите чтобы добавить фото
+      </div>
+      <input type="file" id="ann-img-inp" accept="image/*" style="display:none" onchange="handleAnnImg(this)">
+      <img id="ann-img-preview" style="display:none;width:100%;max-height:180px;object-fit:cover;border-radius:8px;margin-top:8px">
+      <button id="ann-img-clear" class="btn btn-o" style="display:none;margin-top:6px;font-size:11px;padding:4px 10px" onclick="clearAnnImg()">✕ Убрать фото</button>
+    </div>
+    <div class="fg" style="display:flex;align-items:center;gap:10px">
+      <div class="toggle" id="ann-pin-toggle" onclick="this.classList.toggle('on')"></div>
+      <span style="font-size:13px">📌 Закрепить объявление</span>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-g" onclick="cpm('m-add-ann')">Отмена</button>
+      <button class="btn btn-a" onclick="addAnn()">Опубликовать</button>
+    </div>
+  </div>
+</div>
 <div id="toast"><span id="t-txt"></span></div>
 <script>
 // ════════════════════════════════════════════════════════════
@@ -2213,6 +2239,72 @@ function showMemberProfile(uid){
   if(CU && uid === CU.id){ go('myspace'); return; }
   // Иначе открываем модал волонтёра
   if(typeof showVol === 'function') showVol(uid);
+}
+
+
+// ── Объявления ──────────────────────────────────────────────
+var _pendingAnnImg=null;
+
+function handleAnnImg(inp){
+  var file=inp.files[0];if(!file)return;
+  var r=new FileReader();
+  r.onload=function(e){
+    _pendingAnnImg=e.target.result;
+    var prev=document.getElementById('ann-img-preview');
+    var zone=document.getElementById('ann-img-zone');
+    var clear=document.getElementById('ann-img-clear');
+    if(prev){prev.src=_pendingAnnImg;prev.style.display='block';}
+    if(zone)zone.style.display='none';
+    if(clear)clear.style.display='inline-flex';
+  };
+  r.readAsDataURL(file);
+}
+
+function clearAnnImg(){
+  _pendingAnnImg=null;
+  var prev=document.getElementById('ann-img-preview');
+  var zone=document.getElementById('ann-img-zone');
+  var clear=document.getElementById('ann-img-clear');
+  var inp=document.getElementById('ann-img-inp');
+  if(prev){prev.style.display='none';prev.src='';}
+  if(zone)zone.style.display='';
+  if(clear)clear.style.display='none';
+  if(inp)inp.value='';
+}
+
+function addAnn(){
+  var title=document.getElementById('ann-title')?.value.trim();
+  var text=document.getElementById('ann-text')?.value.trim();
+  if(!title||!text){toast('⚠️ Заполните заголовок и текст');return;}
+  var pinned=document.getElementById('ann-pin-toggle')?.classList.contains('on')||false;
+  var now=new Date();
+  var months=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+  var dateStr=now.getDate()+' '+months[now.getMonth()]+' '+now.getFullYear();
+  var ann={id:Date.now(),title:title,text:text,date:dateStr,pinned:pinned,imageData:_pendingAnnImg||null};
+  DB.announcements.unshift(ann);
+  syncToServer();
+  // Отправляем в Telegram
+  sendTGAll('📢 Новое объявление: <b>'+title+'</b>\n\n'+text.slice(0,200)+(text.length>200?'...':''));
+  cpm('m-add-ann');
+  clearAnnImg();
+  document.getElementById('ann-title').value='';
+  document.getElementById('ann-text').value='';
+  document.getElementById('ann-pin-toggle')?.classList.remove('on');
+  toast('✅ Объявление опубликовано');
+  rAnn();
+}
+
+function delAnn(id){
+  if(!confirm('Удалить объявление?'))return;
+  DB.announcements=DB.announcements.filter(function(a){return a.id!==id;});
+  syncToServer();toast('🗑️ Удалено');rAnn();
+}
+
+function pinAnn(id){
+  var a=DB.announcements.find(function(x){return x.id===id;});if(!a)return;
+  a.pinned=!a.pinned;
+  syncToServer();rAnn();
+  toast(a.pinned?'📌 Закреплено':'Откреплено');
 }
 
 // ════════════════════════════════════════════════════════════
