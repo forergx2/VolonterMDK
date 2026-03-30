@@ -2058,8 +2058,18 @@ function syncToServer(){
 function loadFromFirestore(cb){
   if(!_docRef){cb(false);return;}
   _docRef.get().then(function(snap){
-    if(snap.exists){var d=snap.data();Object.keys(d).forEach(function(k){if(DB[k]!==undefined)DB[k]=d[k];});_loadAvatars();cb(true);}
-    else cb(false);
+    if(snap.exists){
+      var d=snap.data();
+      // Сохраняем пароли из локальных данных перед мержем
+      var localPws={};
+      (DB.users||[]).forEach(function(u){if(u.pw)localPws[u.email]=u.pw;});
+      Object.keys(d).forEach(function(k){if(DB[k]!==undefined)DB[k]=d[k];});
+      // Восстанавливаем пароли если Firebase их не содержит
+      (DB.users||[]).forEach(function(u){
+        if(!u.pw&&localPws[u.email])u.pw=localPws[u.email];
+      });
+      _loadAvatars();cb(true);
+    } else cb(false);
   }).catch(function(e){console.warn('Load error:',e);cb(false);});
 }
 function subscribeFirestore(){
@@ -2220,9 +2230,37 @@ function openPromoAdmin(uid){
 function toggleCondAdmin(uid,stage,key){var u=DB.users.find(function(x){return x.id===uid;});if(!u)return;u.promoConditions[stage][key]=!u.promoConditions[stage][key];syncToServer();toast('✅ Обновлено');openPromoAdmin(uid);rAdmPromo();updBadges();}
 
 // ── Запуск ────────────────────────────────────────────────────
+
+// Сброс данных Firebase (вызвать из консоли: resetFirebaseData())
+function resetFirebaseData(){
+  if(!confirm('Сбросить данные Firebase? Это перезапишет всё!'))return;
+  // Убеждаемся что у всех демо-пользователей есть пароли
+  var demo=[
+    {email:'admin@demo.kz',pw:'admin123'},
+    {email:'volunteer@demo.kz',pw:'vol123'},
+    {email:'asel@demo.kz',pw:'asel'},
+    {email:'berik@demo.kz',pw:'berik'},
+    {email:'alina@demo.kz',pw:'alina'}
+  ];
+  demo.forEach(function(d){
+    var u=DB.users.find(function(x){return x.email===d.email;});
+    if(u)u.pw=d.pw;
+  });
+  syncToServer();
+  toast('✅ Данные Firebase обновлены с паролями');
+}
+window.resetFirebaseData=resetFirebaseData;
+
 window.addEventListener('load',function(){
   var ok=typeof firebase!=='undefined'&&initFirebase();
   function start(){
+    // Восстанавливаем пароли демо-аккаунтов если они пустые
+    var demoPws={'admin@demo.kz':'admin123','volunteer@demo.kz':'vol123','asel@demo.kz':'asel','berik@demo.kz':'berik','alina@demo.kz':'alina'};
+    var needSave=false;
+    DB.users.forEach(function(u){
+      if(!u.pw&&demoPws[u.email]){u.pw=demoPws[u.email];needSave=true;}
+    });
+    if(needSave){console.log('Restored demo passwords, saving...');syncToServer();}
     subscribeFirestore();
     if(typeof renderLandingAnns==='function')renderLandingAnns();
     var uid=localStorage.getItem(LS_SES);
