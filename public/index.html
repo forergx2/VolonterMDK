@@ -442,6 +442,58 @@ select option{background:var(--surface2);color:var(--text)}
   .content{padding:10px!important}
   .card{padding:12px}
 }
+
+/* ── Панель участников (Discord style) ── */
+.members-panel{
+  width:220px;min-width:220px;background:var(--surface);
+  border-left:1px solid var(--border);
+  display:flex;flex-direction:column;
+  position:fixed;right:0;top:0;bottom:0;
+  z-index:90;transition:transform .3s;
+  overflow:hidden;
+}
+.members-panel.hidden{transform:translateX(100%)}
+.members-panel-header{
+  padding:14px 14px 10px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
+}
+.members-panel-title{font-family:Unbounded,sans-serif;font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px}
+.members-toggle-btn{background:transparent;border:none;cursor:pointer;color:var(--text2);font-size:16px;padding:2px;line-height:1;border-radius:4px;transition:color .2s}
+.members-toggle-btn:hover{color:var(--text)}
+.members-list{overflow-y:auto;flex:1;padding:8px 0;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.members-group{padding:6px 14px 4px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px}
+.member-item{display:flex;align-items:center;gap:9px;padding:5px 10px;margin:0 4px;border-radius:8px;cursor:pointer;transition:background .15s}
+.member-item:hover{background:var(--surface2)}
+.member-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--purple));display:flex;align-items:center;justify-content:center;font-family:Unbounded,sans-serif;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;position:relative;overflow:hidden}
+.member-av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%}
+.member-av-status{position:absolute;bottom:0;right:0;width:9px;height:9px;border-radius:50%;background:#22c55e;border:2px solid var(--surface)}
+.member-info{flex:1;min-width:0}
+.member-name{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.member-role{font-size:10px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.member-rank-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+
+/* Кнопка показа/скрытия панели */
+.members-show-btn{
+  position:fixed;right:0;top:50%;transform:translateY(-50%);
+  background:var(--surface);border:1px solid var(--border);
+  border-right:none;border-radius:8px 0 0 8px;
+  padding:8px 5px;cursor:pointer;z-index:89;
+  color:var(--text2);font-size:14px;line-height:1;
+  transition:all .2s;display:none;
+}
+.members-show-btn:hover{color:var(--text);background:var(--surface2)}
+.members-show-btn.visible{display:flex;flex-direction:column;align-items:center;gap:3px}
+
+/* Смещаем .main когда панель открыта */
+.main.with-members{margin-right:220px}
+
+@media(max-width:1100px){
+  .members-panel{display:none!important}
+  .members-show-btn{display:none!important}
+  .main.with-members{margin-right:0!important}
+}
 </style>
 <script>
 
@@ -1164,11 +1216,21 @@ function doLogout(){CU=null;localStorage.removeItem('vmdk_uid');document.getElem
 function launchApp(){
   document.getElementById('auth-screen').style.display='none';
   document.getElementById('app').style.display='flex';
+  // Восстанавливаем состояние панели участников
+  var mp=localStorage.getItem('membersOpen');
+  _membersOpen=mp!=='0';
+  var panel=document.getElementById('members-panel');
+  var btn=document.getElementById('members-show-btn');
+  var main=document.querySelector('.main');
+  if(panel)panel.classList.toggle('hidden',!_membersOpen);
+  if(btn)btn.classList.toggle('visible',!_membersOpen);
+  if(main)main.classList.toggle('with-members',_membersOpen);
   updSidebar();
   if(canAdmin(CU)){document.querySelectorAll('.adm-only').forEach(el=>el.style.display='');document.getElementById('doc-btn').style.display='inline-flex';}
   fillSelects();DB.users.forEach(checkAutoPromo);updBadges();updNotifBadge();go('dashboard');
 }
 function updSidebar(){updTopbar();
+  if(typeof renderMembers==='function')renderMembers();
   const ini=CU.name.split(' ').map(x=>x[0]).join('').slice(0,2);
   const wrap=document.getElementById('sb-av-wrap'),txt=document.getElementById('sb-av-txt');
   txt.textContent=ini;wrap.querySelectorAll('img').forEach(i=>i.remove());
@@ -2042,6 +2104,71 @@ function updTopbar() {
   if(nba2) { nba2.textContent=pp; nba2.style.display=pp?'':'none'; }
 }
 
+
+// ════════════════════════════════════════════════════════════
+//  ПАНЕЛЬ УЧАСТНИКОВ
+// ════════════════════════════════════════════════════════════
+var _membersOpen = true;
+
+function toggleMembers(){
+  _membersOpen = !_membersOpen;
+  var panel = document.getElementById('members-panel');
+  var btn = document.getElementById('members-show-btn');
+  var main = document.querySelector('.main');
+  if(panel) panel.classList.toggle('hidden', !_membersOpen);
+  if(btn) btn.classList.toggle('visible', !_membersOpen);
+  if(main) main.classList.toggle('with-members', _membersOpen);
+  localStorage.setItem('membersOpen', _membersOpen?'1':'0');
+}
+
+function renderMembers(){
+  var el = document.getElementById('members-list');
+  if(!el) return;
+
+  var rankOrder = {activist:0, volunteer:1, candidate:2};
+  var rankColors = {activist:'#00d4aa', volunteer:'#a78bfa', candidate:'#94a3b8'};
+  var sorted = DB.users.slice().sort(function(a,b){
+    return (rankOrder[a.rank]||2)-(rankOrder[b.rank]||2);
+  });
+
+  // Группируем по рангу
+  var groups = {activist:[], volunteer:[], candidate:[]};
+  sorted.forEach(function(u){ (groups[u.rank]||groups.candidate).push(u); });
+
+  var groupNames = {activist:'🌟 Активисты', volunteer:'⚡ Волонтёры', candidate:'🌱 Кандидаты'};
+  var html2 = '';
+
+  Object.keys(groups).forEach(function(rank){
+    var members = groups[rank];
+    if(!members.length) return;
+    html2 += '<div class="members-group">'+groupNames[rank]+' — '+members.length+'</div>';
+    members.forEach(function(u){
+      var isMe = CU && u.id === CU.id;
+      var ini = u.name.split(' ').map(function(x){return x[0];}).join('').slice(0,2);
+      var avImg = u.avatarData ? '<img src="'+u.avatarData+'">' : '';
+      html2 += '<div class="member-item" onclick="showMemberProfile('+u.id+')" title="'+u.name+'">'
+        +'<div class="member-av">'+avImg+(u.avatarData?'':ini)
+        +(isMe?'<div class="member-av-status"></div>':'')
+        +'</div>'
+        +'<div class="member-info">'
+        +'<div class="member-name">'+(isMe?'<span style="color:var(--accent)">'+u.name.split(' ')[0]+'</span>':u.name.split(' ')[0])+'</div>'
+        +'<div class="member-role">'+getPos(u).name.split(' ').slice(0,2).join(' ')+'</div>'
+        +'</div>'
+        +'<div class="member-rank-dot" style="background:'+rankColors[u.rank]+'" title="'+getRank(u).name+'"></div>'
+        +'</div>';
+    });
+  });
+
+  el.innerHTML = html2;
+}
+
+function showMemberProfile(uid){
+  // Если это наш профиль — идём в myspace
+  if(CU && uid === CU.id){ go('myspace'); return; }
+  // Иначе открываем модал волонтёра
+  if(typeof showVol === 'function') showVol(uid);
+}
+
 // ════════════════════════════════════════════════════════════
 //  FIREBASE + ХРАНИЛИЩЕ
 // ════════════════════════════════════════════════════════════
@@ -2093,6 +2220,7 @@ function subscribeFirestore(){
 }
 function refreshAllUI(){
   updBadges();updNotifBadge();
+  if(typeof renderMembers==='function')renderMembers();
   if(!CU)return;
   updAdminMenu();updSidebar();
   var ap=document.querySelector('.page.active');
