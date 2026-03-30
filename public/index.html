@@ -444,6 +444,15 @@ select option{background:var(--surface2);color:var(--text)}
 }
 </style>
 <script>
+
+function toast(msg){
+  var t=document.getElementById('toast');
+  var tx=document.getElementById('t-txt');
+  if(!t||!tx){console.log('Toast:',msg);return;}
+  tx.textContent=msg;
+  t.style.opacity='1';t.style.transform='translateY(0)';
+  setTimeout(function(){t.style.opacity='0';t.style.transform='translateY(16px)';},3000);
+}
 function showLoginScreen(){
   var l=document.getElementById('landing-screen');
   var a=document.getElementById('auth-screen');
@@ -463,24 +472,28 @@ function doLogin(){
   var pwEl=document.getElementById('li-pw');
   var id=idEl?idEl.value.trim():'';
   var pw=pwEl?pwEl.value.trim():'';
-  if(!id||!pw){
-    alert('Введите логин и пароль');
+  if(!id||!pw){toast('⚠️ Введите логин и пароль');return;}
+  if(typeof DB==='undefined'||!DB||!DB.users||DB.users.length===0){
+    // Firebase ещё не загрузился — ждём
+    var ldBtn=document.getElementById('li-pw');if(ldBtn)ldBtn.placeholder='Загрузка...';
+    setTimeout(function(){if(ldBtn)ldBtn.placeholder='••••••••';doLogin();},1500);
     return;
   }
-  if(typeof DB==='undefined'||!DB||!DB.users){
-    alert('Данные ещё загружаются, подождите секунду');
-    return;
-  }
+  // Ищем пользователя — сравниваем строки в нижнем регистре для email
   var u=DB.users.find(function(x){
-    return (x.email===id||x.phone===id)&&x.pw===pw;
+    var emailMatch=x.email&&x.email.toLowerCase()===id.toLowerCase();
+    var phoneMatch=x.phone&&x.phone===id;
+    var pwMatch=x.pw&&x.pw===pw;
+    return (emailMatch||phoneMatch)&&pwMatch;
   });
+  console.log('Login attempt:', id, '| Found:', !!u, '| DB users:', DB.users.length);
   if(!u){
-    alert('Неверный логин или пароль');
+    toast('❌ Неверный логин или пароль');
     return;
   }
   CU=u;
-  if(typeof LS_SES!=='undefined')localStorage.setItem(LS_SES,String(u.id));
-  else localStorage.setItem('vmdk_uid',String(u.id));
+  var key=typeof LS_SES!=='undefined'?LS_SES:'vmdk_uid';
+  localStorage.setItem(key,String(u.id));
   var ls=document.getElementById('landing-screen');if(ls)ls.style.display='none';
   var as=document.getElementById('auth-screen');if(as)as.style.display='none';
   var app=document.getElementById('app');if(app)app.style.display='flex';
