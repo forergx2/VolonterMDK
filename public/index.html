@@ -954,6 +954,7 @@ function closeSb(){var s=document.getElementById('sidebar');var o=document.getEl
     <div class="modal-title" id="m-vol-nm">Профиль</div>
     <div id="m-vol-body"></div>
     <div id="m-vol-achs"></div>
+    <div id="m-vol-pts-box" style="display:none">
     <div class="pts-box">
       <div class="pts-box-title">⭐ Управление баллами</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px">
@@ -965,11 +966,14 @@ function closeSb(){var s=document.getElementById('sidebar');var o=document.getEl
         <button class="btn btn-d" style="justify-content:center" onclick="doAddPts(-1)">➖ Снять</button>
       </div>
     </div>
+    </div>
+    <div id="m-vol-warn-box" style="display:none">
     <div class="pts-box" style="margin-top:9px;border-color:rgba(245,158,11,.3)">
       <div class="pts-box-title" style="color:var(--amber)">⚠️ Предупреждения</div>
       <div id="warn-list-modal" style="margin-bottom:8px"></div>
       <div class="fg" style="margin-bottom:8px"><label>Причина варна</label><input id="warn-reason" placeholder="Нарушение правил..."></div>
       <button class="btn btn-am" style="width:100%;justify-content:center" onclick="doWarn()">⚠️ Выдать варн</button>
+    </div>
     </div>
     <div class="modal-actions"><button class="btn btn-g" onclick="cpm('m-vol')">Закрыть</button></div>
   </div>
