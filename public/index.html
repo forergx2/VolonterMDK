@@ -886,6 +886,16 @@ function closeSb(){var s=document.getElementById('sidebar');var o=document.getEl
         </div>
 
 
+    <!-- MEMBERS PANEL -->
+    <div class="members-panel" id="members-panel">
+      <div class="members-panel-header">
+        <div class="members-panel-title">Участники</div>
+        <button class="members-toggle-btn" onclick="toggleMembers()" title="Скрыть">✕</button>
+      </div>
+      <div class="members-list" id="members-list"></div>
+    </div>
+    <button class="members-show-btn" id="members-show-btn" onclick="toggleMembers()" title="Участники">👥</button>
+
 <!-- MODALS -->
 <div class="modal-overlay" id="m-add-ev">
   <div class="modal" style="max-width:520px">
