@@ -1194,7 +1194,25 @@ function renderNotifPanel(){
 }
 
 // Telegram
-function sendTG(uid,msg){const u=DB.users.find(x=>x.id===uid);if(!u||!u.tgEnabled||!u.tgChatId)return;console.log(`[TG→${u.tgChatId}] ${msg}`);}
+function sendTG(uid,msg){
+  var u=DB.users.find(function(x){return x.id===uid;});
+  if(!u||!u.tgEnabled||!u.tgChatId)return;
+  var token='8658026970:AAFaxOboF6F_sqU_jS5dligMfhFDUyyv9KE';
+  var text='🌟 ВолонтёрМДК\n\n'+msg;
+  fetch('https://api.telegram.org/bot'+token+'/sendMessage',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({chat_id:u.tgChatId,text:text,parse_mode:'HTML'})
+  }).then(function(r){return r.json();}).then(function(d){
+    if(!d.ok)console.warn('TG error:',d.description);
+  }).catch(function(e){console.warn('TG send error:',e);});
+}
+
+function sendTGAll(msg){
+  DB.users.forEach(function(u){
+    if(u.tgEnabled&&u.tgChatId)sendTG(u.id,msg);
+  });
+}
 
 // Reactive UI update
 function refreshUI(){
@@ -1491,25 +1509,10 @@ function rTelegramSettings(){
   h(document.getElementById('tg-body')?'tg-body':'tg-settings-body',`<div style="padding:15px;background:var(--surface2);border-radius:12px;border:1px solid var(--border);margin-bottom:13px"><div style="display:flex;align-items:center;gap:11px;margin-bottom:13px"><div style="font-size:28px">📱</div><div><div style="font-weight:700;font-size:14px">Telegram-уведомления</div><div style="font-size:12px;color:var(--text2)">Получайте уведомления о баллах, KPI и повышениях</div></div></div><div class="fg"><label>Ваш Telegram Chat ID</label><input id="tg-chat-id" value="${u.tgChatId||''}" placeholder="123456789 (найдите через @userinfobot)"></div><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><div class="toggle${u.tgEnabled?' on':''}" id="tg-toggle" onclick="this.classList.toggle('on')"></div><span style="font-size:13px">Включить уведомления</span></div><div style="display:flex;gap:8px"><button class="btn btn-a" onclick="saveTgSettings()">Сохранить</button><button class="btn btn-o" onclick="testTG()">📤 Тест</button></div></div><div style="padding:12px;background:var(--blue-dim);border-radius:11px;border:1px solid rgba(59,130,246,.2);font-size:12px;color:var(--text2)"><b style="color:#60a5fa">🧩 Как подключиться:</b><br>1. Напишите боту <b>@userinfobot</b> любое сообщение<br>2. Скопируйте ваш Chat ID (цифры)<br>3. Вставьте Chat ID выше и включите уведомления</div>`);
 }
 function saveTgSettings(){CU.tgChatId=v('tg-chat-id').trim();CU.tgEnabled=document.getElementById('tg-toggle')?.classList.contains('on')||false;toast(CU.tgEnabled?'✅ Telegram включён':'Telegram отключён')}
-function testTG(){const id=v('tg-chat-id').trim()||CU.tgChatId;if(!id){toast('⚠️ Введите Chat ID');return;}toast(`📤 Тест отправлен на ${id}`);console.log(`[TG TEST] Chat: ${id} | Привет от ВолонтёрМДК! 🎉`);}
-
-// ════════════════════════════════════════════════════════════
-//  EXAM
-// ════════════════════════════════════════════════════════════
-function startExam(){
-  const u=CU;if(!u.examRetry)u.examRetry={canRetry:true,lastAttempt:null,adminApproved:false};
-  const today=new Date().toDateString();
-  if(u.examResult&&!u.examResult.passed){
-    if(!u.examRetry.canRetry){h('exam-body','<div class="empty"><div class="ei">⏳</div><p>Пересдача заблокирована. Ждите одобрения администратора</p></div>');opm('m-exam');return;}
-    if(u.examRetry.lastAttempt===today&&!u.examRetry.adminApproved){h('exam-body','<div class="empty"><div class="ei">🕒</div><p>Сегодня уже была попытка. Пересдача завтра после одобрения</p></div>');opm('m-exam');return;}
-  }
-  _examAnswers={};
-  const test=DB.tests.find(t=>t.active)||DB.tests[0];
-  if(!test){toast('Нет активных тестов');return;}
-  h('exam-body',`<div style="font-size:12px;color:var(--text2);margin-bottom:12px;padding:9px;background:var(--surface2);border-radius:9px"><b>${test.title}</b> · Проходной: ${test.passScore}/${test.questions.length}</div>
-    <div>${test.questions.map((q,i)=>`<div class="q-item" id="q${i}"><div class="q-text">${i+1}. ${q.q}</div>${q.opts.map((opt,j)=>`<div class="q-opt" id="qo${i}-${j}" onclick="selectOpt(${i},${j})"><div class="q-radio"></div>${opt}</div>`).join('')}</div>`).join('')}</div>
-    <div class="modal-actions"><button class="btn btn-g" onclick="cpm('m-exam')">Отмена</button><button class="btn btn-a" onclick="submitExam()">Сдать</button></div>`);
-  opm('m-exam');
+function testTG(){
+  if(!CU.tgChatId){toast('⚠️ Введите Chat ID');return;}
+  sendTG(CU.id,'✅ Тест успешен! Telegram-уведомления работают.');
+  toast('📨 Тестовое сообщение отправлено');
 }
 function selectOpt(qi,oi){document.querySelectorAll(`[id^="qo${qi}-"]`).forEach(el=>el.classList.remove('selected'));document.getElementById(`qo${qi}-${oi}`)?.classList.add('selected');_examAnswers[qi]=oi;}
 function submitExam(){
