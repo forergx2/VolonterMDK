@@ -535,18 +535,10 @@ function doLogin(){
     setTimeout(function(){if(ldBtn)ldBtn.placeholder='••••••••';doLogin();},1500);
     return;
   }
-  // Локальные пароли демо-аккаунтов (на случай если Firebase их потерял)
-  var localPws={'admin@demo.kz':'admin123','volunteer@demo.kz':'vol123',
-    'asel@demo.kz':'asel','berik@demo.kz':'berik','alina@demo.kz':'alina'};
   var u=DB.users.find(function(x){
     var emailMatch=x.email&&x.email.toLowerCase()===id.toLowerCase();
     var phoneMatch=x.phone&&x.phone===id;
-    // Сначала проверяем pw из DB, потом из localPws
-    var dbPw=x.pw||localPws[x.email]||'';
-    var pwMatch=dbPw===pw;
-    // Если pw нет в DB но есть в localPws — восстанавливаем
-    if(!x.pw&&localPws[x.email])x.pw=localPws[x.email];
-    return (emailMatch||phoneMatch)&&pwMatch;
+    return (emailMatch||phoneMatch)&&x.pw===pw;
   });
   console.log('Login attempt:', id, '| Found:', !!u, '| DB users:', DB.users.length);
   if(!u){
@@ -1112,13 +1104,7 @@ const PERM_META=[
 //  DATABASE
 // ════════════════════════════════════════════════════════════
 const DB={
-  users:[
-    {id:1,email:'admin@demo.kz',phone:'+77770001100',pw:'admin123',name:'Ахметов Даулет Сейткалиевич',age:28,district:'Центральный',school:'КГУ им. К. Жубанова',work:'МДК Мугунгхва',points:1240,events:18,tasks_done:18,joined:'2022-09-01',avatar:'А',avatarData:null,bio:'Председатель',warnings:[],rank:'activist',positionId:'chair',dept:'management',perms:null,kpiMonth:124,kpiGoal:150,kpiArchive:[{month:'2026-02',points:142,goal:150,pct:95},{month:'2026-01',points:160,goal:150,pct:107}],pointsLog:[{date:'25.03.2026',by:'Система',reason:'Подтверждение участия в субботнике',amount:80,type:'plus'},{date:'01.03.2026',by:'Система',reason:'Сброс KPI за февраль',amount:0,type:'reset'}],notifications:[{id:1,text:'KPI выполнен на 95% в феврале',time:'4 дня назад',read:false}],tgChatId:'',tgEnabled:false,promoConditions:{toVolunteer:{onboarding:true,staffAcademy:true,events3:true,active:true,leaderApproval:true},toActivist:{staffAcademyFull:true,events10:true,organized3:true,examPassed:true,leaderApproval:true}},organizedEvents:[1,2],promoRequest:null,examResult:{passed:true,score:5,total:5,date:'01.01.2023'},examRetry:{canRetry:true,lastAttempt:null,adminApproved:false}},
-    {id:2,email:'volunteer@demo.kz',phone:'+77770002200',pw:'vol123',name:'Сейткали Айгерим Нурланкызы',age:20,district:'мкр Северный',school:'Актюбинский университет',work:'',points:380,events:7,tasks_done:11,joined:'2023-03-15',avatar:'С',avatarData:null,bio:'',warnings:[],rank:'volunteer',positionId:'vol_pos',dept:'volunteers',perms:null,kpiMonth:38,kpiGoal:100,kpiArchive:[{month:'2026-02',points:87,goal:100,pct:87},{month:'2026-01',points:115,goal:100,pct:115}],pointsLog:[{date:'25.03.2026',by:'Ахметов Д.',reason:'Участие в субботнике',amount:80,type:'plus'},{date:'20.03.2026',by:'Ахметов Д.',reason:'Выполнение задачи',amount:40,type:'plus'},{date:'01.03.2026',by:'Система',reason:'Сброс KPI за февраль',amount:0,type:'reset'}],notifications:[{id:1,text:'Вам начислено 80 баллов за субботник 🌱',time:'2 часа назад',read:false},{id:2,text:'Вы записаны на «Форум молодёжи»',time:'вчера',read:false}],tgChatId:'',tgEnabled:false,promoConditions:{toVolunteer:{onboarding:true,staffAcademy:true,events3:true,active:false,leaderApproval:false},toActivist:{staffAcademyFull:false,events10:false,organized3:false,examPassed:false,leaderApproval:false}},organizedEvents:[],promoRequest:null,examResult:null,examRetry:{canRetry:true,lastAttempt:null,adminApproved:false}},
-    {id:3,email:'asel@demo.kz',phone:'+77770003300',pw:'asel',name:'Нурланова Асель Бакытовна',age:19,district:'мкр Восточный',school:'ЗКМУ',work:'',points:720,events:14,tasks_done:22,joined:'2022-11-20',avatar:'Н',avatarData:null,bio:'',warnings:[],rank:'volunteer',positionId:'vol_pos',dept:'volunteers',perms:null,kpiMonth:72,kpiGoal:100,kpiArchive:[{month:'2026-02',points:110,goal:100,pct:110}],pointsLog:[{date:'22.03.2026',by:'Ахметов Д.',reason:'Организация субботника',amount:120,type:'plus'}],notifications:[],tgChatId:'',tgEnabled:false,promoConditions:{toVolunteer:{onboarding:true,staffAcademy:true,events3:true,active:true,leaderApproval:true},toActivist:{staffAcademyFull:true,events10:true,organized3:true,examPassed:false,leaderApproval:false}},organizedEvents:[1],promoRequest:{status:'pending',date:'24.03.2026',fromRank:'volunteer'},examResult:null,examRetry:{canRetry:true,lastAttempt:null,adminApproved:false}},
-    {id:4,email:'berik@demo.kz',phone:'+77770004400',pw:'berik',name:'Жаксыбеков Берик Маратович',age:22,district:'Центральный р-н',school:'АГУ',work:'',points:560,events:10,tasks_done:18,joined:'2023-01-10',avatar:'Ж',avatarData:null,bio:'',warnings:[{id:1,reason:'Пропустил субботник без предупреждения',date:'15.02.2026'}],rank:'volunteer',positionId:'vol_pos',dept:'volunteers',perms:null,kpiMonth:56,kpiGoal:100,kpiArchive:[{month:'2026-02',points:82,goal:100,pct:82}],pointsLog:[],notifications:[],tgChatId:'',tgEnabled:false,promoConditions:{toVolunteer:{onboarding:true,staffAcademy:true,events3:true,active:true,leaderApproval:true},toActivist:{staffAcademyFull:false,events10:true,organized3:false,examPassed:false,leaderApproval:false}},organizedEvents:[],promoRequest:null,examResult:{passed:false,score:2,total:5,date:'20.03.2026'},examRetry:{canRetry:false,lastAttempt:'Mon Mar 20 2026',adminApproved:false}},
-    {id:5,email:'alina@demo.kz',phone:'+77770005500',pw:'alina',name:'Серикова Алина Дулатовна',age:21,district:'мкр Жилгородок',school:'АГУ',work:'',points:140,events:2,tasks_done:3,joined:'2024-01-05',avatar:'С',avatarData:null,bio:'',warnings:[],rank:'candidate',positionId:'cand_pos',dept:'volunteers',perms:null,kpiMonth:14,kpiGoal:50,kpiArchive:[],pointsLog:[],notifications:[],tgChatId:'',tgEnabled:false,promoConditions:{toVolunteer:{onboarding:false,staffAcademy:false,events3:false,active:false,leaderApproval:false},toActivist:{staffAcademyFull:false,events10:false,organized3:false,examPassed:false,leaderApproval:false}},organizedEvents:[],promoRequest:null,examResult:null,examRetry:{canRetry:true,lastAttempt:null,adminApproved:false}},
-  ],
+  users:[],
   events:[
     {id:1,title:'Городской субботник «Зелёный Актобе»',date:'2026-04-05',location:'Центральный парк',points:80,max:50,registered:[2,3],confirmed:[],emoji:'🌿',coverData:null,organizerId:3,desc:'Уборка и озеленение городского парка.',status:'open',comments:[{uid:1,text:'Встречаемся у главного входа в 9:00!',ts:'23 мар, 10:15'},{uid:3,text:'Буду! 💪',ts:'23 мар, 11:42'}]},
     {id:2,title:'Форум молодёжи Казахстана',date:'2026-04-12',location:'ДК «Алтын»',points:120,max:100,registered:[2,4],confirmed:[2],emoji:'🎤',coverData:null,organizerId:1,desc:'Региональный форум с воркшопами.',status:'open',comments:[{uid:1,text:'Программа за 3 дня до события',ts:'20 мар, 14:00'}]},
@@ -2526,11 +2512,7 @@ window.resetFirebaseData=resetFirebaseData;
 window.addEventListener('load',function(){
   var ok=typeof firebase!=='undefined'&&initFirebase();
   function start(){
-    // Восстанавливаем пароли только локально — не сохраняем в Firebase
-    var demoPws={'admin@demo.kz':'admin123','volunteer@demo.kz':'vol123','asel@demo.kz':'asel','berik@demo.kz':'berik','alina@demo.kz':'alina'};
-    DB.users.forEach(function(u){
-      if(!u.pw&&demoPws[u.email])u.pw=demoPws[u.email];
-    });
+
     subscribeFirestore();
     if(typeof renderLandingAnns==='function')renderLandingAnns();
     var uid=localStorage.getItem(LS_SES);
