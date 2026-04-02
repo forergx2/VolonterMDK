@@ -853,6 +853,7 @@ function closeSb(){var s=document.getElementById('sidebar');var o=document.getEl
           <div class="inner-page" id="admin-tasks">
             <button class="btn btn-a" style="margin-bottom:14px" onclick="opm('m-add-task')">+ Назначить задачу</button>
             <div class="table-wrap"><table><thead><tr><th>Задача</th><th>Кому</th><th>Баллы</th><th>Дедлайн</th><th>Статус</th><th></th></tr></thead><tbody id="adm-tasks-tbl"></tbody></table></div>
+            <div id="market-review-list"></div>
           </div>
           <div class="inner-page" id="admin-promo">
             <div class="card" style="margin-bottom:14px"><div class="card-hdr"><div class="card-title">Запросы на повышение</div></div><div id="promo-requests"></div></div>
@@ -1754,13 +1755,42 @@ function openConf(evId){const e=DB.events.find(x=>x.id===evId);if(!e)return;_con
 function confOne(evId,uid){const e=DB.events.find(x=>x.id===evId);if(!e||e.confirmed.includes(uid))return;e.confirmed.push(uid);const u=DB.users.find(x=>x.id===uid);if(u){addPointsWithLog(uid,e.points,`Участие в «${e.title}»`,CU?.name.split(' ').slice(0,2).join(' '));checkAutoPromo(u);}toast(`✅ Подтверждено — начислено ${e.points} баллов`);openConf(evId);rAdmEv();}
 function confirmAll(){const e=DB.events.find(x=>x.id===_confEvId);if(!e)return;const unc=e.registered.filter(id=>!e.confirmed.includes(id));unc.forEach(uid=>{e.confirmed.push(uid);const u=DB.users.find(x=>x.id===uid);if(u){addPointsWithLog(uid,e.points,`Участие в «${e.title}»`,CU?.name.split(' ').slice(0,2).join(' '));checkAutoPromo(u);}});toast(`✅ Подтверждено ${unc.length} участников`);openConf(_confEvId);rAdmEv();}
 function delEv(id){if(!confirm('Удалить мероприятие?'))return;DB.events.splice(DB.events.findIndex(e=>e.id===id),1);toast('🗑️ Удалено');rAdmEv();}
-function rAdmTasks(){h('adm-tasks-tbl',DB.tasks.map(t=>{const u=DB.users.find(x=>x.id===t.assignee);return`<tr><td>${t.title}</td><td>${u?u.name.split(' ').slice(0,2).join(' '):'—'}</td><td><span style="color:var(--amber);font-weight:600">+${t.points}</span></td><td>${fdate(t.due)}</td><td>${t.done?'<span style="color:var(--accent)">✓</span>':'<span style="color:var(--amber)">⏳</span>'}</td><td>${!t.done?`<button class="btn btn-a" style="padding:4px 9px;font-size:11px" onclick="admDoneTask(${t.id})">Подтвердить</button>`:''}</td></tr>`;}).join(''));}
-function admDoneTask(id){const t=DB.tasks.find(x=>x.id===id);if(!t)return;t.done=true;const u=DB.users.find(x=>x.id===t.assignee);if(u){addPointsWithLog(u.id,t.points,`Задача: ${t.title}`,CU?.name.split(' ').slice(0,2).join(' '));u.tasks_done++;}toast('✅ Задача подтверждена');rAdmTasks();}
-function rAdmRep(){
-  h('adm-stats',`<div class="stat-card"><div class="stat-ico">👥</div><div class="stat-val sv-g">${DB.users.length}</div><div class="stat-lbl">Участников</div></div><div class="stat-card"><div class="stat-ico">⭐</div><div class="stat-val sv-p">${DB.users.reduce((a,u)=>a+u.points,0)}</div><div class="stat-lbl">Всего баллов</div></div><div class="stat-card"><div class="stat-ico">📅</div><div class="stat-val sv-a">${DB.events.length}</div><div class="stat-lbl">Мероприятий</div></div><div class="stat-card"><div class="stat-ico">✅</div><div class="stat-val">${DB.events.filter(e=>e.status==='completed').length}</div><div class="stat-lbl">Завершено</div></div>`);
-  const vs=[120,200,180,350,280,420,380,510,460,380,540,600],mx=Math.max(...vs);
-  h('rep-ch',vs.map(val=>`<div class="mini-bar" style="height:${Math.round(val/mx*100)}%"></div>`).join(''));
-  h('rep-ranks',[RANKS.candidate,RANKS.volunteer,RANKS.activist].map(r=>{const cnt=DB.users.filter(u=>u.rank===r.id).length;return`<div style="display:flex;align-items:center;gap:9px;margin-bottom:8px"><span style="font-size:15px">${r.emoji}</span><div style="flex:1"><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span>${r.name}</span><span style="color:var(--accent)">${cnt}</span></div><div class="pb" style="height:5px"><div class="pf" style="width:${Math.round(cnt/DB.users.length*100)}%"></div></div></div></div>`;}).join(''));
+function rAdmTasks(){
+  // Обычные задачи
+  h('adm-tasks-tbl',DB.tasks.map(function(t){
+    var u=DB.users.find(function(x){return x.id===t.assignee;});
+    return '<tr><td>'+t.title+'</td><td>'+(u?u.name.split(' ').slice(0,2).join(' '):'—')+'</td>'
+      +'<td><span style="color:var(--amber);font-weight:600">+'+t.points+'</span></td>'
+      +'<td>'+fdate(t.due)+'</td>'
+      +'<td>'+(t.done?'<span style="color:var(--accent)">✓</span>':'<span style="color:var(--amber)">⏳</span>')+'</td>'
+      +'<td>'+(!t.done?'<button class="btn btn-a" style="padding:4px 9px;font-size:11px" onclick="admDoneTask('+t.id+')">✓ Выполнено</button>':'')+'</td></tr>';
+  }).join(''));
+
+  // Биржа задач на проверке
+  var marketReview=(DB.marketTasks||[]).filter(function(t){return t.status==='review';});
+  var marketEl=document.getElementById('market-review-list');
+  if(marketEl){
+    if(marketReview.length){
+      marketEl.innerHTML='<div style="font-size:12px;font-weight:700;color:var(--amber);margin:14px 0 8px">⏳ Биржа задач — на проверке ('+marketReview.length+')</div>'
+        +'<div style="display:flex;flex-direction:column;gap:8px">'
+        +marketReview.map(function(t){
+          var takers=t.takers.map(function(uid){
+            var u=DB.users.find(function(x){return x.id===uid;});
+            return u?('<span style="background:var(--surface2);border-radius:6px;padding:2px 8px;font-size:11px;margin:0 3px">'
+              +u.name.split(' ')[0]
+              +'<button onclick="confirmMarketTask('+t.id+','+uid+')" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:11px;margin-left:4px;font-weight:700">✓ Принять</button>'
+              +'</span>'):'';
+          }).join('');
+          return '<div style="padding:10px 14px;background:var(--surface2);border-radius:10px;border:1px solid rgba(245,158,11,.25)">'
+            +'<div style="font-weight:600;margin-bottom:5px">'+t.title+'</div>'
+            +'<div style="font-size:11px;color:var(--text2);margin-bottom:6px">+'+t.pts+' баллов · '+fdate(t.due)+'</div>'
+            +'<div>Исполнители: '+takers+'</div>'
+            +'</div>';
+        }).join('')+'</div>';
+    } else {
+      marketEl.innerHTML='';
+    }
+  }
 }
 function xrep(nm){toast(`📥 "${nm}" формируется...`);setTimeout(()=>toast(`✅ "${nm}" готов`),1400);}
 function addEv(){
