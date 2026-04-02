@@ -1043,6 +1043,42 @@ function closeSb(){var s=document.getElementById('sidebar');var o=document.getEl
     </div>
   </div>
 </div>
+
+<div class="modal-overlay" id="m-add-market">
+  <div class="modal" style="max-width:520px">
+    <button class="modal-close" onclick="cpm('m-add-market')">✕</button>
+    <div class="modal-title">💼 Новая задача на бирже</div>
+    <div class="fg"><label>Название</label><input id="mk-title" placeholder="Подготовить баннер..."></div>
+    <div class="fg"><label>Описание</label><textarea id="mk-desc" rows="3" placeholder="Подробно опишите задачу..."></textarea></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px">
+      <div class="fg"><label>Категория</label>
+        <select id="mk-cat">
+          <option value="org">🗂️ Организация</option>
+          <option value="media">📱 Медиа</option>
+          <option value="edu">📚 Обучение</option>
+          <option value="tech">💻 Техническое</option>
+          <option value="other">🔧 Другое</option>
+        </select>
+      </div>
+      <div class="fg"><label>Баллы</label><input id="mk-pts" type="number" value="50" min="10"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px">
+      <div class="fg"><label>Дедлайн</label><input id="mk-due" type="date"></div>
+      <div class="fg"><label>Мест</label><input id="mk-slots" type="number" value="1" min="1" max="20"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-g" onclick="cpm('m-add-market')">Отмена</button>
+      <button class="btn btn-a" onclick="addMarketTask()">Опубликовать</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="m-market-detail">
+  <div class="modal" style="max-width:520px">
+    <button class="modal-close" onclick="cpm('m-market-detail')">✕</button>
+    <div id="m-market-detail-body"></div>
+  </div>
+</div>
 <div id="toast"><span id="t-txt"></span></div>
 <script>
 // ════════════════════════════════════════════════════════════
