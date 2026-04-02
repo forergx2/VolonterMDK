@@ -2408,22 +2408,20 @@ function rAdmRep(){
 
 function xrep(title){
   var rows=DB.users.map(function(u){return[u.name,u.rank,u.points,u.events].join(',');});
-  var csv='Имя,Ранг,Баллы,Мероприятий
-'+rows.join('
-');
+  var csv='Name,Rank,Points,Events\n'+rows.join('\n');
+
   var a=document.createElement('a');
-  a.href='data:text/csv;charset=utf-8,﻿'+encodeURIComponent(csv);
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
   a.download=title+'.csv';a.click();
   toast('📥 Скачивание...');
 }
 
 function exportKpiCsv(){
   var rows=DB.users.map(function(u){return[u.name,u.kpiMonth||0,u.kpiGoal||50,Math.round((u.kpiMonth||0)/(u.kpiGoal||50)*100)+'%'].join(',');});
-  var csv='Имя,KPI,Цель,Процент
-'+rows.join('
-');
+  var csv='Name,KPI,Goal,Percent\n'+rows.join('\n');
+
   var a=document.createElement('a');
-  a.href='data:text/csv;charset=utf-8,﻿'+encodeURIComponent(csv);
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
   a.download='KPI.csv';a.click();
   toast('📥 KPI скачан');
 }
