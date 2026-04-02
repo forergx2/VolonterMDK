@@ -1168,6 +1168,7 @@ const DB={
     {id:4,name:'Планы на 2026 год',icon:'📊',size:'2.1 МБ',date:'05.01.2026'},
     {id:5,name:'Форма заявки на событие',icon:'📄',size:'320 КБ',date:'10.02.2026'},
   ],
+  marketTasks:[],
   tests:[{
     id:1,title:'Экзамен на Активиста',passScore:4,active:true,
     questions:[
@@ -1679,7 +1680,7 @@ function rAdmPromo(){
     </div>`;
   }).join(''));
 }
-function approvePromo(uid){const u=DB.users.find(x=>x.id===uid);if(!u)return;if(u.rank==='candidate'){u.rank='volunteer';u.positionId='vol_pos';}else if(u.rank==='volunteer'){u.rank='activist';u.positionId='activist_pos';}u.promoRequest=null;addNotif(uid,`🎉 Поздравляем! Вы повышены до ранга «${getRank(u).name}»!`);sendTG(uid,`🎉 Поздравляем с повышением до ранга «${getRank(u).name}»!`);toast(`🎉 ${u.name.split(' ')[0]} повышен до «${getRank(u).name}»!`);rAdmPromo();updBadges();if(u.id===CU?.id){updSidebar();rPromotion();}}
+function approvePromo(uid){const u=DB.users.find(x=>x.id===uid);if(!u)return;if(u.rank==='candidate'){u.rank='volunteer';u.positionId='vol_pos';}else if(u.rank==='volunteer'){u.rank='activist';u.positionId='activist_pos';}u.promoRequest=null;addNotif(uid,`🎉 Поздравляем! Вы повышены до ранга «${getRank(u).name}»!`);sendTG(uid,`🎉 Поздравляем с повышением до ранга «${getRank(u).name}»!`);syncToServer();toast(`🎉 ${u.name.split(' ')[0]} повышен до «${getRank(u).name}»!`);rAdmPromo();updBadges();if(u.id===CU?.id){updSidebar();rPromotion();}}
 function rejectPromo(uid){const u=DB.users.find(x=>x.id===uid);if(!u)return;u.promoRequest=null;addNotif(uid,'Ваш запрос на повышение отклонён. Обратитесь к руководству.');toast(`↩️ Запрос отклонён — ${u.name.split(' ')[0]}`);rAdmPromo();updBadges();}
 
 function rKpiAdmin(){
@@ -2357,6 +2358,8 @@ function loadFromFirestore(cb){
       var localPws={};
       (DB.users||[]).forEach(function(u){if(u.pw)localPws[u.email]=u.pw;});
       Object.keys(d).forEach(function(k){if(DB[k]!==undefined)DB[k]=d[k];});
+      // Восстанавливаем marketTasks если его нет
+      if(!DB.marketTasks)DB.marketTasks=[];
       // Восстанавливаем пароли если Firebase их не содержит
       (DB.users||[]).forEach(function(u){
         if(!u.pw&&localPws[u.email])u.pw=localPws[u.email];
