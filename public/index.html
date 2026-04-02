@@ -528,12 +528,14 @@ function doLogin(){
   var pwEl=document.getElementById('li-pw');
   var id=idEl?idEl.value.trim():'';
   var pw=pwEl?pwEl.value.trim():'';
-  if(!id||!pw){toast('⚠️ Введите логин и пароль');return;}
-  if(typeof DB==='undefined'||!DB||!DB.users||DB.users.length===0){
-    var ldBtn=document.getElementById('li-pw');
-    if(ldBtn)ldBtn.placeholder='Загрузка...';
-    setTimeout(function(){if(ldBtn)ldBtn.placeholder='••••••••';doLogin();},1500);
-    return;
+  if(!id||!pw){if(typeof toast==='function')toast('⚠️ Введите логин и пароль');else alert('Введите логин и пароль');return;}
+  if(typeof DB==='undefined'||!DB||!DB.users){
+    if(typeof toast==='function')toast('⚠️ Данные загружаются...');
+    else alert('Подождите загрузки');return;
+  }
+  if(DB.users.length===0){
+    if(typeof toast==='function')toast('❌ Нет аккаунтов. Зарегистрируйтесь!');
+    else alert('Нет аккаунтов. Нажмите Регистрация');return;
   }
   var u=DB.users.find(function(x){
     var emailMatch=x.email&&x.email.toLowerCase()===id.toLowerCase();
@@ -542,7 +544,7 @@ function doLogin(){
   });
   console.log('Login attempt:', id, '| Found:', !!u, '| DB users:', DB.users.length);
   if(!u){
-    toast('❌ Неверный логин или пароль');
+    if(typeof toast==='function')toast('❌ Неверный логин или пароль');else alert('Неверный логин или пароль');
     return;
   }
   CU=u;
@@ -2355,6 +2357,15 @@ function pinAnn(id){
   a.pinned=!a.pinned;
   syncToServer();rAnn();
   toast(a.pinned?'📌 Закреплено':'Откреплено');
+}
+
+
+function admDoneTask(id){
+  var t=DB.tasks.find(function(x){return x.id===id;});if(!t)return;
+  t.done=true;
+  var u=DB.users.find(function(x){return x.id===t.assignee;});
+  if(u){addPointsWithLog(t.assignee,t.points,'Задача: «'+t.title+'»',CU.name.split(' ')[0]);}
+  syncToServer();toast('✅ Задача выполнена, '+t.points+' б начислено');rAdmTasks();
 }
 
 // ════════════════════════════════════════════════════════════
