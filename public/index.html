@@ -2017,7 +2017,7 @@ function openMarketTask(id){
     +'<button class="btn btn-g" onclick="cpm('+String.fromCharCode(39)+'m-market-detail'+String.fromCharCode(39)+')">Закрыть</button>'
     +(!isDone&&!isTaker&&!isFull&&t.status==='open'?'<button class="btn btn-a" onclick="takeMarketTask(null,'+t.id+');cpm('+String.fromCharCode(39)+'m-market-detail'+String.fromCharCode(39)+')">📋 Взять задачу</button>':'')
     +(isTaker&&!isDone&&t.status!=='done'?'<button class="btn btn-am" onclick="submitMarketTask('+t.id+')">⬆️ Сдать на проверку</button>':'')
-    +(isAdm&&t.status!=='done'?'<button class="btn btn-d" style="margin-left:auto" onclick="deleteMarketTask('+t.id+')">🗑 Удалить</button>':'')
+    +(isAdm?'<button class="btn btn-d" style="margin-left:auto" onclick="deleteMarketTask('+t.id+')">🗑 Удалить</button>':'')
     +'</div>'
   );
   opm('m-market-detail');
